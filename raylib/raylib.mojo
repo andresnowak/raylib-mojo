@@ -6,8 +6,6 @@ from .texture import *
 from .space_objects import *
 
 
-alias RAYLIB_PATH = "/home/linuxbrew/.linuxbrew/Cellar/raylib/5.0/lib/libraylib.so"
-
 # Window-related functions
 alias c_raylib_InitWindow = fn (
     width: Int32, height: Int32, title: UnsafePointer[Int8]
@@ -190,7 +188,6 @@ alias c_raylib_MemFree = fn (ptr: UnsafePointer[SYSTEM_SIZE]) -> None
 
 @value
 struct Raylib:
-    var raylib_internal: DLHandle
     var _init_window: c_raylib_InitWindow
     var _close_window: c_raylib_CloseWindow
     var _window_should_close: c_raylib_WindowShouldClose
@@ -254,190 +251,188 @@ struct Raylib:
     var _end_mode3d: c_raylib_EndMode3D
 
     fn __init__(inout self):
-        self.raylib_internal = DLHandle(RAYLIB_PATH)
-
         # window-related functions
-        self._init_window = self.raylib_internal.get_function[
+        self._init_window = raylib_internal.get_function[
             c_raylib_InitWindow
         ]("InitWindow")
-        self._close_window = self.raylib_internal.get_function[
+        self._close_window = raylib_internal.get_function[
             c_raylib_CloseWindow
         ]("CloseWindow")
-        self._window_should_close = self.raylib_internal.get_function[
+        self._window_should_close = raylib_internal.get_function[
             c_raylib_WindowShouldClose
         ]("WindowShouldClose")
-        self._is_window_ready = self.raylib_internal.get_function[
+        self._is_window_ready = raylib_internal.get_function[
             c_raylib_IsWindowReady
         ]("IsWindowReady")
-        self._is_window_fullscreen = self.raylib_internal.get_function[
+        self._is_window_fullscreen = raylib_internal.get_function[
             c_raylib_IsWindowFullscreen
         ]("IsWindowFullscreen")
-        self._is_window_hidden = self.raylib_internal.get_function[
+        self._is_window_hidden = raylib_internal.get_function[
             c_raylib_IsWindowHidden
         ]("IsWindowHidden")
-        self._is_window_minimized = self.raylib_internal.get_function[
+        self._is_window_minimized = raylib_internal.get_function[
             c_raylib_IsWindowMinimized
         ]("IsWindowMinimized")
-        self._is_window_maximized = self.raylib_internal.get_function[
+        self._is_window_maximized = raylib_internal.get_function[
             c_raylib_IsWindowMaximized
         ]("IsWindowMaximized")
-        self._is_window_focused = self.raylib_internal.get_function[
+        self._is_window_focused = raylib_internal.get_function[
             c_raylib_IsWindowFocused
         ]("IsWindowFocused")
-        self._is_window_resized = self.raylib_internal.get_function[
+        self._is_window_resized = raylib_internal.get_function[
             c_raylib_IsWindowResized
         ]("IsWindowResized")
-        self._is_window_state = self.raylib_internal.get_function[
+        self._is_window_state = raylib_internal.get_function[
             c_raylib_IsWindowState
         ]("IsWindowState")
-        self._set_window_state = self.raylib_internal.get_function[
+        self._set_window_state = raylib_internal.get_function[
             c_raylib_SetWindowState
         ]("SetWindowState")
-        self._clear_window_state = self.raylib_internal.get_function[
+        self._clear_window_state = raylib_internal.get_function[
             c_raylib_ClearWindowState
         ]("ClearWindowState")
-        self._toggle_fullscreen = self.raylib_internal.get_function[
+        self._toggle_fullscreen = raylib_internal.get_function[
             c_raylib_ToggleFullscreen
         ]("ToggleFullscreen")
-        self._toggle_borderless_windowed = self.raylib_internal.get_function[
+        self._toggle_borderless_windowed = raylib_internal.get_function[
             c_raylib_ToggleBorderlessWindowed
         ]("ToggleBorderlessWindowed")
-        self._maximize_window = self.raylib_internal.get_function[
+        self._maximize_window = raylib_internal.get_function[
             c_raylib_MaximizeWindow
         ]("MaximizeWindow")
-        self._minimize_window = self.raylib_internal.get_function[
+        self._minimize_window = raylib_internal.get_function[
             c_raylib_MinimizeWindow
         ]("MinimizeWindow")
-        self._restore_window = self.raylib_internal.get_function[
+        self._restore_window = raylib_internal.get_function[
             c_raylib_RestoreWindow
         ]("RestoreWindow")
-        self._set_window_icon = self.raylib_internal.get_function[
+        self._set_window_icon = raylib_internal.get_function[
             c_raylib_SetWindowIcon
         ]("SetWindowIcon")
-        self._set_window_icons = self.raylib_internal.get_function[
+        self._set_window_icons = raylib_internal.get_function[
             c_raylib_SetWindowIcons
         ]("SetWindowIcons")
-        self._set_window_title = self.raylib_internal.get_function[
+        self._set_window_title = raylib_internal.get_function[
             c_raylib_SetWindowTitle
         ]("SetWindowTitle")
-        self._set_window_position = self.raylib_internal.get_function[
+        self._set_window_position = raylib_internal.get_function[
             c_raylib_SetWindowPosition
         ]("SetWindowPosition")
-        self._set_window_monitor = self.raylib_internal.get_function[
+        self._set_window_monitor = raylib_internal.get_function[
             c_raylib_SetWindowMonitor
         ]("SetWindowMonitor")
-        self._set_window_min_size = self.raylib_internal.get_function[
+        self._set_window_min_size = raylib_internal.get_function[
             c_raylib_SetWindowMinSize
         ]("SetWindowMinSize")
-        self._set_window_max_size = self.raylib_internal.get_function[
+        self._set_window_max_size = raylib_internal.get_function[
             c_raylib_SetWindowMaxSize
         ]("SetWindowMaxSize")
-        self._set_window_size = self.raylib_internal.get_function[
+        self._set_window_size = raylib_internal.get_function[
             c_raylib_SetWindowSize
         ]("SetWindowSize")
-        self._set_window_opacity = self.raylib_internal.get_function[
+        self._set_window_opacity = raylib_internal.get_function[
             c_raylib_SetWindowOpacity
         ]("SetWindowOpacity")
-        self._set_window_focused = self.raylib_internal.get_function[
+        self._set_window_focused = raylib_internal.get_function[
             c_raylib_SetWindowFocused
         ]("SetWindowFocused")
-        self._get_window_handle = self.raylib_internal.get_function[
+        self._get_window_handle = raylib_internal.get_function[
             c_raylib_GetWindowHandle
         ]("GetWindowHandle")
-        self._get_screen_width = self.raylib_internal.get_function[
+        self._get_screen_width = raylib_internal.get_function[
             c_raylib_GetScreenWidth
         ]("GetScreenWidth")
-        self._get_screen_height = self.raylib_internal.get_function[
+        self._get_screen_height = raylib_internal.get_function[
             c_raylib_GetScreenHeight
         ]("GetScreenHeight")
-        self._get_render_width = self.raylib_internal.get_function[
+        self._get_render_width = raylib_internal.get_function[
             c_raylib_GetRenderWidth
         ]("GetRenderWidth")
-        self._get_render_height = self.raylib_internal.get_function[
+        self._get_render_height = raylib_internal.get_function[
             c_raylib_GetRenderHeight
         ]("GetRenderHeight")
-        self._get_monitor_count = self.raylib_internal.get_function[
+        self._get_monitor_count = raylib_internal.get_function[
             c_raylib_GetMonitorCount
         ]("GetMonitorCount")
-        self._get_current_monitor = self.raylib_internal.get_function[
+        self._get_current_monitor = raylib_internal.get_function[
             c_raylib_GetCurrentMonitor
         ]("GetCurrentMonitor")
-        self._get_monitor_position = self.raylib_internal.get_function[
+        self._get_monitor_position = raylib_internal.get_function[
             c_raylib_GetMonitorPosition
         ]("GetMonitorPosition")
-        self._get_monitor_width = self.raylib_internal.get_function[
+        self._get_monitor_width = raylib_internal.get_function[
             c_raylib_GetMonitorWidth
         ]("GetMonitorWidth")
-        self._get_monitor_height = self.raylib_internal.get_function[
+        self._get_monitor_height = raylib_internal.get_function[
             c_raylib_GetMonitorHeight
         ]("GetMonitorHeight")
-        self._get_monitor_physical_width = self.raylib_internal.get_function[
+        self._get_monitor_physical_width = raylib_internal.get_function[
             c_raylib_GetMonitorPhysicalWidth
         ]("GetMonitorPhysicalWidth")
-        self._get_monitor_physical_height = self.raylib_internal.get_function[
+        self._get_monitor_physical_height = raylib_internal.get_function[
             c_raylib_GetMonitorPhysicalHeight
         ]("GetMonitorPhysicalHeight")
-        self._get_monitor_refresh_rate = self.raylib_internal.get_function[
+        self._get_monitor_refresh_rate = raylib_internal.get_function[
             c_raylib_GetMonitorRefreshRate
         ]("GetMonitorRefreshRate")
-        self._get_window_position = self.raylib_internal.get_function[
+        self._get_window_position = raylib_internal.get_function[
             c_raylib_GetWindowPosition
         ]("GetWindowPosition")
-        self._get_window_scale_dpi = self.raylib_internal.get_function[
+        self._get_window_scale_dpi = raylib_internal.get_function[
             c_raylib_GetWindowScaleDPI
         ]("GetWindowScaleDPI")
-        self._get_monitor_name = self.raylib_internal.get_function[
+        self._get_monitor_name = raylib_internal.get_function[
             c_raylib_GetMonitorName
         ]("GetMonitorName")
-        self._set_clipboard_text = self.raylib_internal.get_function[
+        self._set_clipboard_text = raylib_internal.get_function[
             c_raylib_SetClipboardText
         ]("SetClipboardText")
-        self._get_clipboard_text = self.raylib_internal.get_function[
+        self._get_clipboard_text = raylib_internal.get_function[
             c_raylib_GetClipboardText
         ]("GetClipboardText")
-        self._enable_event_waiting = self.raylib_internal.get_function[
+        self._enable_event_waiting = raylib_internal.get_function[
             c_raylib_EnableEventWaiting
         ]("EnableEventWaiting")
-        self._disable_event_waiting = self.raylib_internal.get_function[
+        self._disable_event_waiting = raylib_internal.get_function[
             c_raylib_DisableEventWaiting
         ]("DisableEventWaiting")
-        self._show_cursor = self.raylib_internal.get_function[
+        self._show_cursor = raylib_internal.get_function[
             c_raylib_ShowCursor
         ]("ShowCursor")
-        self._hide_cursor = self.raylib_internal.get_function[
+        self._hide_cursor = raylib_internal.get_function[
             c_raylib_HideCursor
         ]("HideCursor")
-        self._is_cursor_hidden = self.raylib_internal.get_function[
+        self._is_cursor_hidden = raylib_internal.get_function[
             c_raylib_IsCursorHidden
         ]("IsCursorHidden")
-        self._enable_cursor = self.raylib_internal.get_function[
+        self._enable_cursor = raylib_internal.get_function[
             c_raylib_EnableCursor
         ]("EnableCursor")
-        self._disable_cursor = self.raylib_internal.get_function[
+        self._disable_cursor = raylib_internal.get_function[
             c_raylib_DisableCursor
         ]("DisableCursor")
-        self._is_cursor_on_screen = self.raylib_internal.get_function[
+        self._is_cursor_on_screen = raylib_internal.get_function[
             c_raylib_IsCursorOnScreen
         ]("IsCursorOnScreen")
-        self._clear_background = self.raylib_internal.get_function[
+        self._clear_background = raylib_internal.get_function[
             c_raylib_ClearBackground
         ]("ClearBackground")
-        self._begin_drawing = self.raylib_internal.get_function[
+        self._begin_drawing = raylib_internal.get_function[
             c_raylib_BeginDrawing
         ]("BeginDrawing")
-        self._end_drawing = self.raylib_internal.get_function[
+        self._end_drawing = raylib_internal.get_function[
             c_raylib_EndDrawing
         ]("EndDrawing")
-        self._begin_mode2d = self.raylib_internal.get_function[
+        self._begin_mode2d = raylib_internal.get_function[
             c_raylib_BeginMode2D
         ]("BeginMode2D")
-        self._end_mode2d = self.raylib_internal.get_function[
+        self._end_mode2d = raylib_internal.get_function[
             c_raylib_EndMode2D
         ]("EndMode2D")
-        self._begin_mode3d = self.raylib_internal.get_function[
+        self._begin_mode3d = raylib_internal.get_function[
             c_raylib_BeginMode3D
         ]("BeginMode3D")
-        self._end_mode3d = self.raylib_internal.get_function[
+        self._end_mode3d = raylib_internal.get_function[
             c_raylib_EndMode3D
         ]("EndMode3D")
 

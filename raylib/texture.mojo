@@ -106,3 +106,29 @@ struct GlyphInfo(CollectionElement):
         self.offsetY = offsetY
         self.advanceX = advanceX
         self.image = image
+
+
+@value
+struct Font(CollectionElement):
+    var baseSize: Int32
+    var charsCount: Int32
+    var charsPadding: Int32
+    var texture: Texture
+    var recs: UnsafePointer[Rectangle]
+    var glyphs: UnsafePointer[GlyphInfo]
+
+    fn __init__(
+        inout self,
+        baseSize: Int32,
+        charsCount: Int32,
+        charsPadding: Int32,
+        texture: Texture,
+        recs: UnsafePointer[Rectangle],
+        glyphs: UnsafePointer[GlyphInfo],
+    ):
+        self.baseSize = baseSize
+        self.charsCount = charsCount
+        self.charsPadding = charsPadding
+        self.texture = texture
+        self.recs = recs
+        self.glyphs = glyphs

@@ -1,4 +1,6 @@
+from sys.ffi import DLHandle
 from .raylib import *
+from .raylib_text import *
 
 fn check_system_size() -> DType:
     @parameter
@@ -10,4 +12,9 @@ fn check_system_size() -> DType:
 
 alias SYSTEM_SIZE = Scalar[check_system_size()]
 
+alias RAYLIB_PATH = "/home/linuxbrew/.linuxbrew/Cellar/raylib/5.0/lib/libraylib.so"
+
+var raylib_internal = DLHandle(RAYLIB_PATH)
+
 var ray_lib = Raylib()
+var ray_lib_text = RaylibText()
