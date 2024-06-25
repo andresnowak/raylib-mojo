@@ -53,7 +53,7 @@ alias c_raylib_GetMonitorPhysicalWidth = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorPhysicalHeight = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorRefreshRate = fn (monitor: Int32) -> Int32
 alias c_raylib_GetWindowPosition = fn () -> SYSTEM_SIZE
-alias c_raylib_GetWindowScaleDPI = fn () -> Vector2
+alias c_raylib_GetWindowScaleDPI = fn () -> SYSTEM_SIZE
 alias c_raylib_GetMonitorName = fn (monitor: Int32) -> UnsafePointer[Int8]
 alias c_raylib_SetClipboardText = fn (text: UnsafePointer[Int8]) -> None
 alias c_raylib_GetClipboardText = fn () -> UnsafePointer[Int8]
@@ -125,7 +125,7 @@ alias c_raylib_SetShaderValueV = fn (
     count: Int32,
 ) -> None
 alias c_raylib_SetShaderValueMatrix = fn (
-    shader: SYSTEM_SIZE, uniformLoc: Int32, mat: Matrix
+    shader: SYSTEM_SIZE, uniformLoc: Int32, mat: SYSTEM_SIZE
 ) -> None
 alias c_raylib_SetShaderValueTexture = fn (
     shader: SYSTEM_SIZE, uniformLoc: Int32, texture: SYSTEM_SIZE
@@ -612,7 +612,8 @@ struct Raylib:
 
     fn get_window_scale_dpi(self) -> Vector2:
         """Get window scale DPI factor."""
-        return self._get_window_scale_dpi()
+        var temp = self._get_window_scale_dpi()
+        return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_monitor_name(self, monitor: Int32) -> String:
         """Get the human-readable, UTF-8 encoded name of the primary monitor."""
