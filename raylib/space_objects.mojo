@@ -4,6 +4,8 @@ from .texture import Image, Texture, RenderTexture
 
 alias Quaternion = Vector4
 alias Texture2D = Texture
+alias RenderTexture2D = RenderTexture
+alias Camera = Camera3D
 
 
 @value

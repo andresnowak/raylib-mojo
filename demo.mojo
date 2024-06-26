@@ -10,12 +10,14 @@ fn main():
     )  # if its a string the pointer gets freed by mojo
     ray_lib.init_window(width, height, window_title)
 
-    # ray_lib.set_target_fps(60)
+    ray_lib.set_target_fps(144)
 
     ray_lib_text.set_text_line_spacing(22)
     print(window_title)
 
     var hello = String("Hello, World!\nHello World!")
+
+    # print(ray_lib_text.get_font_default().base_size) # crashes
 
     while not ray_lib.window_should_close():
         ray_lib.begin_drawing()
