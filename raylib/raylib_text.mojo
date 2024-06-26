@@ -1,3 +1,5 @@
+from sys.ffi import DLHandle
+
 from .texture import Font
 
 #  Font loading/unloading functions
@@ -175,7 +177,7 @@ struct RaylibText:
     var _get_codepoint_next: c_raylib_GetCodepointNext
     var _get_codepoint_previous: c_raylib_GetCodepointPrevious
 
-    fn __init__(inout self):
+    fn __init__(inout self, raylib_internal: DLHandle):
         # Font loading/unloading functions
         self._get_font_default = raylib_internal.get_function[
             c_raylib_GetFontDefault
@@ -506,7 +508,9 @@ struct RaylibText:
     fn measure_text(self, text: String, font_size: Int32) -> Int32:
         """Measure string width for default font."""
         var temp = text.unsafe_ptr()
-        return self._measure_text(temp, font_size)
+        var res = self._measure_text(temp, font_size)
+        _ = text
+        return res
 
     fn measure_text_ex(
         self,

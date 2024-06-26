@@ -250,7 +250,7 @@ struct Raylib:
     var _begin_mode3d: c_raylib_BeginMode3D
     var _end_mode3d: c_raylib_EndMode3D
 
-    fn __init__(inout self):
+    fn __init__(inout self, raylib_internal: DLHandle):
         # window-related functions
         self._init_window = raylib_internal.get_function[
             c_raylib_InitWindow

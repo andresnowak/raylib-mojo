@@ -16,5 +16,5 @@ alias RAYLIB_PATH = "/home/linuxbrew/.linuxbrew/Cellar/raylib/5.0/lib/libraylib.
 
 var raylib_internal = DLHandle(RAYLIB_PATH)
 
-var ray_lib = Raylib()
-var ray_lib_text = RaylibText()
+var ray_lib = Raylib(raylib_internal)
+var ray_lib_text = RaylibText(raylib_internal)
