@@ -24,7 +24,7 @@ struct Image(CollectionElement):
         self.format = format
 
 
-@value
+@register_passable("trivial")
 struct Texture(CollectionElement):
     var id: UInt32
     var width: Int32
@@ -110,25 +110,25 @@ struct GlyphInfo(CollectionElement):
 
 @value
 struct Font(CollectionElement):
-    var baseSize: Int32
-    var charsCount: Int32
-    var charsPadding: Int32
+    var base_size: Int32
+    var glyph_count: Int32
+    var glyph_padding: Int32
     var texture: Texture
     var recs: UnsafePointer[Rectangle]
     var glyphs: UnsafePointer[GlyphInfo]
 
     fn __init__(
         inout self,
-        baseSize: Int32,
-        charsCount: Int32,
-        charsPadding: Int32,
+        base_size: Int32,
+        glyph_count: Int32,
+        glyph_padding: Int32,
         texture: Texture,
         recs: UnsafePointer[Rectangle],
         glyphs: UnsafePointer[GlyphInfo],
     ):
-        self.baseSize = baseSize
-        self.charsCount = charsCount
-        self.charsPadding = charsPadding
+        self.base_size = base_size
+        self.glyph_count = glyph_count
+        self.glyph_padding = glyph_padding
         self.texture = texture
         self.recs = recs
         self.glyphs = glyphs
