@@ -66,14 +66,17 @@ struct Texture(CollectionElement):
     fn __str__(self) -> String:
         return (
             "Texture("
+            "id: "
+            + str(self.id)
+            + ", width:"
             + str(self.width)
-            + ", "
+            + ", height:"
             + str(self.height)
-            + ")"
             + ", mipmaps: "
             + str(self.mipmaps)
             + ", format: "
             + str(self.format)
+            + ")"
         )
 
 
