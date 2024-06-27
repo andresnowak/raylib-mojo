@@ -1,3 +1,5 @@
+alias Quaternion = Vector4
+
 @register_passable("trivial")
 struct Vector2(CollectionElement):
     var x: Float32
@@ -22,6 +24,9 @@ struct Vector3:
         self.y = y
         self.z = z
 
+    fn __str__(self) -> String:
+        return "Vector3(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
+
 
 @register_passable("trivial")
 struct Vector4:
@@ -36,8 +41,12 @@ struct Vector4:
         self.z = z
         self.w = w
 
+    fn __str__(self) -> String:
+        return "Vector4(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ", " + str(self.w) + ")"
+
 
 @value
+@register_passable
 struct Matrix(CollectionElement):
     var data: SIMD[DType.float32, 16]
 
@@ -46,6 +55,9 @@ struct Matrix(CollectionElement):
 
         for i in range(len(data)):
             self.data[i] = data[i]
+
+    fn __str__(self) -> String:
+        return "Matrix(" + str(self.data) + ")"
 
 
 @register_passable("trivial")
@@ -65,6 +77,9 @@ struct Color(CollectionElement):
         self.b = b
         self.a = a
 
+    fn __str__(self) -> String:
+        return "Color(" + str(self.r) + ", " + str(self.g) + ", " + str(self.b) + ", " + str(self.a) + ")"
+
 
 @register_passable("trivial")
 struct Rectangle:
@@ -80,3 +95,6 @@ struct Rectangle:
         self.y = y
         self.width = width
         self.height = height
+
+    fn __str__(self) -> String:
+        return "Rectangle(" + str(self.x) + ", " + str(self.y) + ", " + str(self.width) + ", " + str(self.height) + ")"

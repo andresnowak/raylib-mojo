@@ -1,7 +1,11 @@
 from .shapes import Rectangle
 
+alias Texture2D = Texture
+alias RenderTexture2D = RenderTexture
+
 
 @value
+@register_passable
 struct Image(CollectionElement):
     var data: DTypePointer[DType.float32]
     var width: Int32
@@ -22,6 +26,19 @@ struct Image(CollectionElement):
         self.height = height
         self.mipmaps = mipmaps
         self.format = format
+
+    fn __str__(self) -> String:
+        return (
+            "Image("
+            + str(self.width)
+            + ", "
+            + str(self.height)
+            + ")"
+            + ", mipmaps: "
+            + str(self.mipmaps)
+            + ", format: "
+            + str(self.format)
+        )
 
 
 @register_passable("trivial")
@@ -46,8 +63,22 @@ struct Texture(CollectionElement):
         self.mipmaps = mipmaps
         self.format = format
 
+    fn __str__(self) -> String:
+        return (
+            "Texture("
+            + str(self.width)
+            + ", "
+            + str(self.height)
+            + ")"
+            + ", mipmaps: "
+            + str(self.mipmaps)
+            + ", format: "
+            + str(self.format)
+        )
+
 
 @value
+@register_passable
 struct RenderTexture(CollectionElement):
     var id: UInt32
     var texture: Texture
@@ -58,8 +89,18 @@ struct RenderTexture(CollectionElement):
         self.texture = texture
         self.depth = depth
 
+    fn __str__(self) -> String:
+        return (
+            "RenderTexture("
+            + str(self.texture.width)
+            + ", "
+            + str(self.texture.height)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct NPatchInfo(CollectionElement):
     var sourceRec: Rectangle
     var left: Int32
@@ -84,8 +125,12 @@ struct NPatchInfo(CollectionElement):
         self.bottom = bottom
         self.layout = layout
 
+    fn __str__(self) -> String:
+        return "NPatchInfo(" + str(self.sourceRec) + ")"
+
 
 @value
+@register_passable
 struct GlyphInfo(CollectionElement):
     var value: Int32
     var offsetX: Int32
@@ -107,13 +152,17 @@ struct GlyphInfo(CollectionElement):
         self.advanceX = advanceX
         self.image = image
 
+    fn __str__(self) -> String:
+        return "GlyphInfo(" + str(self.value) + ")"
+
 
 @value
+@register_passable
 struct Font(CollectionElement):
     var base_size: Int32
     var glyph_count: Int32
     var glyph_padding: Int32
-    var texture: Texture
+    var texture: Texture2D
     var recs: UnsafePointer[Rectangle]
     var glyphs: UnsafePointer[GlyphInfo]
 
@@ -122,7 +171,7 @@ struct Font(CollectionElement):
         base_size: Int32,
         glyph_count: Int32,
         glyph_padding: Int32,
-        texture: Texture,
+        texture: Texture2D,
         recs: UnsafePointer[Rectangle],
         glyphs: UnsafePointer[GlyphInfo],
     ):
@@ -132,3 +181,16 @@ struct Font(CollectionElement):
         self.texture = texture
         self.recs = recs
         self.glyphs = glyphs
+
+    fn __str__(self) -> String:
+        return (
+            "Font("
+            + str(self.base_size)
+            + ", glyphs: "
+            + str(self.glyph_count)
+            + ", padding: "
+            + str(self.glyph_padding)
+            + ", "
+            + str(self.texture)
+            + ")"
+        )

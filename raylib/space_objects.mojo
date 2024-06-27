@@ -1,14 +1,14 @@
-from .shapes import Vector2, Vector3, Vector4, Matrix, Color
+from utils.static_tuple import StaticTuple
+
+from .shapes import Vector2, Vector3, Vector4, Matrix, Color, Quaternion
 from .texture import Image, Texture, RenderTexture
 
 
-alias Quaternion = Vector4
-alias Texture2D = Texture
-alias RenderTexture2D = RenderTexture
 alias Camera = Camera3D
 
 
 @value
+@register_passable
 struct Camera3D(CollectionElement):
     var position: Vector3
     var target: Vector3
@@ -30,8 +30,24 @@ struct Camera3D(CollectionElement):
         self.fovy = fovy
         self.projection = projection
 
+    fn __str__(self) -> String:
+        return (
+            "Camera3D("
+            + str(self.position)
+            + ", "
+            + str(self.target)
+            + ", "
+            + str(self.up)
+            + ", "
+            + str(self.fovy)
+            + ", "
+            + str(self.projection)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct Camera2D(CollectionElement):
     var offset: Vector2
     var target: Vector2
@@ -50,8 +66,22 @@ struct Camera2D(CollectionElement):
         self.rotation = rotation
         self.zoom = zoom
 
+    fn __str__(self) -> String:
+        return (
+            "Camera2D("
+            + str(self.offset)
+            + ", "
+            + str(self.target)
+            + ", "
+            + str(self.rotation)
+            + ", "
+            + str(self.zoom)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct Mesh(CollectionElement):
     var vertexCount: Int32  # Number of vertices stored in arrays
     var triangleCount: Int32  # Number of triangles stored (indexed or not)
@@ -131,8 +161,22 @@ struct Mesh(CollectionElement):
         self.vaoId = vaoId
         self.vboId = vboId
 
+    fn __str__(self) -> String:
+        return (
+            "Mesh("
+            + str(self.vertexCount)
+            + ", "
+            + str(self.triangleCount)
+            + ", "
+            + str(self.vaoId)
+            + ", "
+            + str(self.vboId)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct Shader(CollectionElement):
     var id: UInt32
     var locs: DTypePointer[DType.int32]
@@ -141,8 +185,12 @@ struct Shader(CollectionElement):
         self.id = id
         self.locs = locs
 
+    fn __str__(self) -> String:
+        return "Shader(" + str(self.id) + ")"
+
 
 @value
+@register_passable
 struct MaterialMap(CollectionElement):
     var texture: Texture2D
     var color: Color
@@ -153,8 +201,20 @@ struct MaterialMap(CollectionElement):
         self.color = color
         self.value = value
 
+    fn __str__(self) -> String:
+        return (
+            "MaterialMap("
+            + str(self.texture)
+            + ", "
+            + str(self.color)
+            + ", "
+            + str(self.value)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct Material(CollectionElement):
     var shader: Shader
     var maps: UnsafePointer[MaterialMap]
@@ -163,8 +223,12 @@ struct Material(CollectionElement):
         self.shader = shader
         self.maps = maps
 
+    fn __str__(self) -> String:
+        return "Material(" + str(self.shader) + ")"
+
 
 @value
+@register_passable
 struct Transform(CollectionElement):
     var translation: Vector3
     var rotation: Quaternion
@@ -177,18 +241,48 @@ struct Transform(CollectionElement):
         self.rotation = rotation
         self.scale = scale
 
+    fn __str__(self) -> String:
+        return (
+            "Transform("
+            + str(self.translation)
+            + ", "
+            + str(self.rotation)
+            + ", "
+            + str(self.scale)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct BoneInfo(CollectionElement):
-    var name: String
+    var name: StaticTuple[Int8, 32]
     var parent: Int32
 
     fn __init__(inout self, name: String, parent: Int32):
-        self.name = name
+        if len(name) > 32:
+            print("Bone name too long, truncating to 32 characters")
+        self.name = StaticTuple[Int8, 32]()
         self.parent = parent
+
+        var n = min(len(name), 32)
+
+        for i in range(n):
+            self.name[i] = name[i]
+
+    fn __str__(self) -> String:
+        var result: String = "BoneInfo("
+        for i in range(len(self.name)):
+            if self.name[i] == 0:
+                break
+            result += str(self.name[i])
+        result += ", " + str(self.parent) + ")"
+
+        return result
 
 
 @value
+@register_passable
 struct Model(CollectionElement):
     var transform: Matrix
     var meshCount: Int32
@@ -219,8 +313,22 @@ struct Model(CollectionElement):
         self.boneCount = boneCount
         self.bones = bones
 
+    fn __str__(self) -> String:
+        return (
+            "Model(transform: "
+            + str(self.transform)
+            + ", mesh_count: "
+            + str(self.meshCount)
+            + ", material_count: "
+            + str(self.materialCount)
+            + ", bone_count: "
+            + str(self.boneCount)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct ModelAnimation(CollectionElement):
     var boneCount: Int32
     var bones: UnsafePointer[BoneInfo]
@@ -239,8 +347,18 @@ struct ModelAnimation(CollectionElement):
         self.frameCount = frameCount
         self.frames = frames
 
+    fn __str__(self) -> String:
+        return (
+            "ModelAnimation(bone_count: "
+            + str(self.boneCount)
+            + ", frame_count: "
+            + str(self.frameCount)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct Ray(CollectionElement):
     var position: Vector3
     var direction: Vector3
@@ -249,8 +367,12 @@ struct Ray(CollectionElement):
         self.position = position
         self.direction = direction
 
+    fn __str__(self) -> String:
+        return "Ray(" + str(self.position) + ", " + str(self.direction) + ")"
+
 
 @value
+@register_passable
 struct RayCollision(CollectionElement):
     var hit: Bool
     var distance: Float32
@@ -269,8 +391,22 @@ struct RayCollision(CollectionElement):
         self.position = position
         self.normal = normal
 
+    fn __str__(self) -> String:
+        return (
+            "RayCollision("
+            + str(self.hit)
+            + ", "
+            + str(self.distance)
+            + ", "
+            + str(self.position)
+            + ", "
+            + str(self.normal)
+            + ")"
+        )
+
 
 @value
+@register_passable
 struct BoundingBox(CollectionElement):
     var min: Vector3
     var max: Vector3
@@ -278,3 +414,6 @@ struct BoundingBox(CollectionElement):
     fn __init__(inout self, min: Vector3, max: Vector3):
         self.min = min
         self.max = max
+
+    fn __str__(self) -> String:
+        return "BoundingBox(" + str(self.min) + ", " + str(self.max) + ")"

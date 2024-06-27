@@ -2,6 +2,8 @@ from sys.ffi import DLHandle
 from .raylib import *
 from .raylib_text import *
 
+# All Structs for now are defined as register_passable, because it seems it is necessary for c interop if you don't use them it sees to cause memory errors
+
 fn check_system_size() -> DType:
     @parameter
     if is_64bit():
