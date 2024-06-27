@@ -3,17 +3,17 @@ from sys.ffi import DLHandle
 from .texture import Font
 
 #  Font loading/unloading functions
-alias c_raylib_GetFontDefault = fn () -> SYSTEM_SIZE
-alias c_raylib_LoadFont = fn (fileName: UnsafePointer[Int8]) -> SYSTEM_SIZE
+alias c_raylib_GetFontDefault = fn () -> Font
+alias c_raylib_LoadFont = fn (fileName: UnsafePointer[Int8]) -> Font
 alias c_raylib_LoadFontEx = fn (
     fileName: UnsafePointer[Int8],
     fontSize: Int32,
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
-) -> SYSTEM_SIZE
+) -> Font
 alias c_raylib_LoadFontFromImage = fn (
-    image: SYSTEM_SIZE, key: Color, firstChar: Int32
-) -> SYSTEM_SIZE
+    image: SYSTEM_SIZE, key: SYSTEM_SIZE, firstChar: Int32
+) -> Font
 alias c_raylib_LoadFontFromMemory = fn (
     fileType: UnsafePointer[Int8],
     fileData: UnsafePointer[UInt8],
@@ -21,7 +21,7 @@ alias c_raylib_LoadFontFromMemory = fn (
     fontSize: Int32,
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
-) -> SYSTEM_SIZE
+) -> Font
 alias c_raylib_IsFontReady = fn (font: SYSTEM_SIZE) -> Bool
 alias c_raylib_LoadFontData = fn (
     fileType: UnsafePointer[UInt8],
@@ -281,14 +281,11 @@ struct RaylibText:
 
     fn get_font_default(self) -> Font:
         """Get the default Font."""
-        var temp = self._get_font_default()
-        return UnsafePointer.address_of(temp).bitcast[Font]()[0]
+        return self._get_font_default()
 
     fn load_font(self, file_name: String) -> Font:
         """Load font from file into GPU memory (VRAM)."""
-        var temp = file_name.unsafe_ptr()
-        var font = self._load_font(temp)
-        return UnsafePointer.address_of(font).bitcast[Font]()[0]
+        return self._load_font(file_name.unsafe_ptr())
 
     fn load_font_ex(
         self,
@@ -305,12 +302,12 @@ struct RaylibText:
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
     fn load_font_from_image(
-        self, image: Image, key: Color, first_char: Int32
+        self, owned image: Image, owned key: Color, first_char: Int32
     ) -> Font:
         """Load font from Image (XNA style)."""
         var font = self._load_font_from_image(
             UnsafePointer.address_of(image).bitcast[SYSTEM_SIZE]()[0],
-            key,
+            UnsafePointer.address_of(key).bitcast[SYSTEM_SIZE]()[0],
             first_char,
         )
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
@@ -332,7 +329,7 @@ struct RaylibText:
         )
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
-    fn is_font_ready(self, font: Font) -> Bool:
+    fn is_font_ready(self, owned font: Font) -> Bool:
         """Check if any font is loaded."""
         return self._is_font_ready(
             UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0]
@@ -384,13 +381,13 @@ struct RaylibText:
         """Unload font chars info (RAM)."""
         self._unload_font_data(glyphs.bitcast[SYSTEM_SIZE](), glyph_count)
 
-    fn unload_font(self, font: Font):
+    fn unload_font(self, owned font: Font):
         """Unload Font from GPU memory (VRAM)."""
         self._unload_font(
             UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0]
         )
 
-    fn export_font_as_code(self, font: Font, file_name: String) -> Bool:
+    fn export_font_as_code(self, owned font: Font, file_name: String) -> Bool:
         """Export font data to code file."""
         var temp = file_name.unsafe_ptr()
         return self._export_font_as_code(
@@ -421,7 +418,7 @@ struct RaylibText:
 
     fn draw_text_ex(
         self,
-        font: Font,
+        owned font: Font,
         text: String,
         owned position: Vector2,
         font_size: Float32,
@@ -441,7 +438,7 @@ struct RaylibText:
 
     fn draw_text_pro(
         self,
-        font: Font,
+        owned font: Font,
         text: String,
         owned position: Vector2,
         owned origin: Vector2,
@@ -465,7 +462,7 @@ struct RaylibText:
 
     fn draw_text_codepoint(
         self,
-        font: Font,
+        owned font: Font,
         codepoint: Int32,
         owned position: Vector2,
         font_size: Float32,
@@ -482,7 +479,7 @@ struct RaylibText:
 
     fn draw_text_codepoints(
         self,
-        font: Font,
+        owned font: Font,
         codepoints: UnsafePointer[Int32],
         codepoint_count: Int32,
         owned position: Vector2,
@@ -514,7 +511,7 @@ struct RaylibText:
 
     fn measure_text_ex(
         self,
-        font: Font,
+        owned font: Font,
         text: String,
         font_size: Float32,
         spacing: Float32,
@@ -529,19 +526,19 @@ struct RaylibText:
         )
         return UnsafePointer.address_of(result).bitcast[Vector2]()[0]
     
-    fn get_glyph_index(self, font: Font, codepoint: Int32) -> Int32:
+    fn get_glyph_index(self, owned font: Font, codepoint: Int32) -> Int32:
         """Get index position for a unicode character on font."""
         return self._get_glyph_index(
             UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], codepoint
         )
     
-    fn get_glyph_info(self, font: Font, glyph_index: Int32) -> SYSTEM_SIZE:
+    fn get_glyph_info(self, owned font: Font, glyph_index: Int32) -> SYSTEM_SIZE:
         """Get glyph info for a unicode character on font."""
         return self._get_glyph_info(
             UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], glyph_index
         )
 
-    fn get_glyph_atlas_rec(self, font: Font, glyph_index: Int32) -> Rectangle:
+    fn get_glyph_atlas_rec(self, owned font: Font, glyph_index: Int32) -> Rectangle:
         """Get glyph atlas rectangle for a unicode character on font."""
         var temp = self._get_glyph_atlas_rec(
             UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], glyph_index
