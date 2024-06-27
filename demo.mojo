@@ -17,7 +17,11 @@ fn main():
 
     var hello = String("Hello, World!\nHello World!")
 
-    # print(ray_lib_text.get_font_default().base_size) # crashes
+    print(ray_lib_text.get_font_default())
+    
+    var font2 = ray_lib_text.load_font("resources/KAISG.ttf")
+    
+    print(font2)
 
     while not ray_lib.window_should_close():
         ray_lib.begin_drawing()
@@ -28,18 +32,20 @@ fn main():
         ray_lib_text.draw_text(hello, 190, 200, 20, Color(200, 200, 200, 255))
         ray_lib_text.draw_text("Hello raylib from mojo", 40, 20, 20, Color(200, 200, 200, 255))
 
-        print(ray_lib_text.measure_text("hello raylib from mojo", 20))
+        # print(ray_lib_text.measure_text("hello raylib from mojo", 20))
 
-        var h = ray_lib.get_current_monitor()
-        print(h)
-        print(ray_lib.get_monitor_name(h))
-        print(ray_lib.get_clipboard_text())
-        print(ray_lib.get_monitor_position(h))
-        print(ray_lib.get_window_position())
+        # var h = ray_lib.get_current_monitor()
+        # print(h)
+        # print(ray_lib.get_monitor_name(h))
+        # print(ray_lib.get_clipboard_text())
+        # print(ray_lib.get_monitor_position(h))
+        # print(ray_lib.get_window_position())
 
         ray_lib.end_drawing()
 
     _ = (window_title, hello)
+
+    # ray_lib_text.unload_font(font2) # Not working when passing the font value what c gets is trash memory
 
 
     ray_lib.close_window()
