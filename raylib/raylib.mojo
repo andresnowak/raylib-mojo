@@ -728,7 +728,7 @@ struct Raylib:
         """
         self._restore_window()
 
-    fn set_window_icon(self, image: Image):
+    fn set_window_icon(self, owned image: Image):
         """Set icon for window (only PLATFORM_DESKTOP)."""
         self._set_window_icon(
             UnsafePointer.address_of(image).bitcast[SYSTEM_SIZE]()[0]
@@ -893,7 +893,7 @@ struct Raylib:
         """End canvas drawing and swap buffers (double buffering)."""
         self._end_drawing()
 
-    fn begin_mode2d(self, camera: Camera2D):
+    fn begin_mode2d(self, owned camera: Camera2D):
         """Begin 2D mode with custom camera."""
         self._begin_mode2d(
             UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[0]
@@ -903,7 +903,7 @@ struct Raylib:
         """End 2D mode with custom camera."""
         self._end_mode2d()
 
-    fn begin_mode3d(self, camera: Camera3D):
+    fn begin_mode3d(self, owned camera: Camera3D):
         """Begin 3D mode with custom camera."""
         self._begin_mode3d(
             UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[0]
@@ -913,7 +913,7 @@ struct Raylib:
         """End 3D mode and return to default 2D mode."""
         self._end_mode3d()
 
-    fn begin_texture_mode(self, target: RenderTexture2D):
+    fn begin_texture_mode(self, owned target: RenderTexture2D):
         """Begin texture drawing to render texture."""
         self._begin_texture_mode(
             UnsafePointer.address_of(target).bitcast[SYSTEM_SIZE]()[]
@@ -923,7 +923,7 @@ struct Raylib:
         """End texture drawing and return to default render texture."""
         self._end_texture_mode()
 
-    fn begin_shader_mode(self, shader: Shader):
+    fn begin_shader_mode(self, owned shader: Shader):
         """Begin custom shader drawing."""
         self._begin_shader_mode(
             UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
@@ -951,7 +951,7 @@ struct Raylib:
         """End scissor mode."""
         self._end_scissor_mode()
 
-    fn begin_vr_stereo_mode(self, config: VrStereoConfig):
+    fn begin_vr_stereo_mode(self, owned config: VrStereoConfig):
         """Begin VR stereo rendering."""
         self._begin_vr_stereo_mode(
             UnsafePointer.address_of(config).bitcast[SYSTEM_SIZE]()[]
@@ -961,14 +961,14 @@ struct Raylib:
         """End VR stereo rendering."""
         self._end_vr_stereo_mode()
 
-    fn load_vr_stereo_config(self, device: VrDeviceInfo) -> VrStereoConfig:
+    fn load_vr_stereo_config(self, owned device: VrDeviceInfo) -> VrStereoConfig:
         """Load VR stereo config for VR simulator."""
         var temp = self._load_vr_stereo_config(
             UnsafePointer.address_of(device).bitcast[SYSTEM_SIZE]()[]
         )
         return UnsafePointer.address_of(temp).bitcast[VrStereoConfig]()[]
 
-    fn unload_vr_stereo_config(self, config: VrStereoConfig):
+    fn unload_vr_stereo_config(self, owned config: VrStereoConfig):
         """Unload VR stereo config for VR simulator."""
         self._unload_vr_stereo_config(
             UnsafePointer.address_of(config).bitcast[SYSTEM_SIZE]()[]
@@ -988,13 +988,13 @@ struct Raylib:
         )
         return UnsafePointer.address_of(temp).bitcast[Shader]()[]
 
-    fn is_shader_ready(self, shader: Shader) -> Bool:
+    fn is_shader_ready(self, owned shader: Shader) -> Bool:
         """Check if a shader is ready."""
         return self._is_shader_ready(
             UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
         )
 
-    fn get_shader_location(self, shader: Shader, uniformName: String) -> Int32:
+    fn get_shader_location(self, owned shader: Shader, uniformName: String) -> Int32:
         """Get shader uniform location."""
         return self._get_shader_location(
             UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
@@ -1002,7 +1002,7 @@ struct Raylib:
         )
 
     fn get_shader_location_attrib(
-        self, shader: Shader, attribName: String
+        self, owned shader: Shader, attribName: String
     ) -> Int32:
         """Get shader attribute location."""
         return self._get_shader_location_attrib(
@@ -1012,7 +1012,7 @@ struct Raylib:
 
     fn set_shader_value(
         self,
-        shader: Shader,
+        owned shader: Shader,
         uniformLoc: Int32,
         value: UnsafePointer[SYSTEM_SIZE],
         uniformType: Int32,
@@ -1027,7 +1027,7 @@ struct Raylib:
 
     fn set_shader_value_v(
         self,
-        shader: Shader,
+        owned shader: Shader,
         uniformLoc: Int32,
         value: UnsafePointer[SYSTEM_SIZE],
         uniformType: Int32,
@@ -1043,7 +1043,7 @@ struct Raylib:
         )
 
     fn set_shader_value_matrix(
-        self, shader: Shader, uniformLoc: Int32, mat: Matrix
+        self, owned shader: Shader, uniformLoc: Int32, owned mat: Matrix
     ):
         """Set shader uniform value (matrix 4x4)."""
         self._set_shader_value_matrix(
@@ -1053,7 +1053,7 @@ struct Raylib:
         )
 
     fn set_shader_value_texture(
-        self, shader: Shader, uniformLoc: Int32, owned texture: Texture2D
+        self, owned shader: Shader, uniformLoc: Int32, owned texture: Texture2D
     ):
         """Set shader uniform value for texture."""
         self._set_shader_value_texture(
@@ -1062,13 +1062,13 @@ struct Raylib:
             UnsafePointer.address_of(texture).bitcast[SYSTEM_SIZE]()[],
         )
 
-    fn unload_shader(self, shader: Shader):
+    fn unload_shader(self, owned shader: Shader):
         """Unload shader from GPU memory (VRAM)."""
         self._unload_shader(
             UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
         )
 
-    fn get_mouse_ray(self, owned mousePosition: Vector2, camera: Camera) -> Ray:
+    fn get_mouse_ray(self, owned mousePosition: Vector2, owned camera: Camera) -> Ray:
         """Get a ray trace from mouse."""
         var temp = self._get_mouse_ray(
             UnsafePointer.address_of(mousePosition).bitcast[SYSTEM_SIZE]()[],
@@ -1076,14 +1076,14 @@ struct Raylib:
         )
         return UnsafePointer.address_of(temp).bitcast[Ray]()[]
 
-    fn get_camera_matrix(self, camera: Camera) -> Matrix:
+    fn get_camera_matrix(self, owned camera: Camera) -> Matrix:
         """Get camera transform matrix (view matrix)."""
         var temp = self._get_camera_matrix(
             UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[]
         )
         return UnsafePointer.address_of(temp).bitcast[Matrix]()[]
 
-    fn get_camera_matrix2d(self, camera: Camera2D) -> Matrix:
+    fn get_camera_matrix2d(self, owned camera: Camera2D) -> Matrix:
         """Get camera 2d transform matrix."""
         var temp = self._get_camera_matrix2d(
             UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[]
@@ -1091,7 +1091,7 @@ struct Raylib:
         return UnsafePointer.address_of(temp).bitcast[Matrix]()[]
 
     fn get_world_to_screen(
-        self, owned position: Vector3, camera: Camera
+        self, owned position: Vector3, owned camera: Camera
     ) -> Vector2:
         """Get the screen space position for a 3d world space position."""
         var temp = self._get_world_to_screen(
@@ -1101,7 +1101,7 @@ struct Raylib:
         return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_screen_world_to_screen2d(
-        self, owned position: Vector3, camera: Camera
+        self, owned position: Vector3, owned camera: Camera
     ) -> Vector2:
         """Get the screen space position for a 3d world space position."""
         var temp = self._get_screen_world_to_screen2d(
@@ -1113,7 +1113,7 @@ struct Raylib:
     fn get_world_to_screen_ex(
         self,
         owned position: Vector3,
-        camera: Camera,
+        owned camera: Camera,
         width: Int32,
         height: Int32,
     ) -> Vector2:
@@ -1127,7 +1127,7 @@ struct Raylib:
         return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_world_to_screen2d(
-        self, owned position: Vector2, camera: Camera2D
+        self, owned position: Vector2, owned camera: Camera2D
     ) -> Vector2:
         """Get the screen space position for a 2d camera world space position.
         """

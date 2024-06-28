@@ -1,4 +1,4 @@
-from raylib import ray_lib, ray_lib_text, Color
+from raylib import ray_lib, ray_lib_text, ray_lib_textures, Color
 
 
 fn main():
@@ -22,6 +22,9 @@ fn main():
     var font2 = ray_lib_text.load_font("resources/KAISG.ttf")
     
     print(font2)
+
+    var xbox = ray_lib_textures.load_texture("resources/xbox.png")
+    print(xbox)
 
     while not ray_lib.window_should_close():
         ray_lib.begin_drawing()
