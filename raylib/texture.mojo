@@ -7,7 +7,7 @@ alias RenderTexture2D = RenderTexture
 @value
 @register_passable
 struct Image(CollectionElement):
-    var data: DTypePointer[DType.float32]
+    var data: DTypePointer[DType.uint8]
     var width: Int32
     var height: Int32
     var mipmaps: Int32
@@ -15,7 +15,7 @@ struct Image(CollectionElement):
 
     fn __init__(
         inout self,
-        data: DTypePointer[DType.float32],
+        data: DTypePointer[DType.uint8],
         width: Int32,
         height: Int32,
         mipmaps: Int32,
@@ -41,8 +41,10 @@ struct Image(CollectionElement):
         )
 
 
+# Texture2D type, bpp always RGBA (32bit)
+# NOTE: Data stored in GPU memory
 @register_passable("trivial")
-struct Texture(CollectionElement):
+struct Texture:
     var id: UInt32
     var width: Int32
     var height: Int32
