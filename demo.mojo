@@ -1,7 +1,7 @@
 from raylib import ray_lib, ray_lib_text, ray_lib_textures, Color
 
 
-fn main():
+fn main() raises:
     var width = 800
     var height = 450
 
@@ -23,7 +23,7 @@ fn main():
     
     print(font2)
 
-    var xbox = ray_lib_textures.load_texture("resources/xbox.png")
+    var xbox = ray_lib_textures.load_texture("resources/xbox.png") # This function crashes on macos, when returning the value from c to mojo it seems an error happens from the mojo side. (because the value is successfully loaded on the c side but moving the value from c world to mojo world seems to be the problem)
     print(xbox)
 
     while not ray_lib.window_should_close():
@@ -48,7 +48,10 @@ fn main():
 
     _ = (window_title, hello)
 
-    # ray_lib_text.unload_font(font2) # Not working when passing the font value what c gets is trash memory
+    print("Exiting")
+
+    ray_lib_text.unload_font(font2)
+    ray_lib_textures.unload_texture(xbox)
 
 
     ray_lib.close_window()

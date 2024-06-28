@@ -43,7 +43,7 @@ alias c_raylib_GenImageFontAtlas = fn (
 alias c_raylib_UnloadFontData = fn (
     glyphs: UnsafePointer[SYSTEM_SIZE], glyphCount: Int32
 ) -> None
-alias c_raylib_UnloadFont = fn (font: SYSTEM_SIZE) -> None
+alias c_raylib_UnloadFont = fn (font: UnsafePointer[Font]) -> None
 alias c_raylib_ExportFontAsCode = fn (
     font: SYSTEM_SIZE, filename: UnsafePointer[Int8]
 ) -> Bool
@@ -177,7 +177,7 @@ struct RaylibText:
     var _get_codepoint_next: c_raylib_GetCodepointNext
     var _get_codepoint_previous: c_raylib_GetCodepointPrevious
 
-    fn __init__(inout self, raylib_internal: DLHandle):
+    fn __init__(inout self, raylib_internal: DLHandle, raylib_bindings_internal: DLHandle):
         # Font loading/unloading functions
         self._get_font_default = raylib_internal.get_function[
             c_raylib_GetFontDefault
@@ -206,8 +206,8 @@ struct RaylibText:
         self._unload_font_data = raylib_internal.get_function[
             c_raylib_UnloadFontData
         ]("UnloadFontData")
-        self._unload_font = raylib_internal.get_function[c_raylib_UnloadFont](
-            "UnloadFont"
+        self._unload_font = raylib_bindings_internal.get_function[c_raylib_UnloadFont](
+            "_UnloadFont"
         )
         self._export_font_as_code = raylib_internal.get_function[
             c_raylib_ExportFontAsCode
@@ -383,9 +383,7 @@ struct RaylibText:
 
     fn unload_font(self, owned font: Font):
         """Unload Font from GPU memory (VRAM)."""
-        self._unload_font(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0]
-        )
+        self._unload_font(UnsafePointer.address_of(font))
 
     fn export_font_as_code(self, owned font: Font, file_name: String) -> Bool:
         """Export font data to code file."""

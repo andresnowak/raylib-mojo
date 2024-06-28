@@ -1,7 +1,8 @@
-from sys.ffi import DLHandle
+from sys.ffi import DLHandle, RTLD
 from .raylib import *
 from .raylib_text import *
 from .raylib_textures import *
+from .env_variables import *
 
 # All Structs for now are defined as register_passable, because it seems it is necessary for c interop if you don't use them it sees to cause memory errors
 
@@ -15,10 +16,9 @@ fn check_system_size() -> DType:
 
 alias SYSTEM_SIZE = Scalar[check_system_size()]
 
-alias RAYLIB_PATH = "/home/linuxbrew/.linuxbrew/Cellar/raylib/5.0/lib/libraylib.so"
-
-var raylib_internal = DLHandle(RAYLIB_PATH)
+var raylib_internal = DLHandle(RAYLIB_PATH, RTLD.NOW)
+var raylib_bindings_internal = DLHandle(RAYLIB_BINDINGS_PATH, RTLD.NOW)
 
 var ray_lib = Raylib(raylib_internal)
-var ray_lib_text = RaylibText(raylib_internal)
-var ray_lib_textures = RayLibTextures(raylib_internal)
+var ray_lib_text = RaylibText(raylib_internal, raylib_bindings_internal)
+var ray_lib_textures = RayLibTextures(raylib_internal, raylib_bindings_internal)
