@@ -2,6 +2,7 @@ from .shapes import Rectangle
 
 alias Texture2D = Texture
 alias RenderTexture2D = RenderTexture
+alias TextureCubemap = Texture
 
 
 @value
