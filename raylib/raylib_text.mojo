@@ -1,6 +1,7 @@
 from sys.ffi import DLHandle
 
-from .texture import Font
+from .texture import Font, GlyphInfo, Image, Rectangle
+from .shapes import Color
 
 #  Font loading/unloading functions
 alias c_raylib_GetFontDefault = fn () -> Font
@@ -12,7 +13,7 @@ alias c_raylib_LoadFontEx = fn (
     codepointCount: Int32,
 ) -> Font
 alias c_raylib_LoadFontFromImage = fn (
-    image: SYSTEM_SIZE, key: SYSTEM_SIZE, firstChar: Int32
+    image: UnsafePointer[Image], key: UnsafePointer[Color], firstChar: Int32
 ) -> Font
 alias c_raylib_LoadFontFromMemory = fn (
     fileType: UnsafePointer[Int8],
@@ -22,7 +23,7 @@ alias c_raylib_LoadFontFromMemory = fn (
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
 ) -> Font
-alias c_raylib_IsFontReady = fn (font: SYSTEM_SIZE) -> Bool
+alias c_raylib_IsFontReady = fn (font: UnsafePointer[Font]) -> Bool
 alias c_raylib_LoadFontData = fn (
     fileType: UnsafePointer[UInt8],
     fileData: UnsafePointer[UInt8],
@@ -31,21 +32,21 @@ alias c_raylib_LoadFontData = fn (
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
     type: Int,
-) -> UnsafePointer[SYSTEM_SIZE]
+) -> GlyphInfo
 alias c_raylib_GenImageFontAtlas = fn (
-    chars: UnsafePointer[SYSTEM_SIZE],
-    recs: UnsafePointer[Rectangle],
+    chars: UnsafePointer[GlyphInfo],
+    recs: UnsafePointer[UnsafePointer[Rectangle]],
     charsCount: Int32,
     fontSize: Int32,
     padding: Int32,
     packMethod: Int32,
-) -> SYSTEM_SIZE
+) -> Image
 alias c_raylib_UnloadFontData = fn (
-    glyphs: UnsafePointer[SYSTEM_SIZE], glyphCount: Int32
+    glyphs: UnsafePointer[GlyphInfo], glyphCount: Int32
 ) -> None
 alias c_raylib_UnloadFont = fn (font: UnsafePointer[Font]) -> None
 alias c_raylib_ExportFontAsCode = fn (
-    font: SYSTEM_SIZE, filename: UnsafePointer[Int8]
+    font: UnsafePointer[Font], filename: UnsafePointer[Int8]
 ) -> Bool
 
 
@@ -56,41 +57,41 @@ alias c_raylib_DrawText = fn (
     x: Int32,
     y: Int32,
     fontSize: Int32,
-    color: SYSTEM_SIZE,
+    color: UnsafePointer[Color],
 ) -> None
 alias c_raylib_DrawTextEx = fn (
-    font: SYSTEM_SIZE,
+    font: UnsafePointer[Font],
     text: UnsafePointer[Int8],
-    position: SYSTEM_SIZE,
+    position: UnsafePointer[Vector2],
     fontSize: Float32,
     spacing: Float32,
-    tint: SYSTEM_SIZE,
+    tint: UnsafePointer[Color],
 ) -> None
 alias c_raylib_DrawTextPro = fn (
-    font: SYSTEM_SIZE,
+    font: UnsafePointer[Font],
     text: UnsafePointer[Int8],
-    position: SYSTEM_SIZE,
-    origin: SYSTEM_SIZE,
+    position: UnsafePointer[Vector2],
+    origin: UnsafePointer[Vector2],
     rotation: Float32,
     fontSize: Float32,
     spacing: Float32,
-    tint: SYSTEM_SIZE,
+    tint: UnsafePointer[Color],
 ) -> None
 alias c_raylib_DrawTextCodepoint = fn (
-    font: SYSTEM_SIZE,
+    font: UnsafePointer[Font],
     codepoint: Int32,
-    position: SYSTEM_SIZE,
+    position: UnsafePointer[Vector2],
     fontSize: Float32,
-    tint: SYSTEM_SIZE,
+    tint: UnsafePointer[Color],
 ) -> None
 alias c_raylib_DrawTextCodepoints = fn (
-    font: SYSTEM_SIZE,
+    font: UnsafePointer[Font],
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
-    position: SYSTEM_SIZE,
+    position: UnsafePointer[Vector2],
     fontSize: Float32,
     spacing: Float32,
-    tint: SYSTEM_SIZE,
+    tint: UnsafePointer[Color],
 ) -> None
 
 # Text font info functions
@@ -99,18 +100,18 @@ alias c_raylib_MeasureText = fn (
     text: UnsafePointer[Int8], fontSize: Int32
 ) -> Int32
 alias c_raylib_MeasureTextEx = fn (
-    font: SYSTEM_SIZE,
+    font: UnsafePointer[Font],
     text: UnsafePointer[Int8],
     fontSize: Float32,
     spacing: Float32,
-) -> SYSTEM_SIZE
-alias c_raylib_GetGlyphIndex = fn (font: SYSTEM_SIZE, codepoint: Int32) -> Int32
+) -> Vector2
+alias c_raylib_GetGlyphIndex = fn (font: UnsafePointer[Font], codepoint: Int32) -> Int32
 alias c_raylib_GetGlyphInfo = fn (
-    font: SYSTEM_SIZE, glyphIndex: Int32
-) -> SYSTEM_SIZE
+    font: UnsafePointer[Font], glyphIndex: Int32
+) -> GlyphInfo
 alias c_raylib_GetGlyphAtlasRec = fn (
-    font: SYSTEM_SIZE, glyphIndex: Int32
-) -> SYSTEM_SIZE
+    font: UnsafePointer[Font], glyphIndex: Int32
+) -> Rectangle
 
 # Text codepoint management functions (unicode characters)
 alias c_raylib_LoadUTF8 = fn (
@@ -209,29 +210,29 @@ struct RaylibText:
         self._unload_font = raylib_bindings_internal.get_function[c_raylib_UnloadFont](
             "_UnloadFont"
         )
-        self._export_font_as_code = raylib_internal.get_function[
+        self._export_font_as_code = raylib_bindings_internal.get_function[
             c_raylib_ExportFontAsCode
-        ]("ExportFontAsCode")
+        ]("_ExportFontAsCode")
 
         # Text drawing functions
         self._draw_fps = raylib_internal.get_function[c_raylib_DrawFPS](
             "DrawFPS"
         )
-        self._draw_text = raylib_internal.get_function[c_raylib_DrawText](
-            "DrawText"
+        self._draw_text = raylib_bindings_internal.get_function[c_raylib_DrawText](
+            "_DrawText"
         )
-        self._draw_text_ex = raylib_internal.get_function[c_raylib_DrawTextEx](
-            "DrawTextEx"
+        self._draw_text_ex = raylib_bindings_internal.get_function[c_raylib_DrawTextEx](
+            "_DrawTextEx"
         )
-        self._draw_text_pro = raylib_internal.get_function[
+        self._draw_text_pro = raylib_bindings_internal.get_function[
             c_raylib_DrawTextPro
-        ]("DrawTextPro")
-        self._draw_text_codepoint = raylib_internal.get_function[
+        ]("_DrawTextPro")
+        self._draw_text_codepoint = raylib_bindings_internal.get_function[
             c_raylib_DrawTextCodepoint
-        ]("DrawTextCodepoint")
-        self._draw_text_codepoints = raylib_internal.get_function[
+        ]("_DrawTextCodepoint")
+        self._draw_text_codepoints = raylib_bindings_internal.get_function[
             c_raylib_DrawTextCodepoints
-        ]("DrawTextCodepointEx")
+        ]("_DrawTextCodepointEx")
 
         # Text font info functions
         self._set_text_line_spacing = raylib_internal.get_function[
@@ -243,15 +244,15 @@ struct RaylibText:
         self._measure_text_ex = raylib_internal.get_function[
             c_raylib_MeasureTextEx
         ]("MeasureTextEx")
-        self._get_glyph_index = raylib_internal.get_function[
+        self._get_glyph_index = raylib_bindings_internal.get_function[
             c_raylib_GetGlyphIndex
-        ]("GetGlyphIndex")
-        self._get_glyph_info = raylib_internal.get_function[
+        ]("_GetGlyphIndex")
+        self._get_glyph_info = raylib_bindings_internal.get_function[
             c_raylib_GetGlyphInfo
-        ]("GetGlyphInfo")
-        self._get_glyph_atlas_rec = raylib_internal.get_function[
+        ]("_GetGlyphInfo")
+        self._get_glyph_atlas_rec = raylib_bindings_internal.get_function[
             c_raylib_GetGlyphAtlasRec
-        ]("GetGlyphAtlasRec")
+        ]("_GetGlyphAtlasRec")
 
         # Text codepoint management functions (unicode characters)
         self._load_utf8 = raylib_internal.get_function[c_raylib_LoadUTF8](
@@ -305,12 +306,11 @@ struct RaylibText:
         self, owned image: Image, owned key: Color, first_char: Int32
     ) -> Font:
         """Load font from Image (XNA style)."""
-        var font = self._load_font_from_image(
-            UnsafePointer.address_of(image).bitcast[SYSTEM_SIZE]()[0],
-            UnsafePointer.address_of(key).bitcast[SYSTEM_SIZE]()[0],
+        return self._load_font_from_image(
+            UnsafePointer.address_of(image),
+            UnsafePointer.address_of(key),
             first_char,
         )
-        return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
     fn load_font_from_memory(
         self,
@@ -332,7 +332,7 @@ struct RaylibText:
     fn is_font_ready(self, owned font: Font) -> Bool:
         """Check if any font is loaded."""
         return self._is_font_ready(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0]
+            UnsafePointer.address_of(font)
         )
 
     fn load_font_data(
@@ -344,7 +344,7 @@ struct RaylibText:
         codepoints: UnsafePointer[Int32],
         codepoint_count: Int32,
         type: Int,
-    ) -> UnsafePointer[Font]:
+    ) -> GlyphInfo:
         """Load font data for further use."""
         var temp = file_type.unsafe_uint8_ptr()
         return self._load_font_data(
@@ -355,31 +355,30 @@ struct RaylibText:
             codepoints,
             codepoint_count,
             type,
-        ).bitcast[Font]()
+        )
 
     fn gen_image_font_atlas(
         self,
-        chars: UnsafePointer[Font],
-        recs: UnsafePointer[Rectangle],
+        chars: UnsafePointer[GlyphInfo],
+        recs: UnsafePointer[UnsafePointer[Rectangle]],
         chars_count: Int32,
         font_size: Int32,
         padding: Int32,
         pack_method: Int32,
     ) -> Image:
         """Generate image font atlas using chars info."""
-        var temp = self._gen_image_font_atlas(
-            chars.bitcast[SYSTEM_SIZE](),
+        return self._gen_image_font_atlas(
+            chars,
             recs,
             chars_count,
             font_size,
             padding,
             pack_method,
         )
-        return UnsafePointer.address_of(temp).bitcast[Image]()[0]
 
-    fn unload_font_data(self, glyphs: UnsafePointer[Font], glyph_count: Int32):
+    fn unload_font_data(self, glyphs: UnsafePointer[GlyphInfo], glyph_count: Int32):
         """Unload font chars info (RAM)."""
-        self._unload_font_data(glyphs.bitcast[SYSTEM_SIZE](), glyph_count)
+        self._unload_font_data(glyphs, glyph_count)
 
     fn unload_font(self, owned font: Font):
         """Unload Font from GPU memory (VRAM)."""
@@ -389,7 +388,7 @@ struct RaylibText:
         """Export font data to code file."""
         var temp = file_name.unsafe_ptr()
         return self._export_font_as_code(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], temp
+            UnsafePointer.address_of(font), temp
         )
 
     fn draw_fps(self, x: Int32, y: Int32):
@@ -411,7 +410,7 @@ struct RaylibText:
             x,
             y,
             font_size,
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(color),
         )
 
     fn draw_text_ex(
@@ -426,12 +425,12 @@ struct RaylibText:
         """Draw text using font and additional parameters."""
         var temp = text.unsafe_ptr()
         self._draw_text_ex(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(font),
             temp,
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(position),
             font_size,
             spacing,
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(color),
         )
 
     fn draw_text_pro(
@@ -448,14 +447,14 @@ struct RaylibText:
         """Draw text using font and additional parameters."""
         var temp = text.unsafe_ptr()
         self._draw_text_pro(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(font),
             temp,
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[0],
-            UnsafePointer.address_of(origin).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(origin),
             rotation,
             font_size,
             spacing,
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(color),
         )
 
     fn draw_text_codepoint(
@@ -468,11 +467,11 @@ struct RaylibText:
     ):
         """Draw one character (codepoint)."""
         self._draw_text_codepoint(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(font),
             codepoint,
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(position),
             font_size,
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(color),
         )
 
     fn draw_text_codepoints(
@@ -487,13 +486,13 @@ struct RaylibText:
     ):
         """Draw text using font and additional parameters."""
         self._draw_text_codepoints(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(font),
             codepoints,
             codepoint_count,
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(position),
             font_size,
             spacing,
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(color),
         )
 
     fn set_text_line_spacing(self, spacing: Int32):
@@ -516,30 +515,29 @@ struct RaylibText:
     ) -> Vector2:
         """Measure string size for Font."""
         var temp = text.unsafe_ptr()
-        var result = self._measure_text_ex(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0],
+        return self._measure_text_ex(
+            UnsafePointer.address_of(font),
             temp,
             font_size,
             spacing,
         )
-        return UnsafePointer.address_of(result).bitcast[Vector2]()[0]
     
     fn get_glyph_index(self, owned font: Font, codepoint: Int32) -> Int32:
         """Get index position for a unicode character on font."""
         return self._get_glyph_index(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], codepoint
+            UnsafePointer.address_of(font), codepoint
         )
     
-    fn get_glyph_info(self, owned font: Font, glyph_index: Int32) -> SYSTEM_SIZE:
+    fn get_glyph_info(self, owned font: Font, glyph_index: Int32) -> GlyphInfo:
         """Get glyph info for a unicode character on font."""
         return self._get_glyph_info(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], glyph_index
+            UnsafePointer.address_of(font), glyph_index
         )
 
     fn get_glyph_atlas_rec(self, owned font: Font, glyph_index: Int32) -> Rectangle:
         """Get glyph atlas rectangle for a unicode character on font."""
         var temp = self._get_glyph_atlas_rec(
-            UnsafePointer.address_of(font).bitcast[SYSTEM_SIZE]()[0], glyph_index
+            UnsafePointer.address_of(font), glyph_index
         )
 
         return UnsafePointer.address_of(temp).bitcast[Rectangle]()[0]
