@@ -231,8 +231,8 @@ void _SetTextureWrap(Texture2D *texture, int wrap) {
     SetTextureWrap(*texture, wrap);
 }
 
-void _DrawTexture(Texture2D *texture, int posX, int posY, Color tint) {
-    DrawTexture(*texture, posX, posY, tint);
+void _DrawTexture(Texture2D *texture, int posX, int posY, Color *tint) {
+    DrawTexture(*texture, posX, posY, *tint);
 }
 
 void _DrawTextureV(Texture2D *texture, Vector2 *position, Color *tint) {

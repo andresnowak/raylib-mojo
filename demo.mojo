@@ -32,6 +32,7 @@ fn main() raises:
         ray_lib.clear_background(Color(255, 255, 255, 255))
 
         ray_lib_text.draw_fps(20, 110)
+        ray_lib_textures.draw_texture(xbox, 100, 100, Color(100, 40, 60, 255))
         ray_lib_text.draw_text(hello, 190, 200, 20, Color(200, 200, 200, 255))
         ray_lib_text.draw_text("Hello raylib from mojo", 40, 20, 20, Color(200, 200, 200, 255))
 

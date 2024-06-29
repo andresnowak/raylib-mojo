@@ -78,7 +78,7 @@ void _SetTextureFilter(Texture2D *texture, int filter);
 void _SetTextureWrap(Texture2D *texture, int wrap);
 
 // Texture drawing functions
-void _DrawTexture(Texture2D *texture, int posX, int posY, Color tint);
+void _DrawTexture(Texture2D *texture, int posX, int posY, Color *tint);
 void _DrawTextureV(Texture2D *texture, Vector2 *position, Color *tint);
 void _DrawTextureEx(Texture2D *texture, Vector2 *position, float rotation, float scale, Color *tint);
 void _DrawTextureRec(Texture2D *texture, Rectangle *source, Vector2 *position, Color *tint);
