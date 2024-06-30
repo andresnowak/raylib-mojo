@@ -1,4 +1,6 @@
-from raylib import ray_lib, ray_lib_text, ray_lib_textures, ray_lib_shapes, Color, Vector2
+from raylib import ray_lib, ray_lib_text, ray_lib_textures, ray_lib_shapes
+from raylib.shapes import Color, Vector2
+from raylib.colors import LIGHTGRAY, BLUE, RED, WHITE
 
 
 fn main() raises:
@@ -29,15 +31,15 @@ fn main() raises:
     while not ray_lib.window_should_close():
         ray_lib.begin_drawing()
 
-        ray_lib.clear_background(Color(255, 255, 255, 255))
+        ray_lib.clear_background(WHITE)
 
         ray_lib_text.draw_fps(20, 110)
-        ray_lib_textures.draw_texture(xbox, 100, 100, Color(100, 40, 60, 255))
-        ray_lib_text.draw_text(hello, 190, 200, 20, Color(200, 200, 200, 255))
-        ray_lib_text.draw_text("Hello raylib from mojo", 40, 20, 20, Color(200, 200, 200, 255))
-        ray_lib_text.draw_text_ex(font2, "Hello raylib from mojo", Vector2(40, 40), 30, 8, Color(200, 200, 200, 255))
+        ray_lib_textures.draw_texture(xbox, 100, 100, RED)
+        ray_lib_text.draw_text(hello, 190, 200, 20, LIGHTGRAY)
+        ray_lib_text.draw_text("Hello raylib from mojo", 40, 20, 20, LIGHTGRAY)
+        ray_lib_text.draw_text_ex(font2, "Hello raylib from mojo", Vector2(40, 40), 30, 8, LIGHTGRAY)
 
-        ray_lib_shapes.draw_rectangle_lines(10, 10, 100, 100, Color(30, 200, 200, 255))
+        ray_lib_shapes.draw_rectangle_lines(10, 10, 100, 100, BLUE)
 
         # print(ray_lib_text.measure_text("hello raylib from mojo", 20))
 
