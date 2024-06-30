@@ -1,4 +1,4 @@
-from raylib import ray_lib, ray_lib_text, ray_lib_textures, Color, Vector2
+from raylib import ray_lib, ray_lib_text, ray_lib_textures, ray_lib_shapes, Color, Vector2
 
 
 fn main() raises:
@@ -36,6 +36,9 @@ fn main() raises:
         ray_lib_text.draw_text(hello, 190, 200, 20, Color(200, 200, 200, 255))
         ray_lib_text.draw_text("Hello raylib from mojo", 40, 20, 20, Color(200, 200, 200, 255))
         ray_lib_text.draw_text_ex(font2, "Hello raylib from mojo", Vector2(40, 40), 30, 8, Color(200, 200, 200, 255))
+
+        ray_lib_shapes.draw_rectangle_lines(10, 10, 100, 100, Color(30, 200, 200, 255))
+
         # print(ray_lib_text.measure_text("hello raylib from mojo", 20))
 
         # var h = ray_lib.get_current_monitor()

@@ -1,6 +1,7 @@
 from sys.ffi import DLHandle, RTLD
 from .raylib import *
 from .raylib_text import *
+from .raylib_shapes import *
 from .raylib_textures import *
 from .env_variables import *
 
@@ -22,3 +23,4 @@ var raylib_bindings_internal = DLHandle(RAYLIB_BINDINGS_PATH, RTLD.NOW)
 var ray_lib = Raylib(raylib_internal)
 var ray_lib_text = RaylibText(raylib_internal, raylib_bindings_internal)
 var ray_lib_textures = RayLibTextures(raylib_internal, raylib_bindings_internal)
+var ray_lib_shapes = RayLibShapes(raylib_bindings_internal)
