@@ -864,9 +864,11 @@ struct RayLibTextures:
             c_raylib_GetPixelDataSize
         ]("GetPixelDataSize")
 
+    @always_inline
     fn load_image(self, file_name: String) -> Image:
         return self._load_image(file_name.unsafe_ptr())
 
+    @always_inline
     fn load_image_raw(
         self,
         file_name: String,
@@ -883,6 +885,7 @@ struct RayLibTextures:
             headerSize,
         )
 
+    @always_inline
     fn load_image_svg(
         self, file_name_or_string: String, width: Int32, height: Int32
     ) -> Image:
@@ -890,11 +893,13 @@ struct RayLibTextures:
             file_name_or_string.unsafe_ptr(), width, height
         )
 
+    @always_inline
     fn load_image_anim(
         self, file_name: String, frames: UnsafePointer[Int32]
     ) -> Image:
         return self._load_image_anim(file_name.unsafe_ptr(), frames)
 
+    @always_inline
     fn load_image_from_memory(
         self,
         file_type: String,
@@ -907,23 +912,29 @@ struct RayLibTextures:
             data_size,
         )
 
+    @always_inline
     fn load_image_from_texture(self, owned texture: Texture2D) -> Image:
         return self._load_image_from_texture(UnsafePointer.address_of(texture))
 
+    @always_inline
     fn load_image_from_screen(self) -> Image:
         return self._load_image_from_screen()
 
+    @always_inline
     fn is_image_ready(self, owned image: Image) -> Bool:
         return self._is_image_ready(UnsafePointer.address_of(image))
 
+    @always_inline
     fn unload_image(self, owned image: Image) -> None:
         self._unload_image(UnsafePointer.address_of(image))
 
+    @always_inline
     fn export_image(self, owned image: Image, file_name: String) -> Bool:
         return self._export_image(
             UnsafePointer.address_of(image), file_name.unsafe_ptr()
         )
 
+    @always_inline
     fn export_image_to_memory(
         self,
         owned image: Image,
@@ -934,6 +945,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), file_type.unsafe_ptr(), file_size
         )
 
+    @always_inline
     fn export_image_as_code(
         self, owned image: Image, file_name: String
     ) -> Bool:
@@ -941,6 +953,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), file_name.unsafe_ptr()
         )
 
+    @always_inline
     fn gen_image_color(
         self, width: Int32, height: Int32, owned color: Color
     ) -> Image:
@@ -948,6 +961,7 @@ struct RayLibTextures:
             width, height, UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn gen_image_gradient_linear(
         self,
         width: Int32,
@@ -964,6 +978,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(end),
         )
 
+    @always_inline
     fn gen_image_gradient_radial(
         self,
         width: Int32,
@@ -980,6 +995,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(outer),
         )
 
+    @always_inline
     fn gen_image_gradient_square(
         self,
         width: Int32,
@@ -996,6 +1012,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(outer),
         )
 
+    @always_inline
     fn gen_image_checked(
         self,
         width: Int32,
@@ -1014,11 +1031,13 @@ struct RayLibTextures:
             UnsafePointer.address_of(col2),
         )
 
+    @always_inline
     fn gen_image_white_noise(
         self, width: Int32, height: Int32, factor: Float32
     ) -> Image:
         return self._gen_image_white_noise(width, height, factor)
 
+    @always_inline
     fn gen_image_perlin_noise(
         self,
         width: Int32,
@@ -1031,6 +1050,7 @@ struct RayLibTextures:
             width, height, offsetX, offsetY, scale
         )
 
+    @always_inline
     fn gen_image_cellular(
         self,
         width: Int32,
@@ -1039,6 +1059,7 @@ struct RayLibTextures:
     ) -> Image:
         return self._gen_image_cellular(width, height, tileSize)
 
+    @always_inline
     fn gen_image_text(
         self,
         widht: Int32,
@@ -1047,9 +1068,11 @@ struct RayLibTextures:
     ) -> Image:
         return self._gen_image_text(widht, height, text.unsafe_ptr())
 
+    @always_inline
     fn image_copy(self, owned image: Image) -> Image:
         return self._image_copy(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_from_image(
         self, owned image: Image, owned rec: Rectangle
     ) -> Image:
@@ -1057,6 +1080,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), UnsafePointer.address_of(rec)
         )
 
+    @always_inline
     fn image_text(
         self,
         text: String,
@@ -1069,6 +1093,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_text_ex(
         self,
         owned font: Font,
@@ -1085,22 +1110,27 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn image_format(self, owned image: Image, newFormat: Int32) -> None:
         self._image_format(UnsafePointer.address_of(image), newFormat)
 
+    @always_inline
     fn image_to_pot(self, owned image: Image, owned fill: Color):
         self._image_to_pot(
             UnsafePointer.address_of(image), UnsafePointer.address_of(fill)
         )
 
+    @always_inline
     fn image_crop(self, owned image: Image, owned crop: Rectangle):
         self._image_crop(
             UnsafePointer.address_of(image), UnsafePointer.address_of(crop)
         )
 
+    @always_inline
     fn image_alpha_crop(self, owned image: Image, threshold: Float32):
         self._image_alpha_crop(UnsafePointer.address_of(image), threshold)
 
+    @always_inline
     fn image_alpha_clear(
         self, owned image: Image, owned color: Color, threshold: Float32
     ):
@@ -1110,18 +1140,22 @@ struct RayLibTextures:
             threshold,
         )
 
+    @always_inline
     fn image_alpha_mask(self, owned image: Image, owned alpha_mask: Image):
         self._image_alpha_mask(
             UnsafePointer.address_of(image),
             UnsafePointer.address_of(alpha_mask),
         )
 
+    @always_inline
     fn image_alpha_premultiply(self, owned image: Image):
         self._image_alpha_premultiply(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_blur_gaussian(self, owned image: Image, blur_size: Int32):
         self._image_blur_gaussian(UnsafePointer.address_of(image), blur_size)
 
+    @always_inline
     fn image_resize(
         self, owned image: Image, new_width: Int32, new_height: Int32
     ):
@@ -1129,6 +1163,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), new_width, new_height
         )
 
+    @always_inline
     fn image_resize_nn(
         self, owned image: Image, new_width: Int32, new_height: Int32
     ):
@@ -1136,6 +1171,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), new_width, new_height
         )
 
+    @always_inline
     fn image_resize_canvas(
         self,
         owned image: Image,
@@ -1154,9 +1190,11 @@ struct RayLibTextures:
             UnsafePointer.address_of(fill),
         )
 
+    @always_inline
     fn image_mipmaps(self, owned image: Image):
         self._image_mipmaps(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_dither(
         self,
         owned image: Image,
@@ -1169,40 +1207,51 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), r_bpp, g_bpp, b_bpp, a_bpp
         )
 
+    @always_inline
     fn image_flip_vertical(self, owned image: Image):
         self._image_flip_vertical(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_flip_horizontal(self, owned image: Image):
         self._image_flip_horizontal(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_rotate(self, owned image: Image, degrees: Int32):
         self._image_rotate(UnsafePointer.address_of(image), degrees)
 
+    @always_inline
     fn image_rotate_cw(self, owned image: Image):
         self._image_rotate_cw(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_rotate_ccw(self, owned image: Image):
         self._image_rotate_ccw(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_color_tint(self, owned image: Image, owned color: Color):
         self._image_color_tint(
             UnsafePointer.address_of(image), UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn image_color_invert(self, owned image: Image):
         self._image_color_invert(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_color_grayscale(self, owned image: Image):
         self._image_color_grayscale(UnsafePointer.address_of(image))
 
+    @always_inline
     fn image_color_contrast(self, owned image: Image, contrast: Float32):
         self._image_color_contrast(UnsafePointer.address_of(image), contrast)
 
+    @always_inline
     fn image_color_brightness(self, owned image: Image, brightness: Int32):
         self._image_color_brightness(
             UnsafePointer.address_of(image), brightness
         )
 
+    @always_inline
     fn image_color_replace(
         self, owned image: Image, owned color: Color, owned replace: Color
     ):
@@ -1212,9 +1261,11 @@ struct RayLibTextures:
             UnsafePointer.address_of(replace),
         )
 
+    @always_inline
     fn load_image_colors(self, owned image: Image) -> UnsafePointer[Color]:
         return self._load_image_colors(UnsafePointer.address_of(image))
 
+    @always_inline
     fn load_image_palette(
         self,
         owned image: Image,
@@ -1225,12 +1276,15 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), maxPaletteSize, colorsCount
         )
 
+    @always_inline
     fn unload_image_colors(self, colors: UnsafePointer[Color]):
         self._unload_image_colors(colors)
 
+    @always_inline
     fn unload_image_palette(self, palette: UnsafePointer[Color]):
         self._unload_image_palette(palette)
 
+    @always_inline
     fn get_image_alpha_border(
         self, owned image: Image, threshold: Float32
     ) -> Rectangle:
@@ -1238,14 +1292,17 @@ struct RayLibTextures:
             UnsafePointer.address_of(image), threshold
         )
 
+    @always_inline
     fn get_image_color(self, owned image: Image, x: Int32, y: Int32) -> Color:
         return self._get_image_color(UnsafePointer.address_of(image), x, y)
 
+    @always_inline
     fn image_clear_background(
         self, owned dst: UnsafePointer[Image], owned color: Color
     ):
         self._image_clear_background(dst, UnsafePointer.address_of(color))
 
+    @always_inline
     fn image_draw_pixel(
         self,
         dst: UnsafePointer[Image],
@@ -1255,6 +1312,7 @@ struct RayLibTextures:
     ):
         self._image_draw_pixel(dst, posX, posY, UnsafePointer.address_of(color))
 
+    @always_inline
     fn image_draw_pixel_v(
         self,
         dst: UnsafePointer[Image],
@@ -1267,6 +1325,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_line(
         self,
         dst: UnsafePointer[Image],
@@ -1285,6 +1344,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_line_v(
         self,
         dst: UnsafePointer[Image],
@@ -1299,6 +1359,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_circle(
         self,
         dst: UnsafePointer[Image],
@@ -1311,6 +1372,7 @@ struct RayLibTextures:
             dst, centerX, centerY, radius, UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn image_draw_circle_v(
         self,
         dst: UnsafePointer[Image],
@@ -1325,6 +1387,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_circle_lines(
         self,
         dst: UnsafePointer[Image],
@@ -1337,6 +1400,7 @@ struct RayLibTextures:
             dst, centerX, centerY, radius, UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn image_draw_circle_lines_v(
         self,
         dst: UnsafePointer[Image],
@@ -1351,6 +1415,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_rectangle(
         self,
         dst: UnsafePointer[Image],
@@ -1364,6 +1429,7 @@ struct RayLibTextures:
             dst, posX, posY, width, height, UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn image_draw_rectangle_v(
         self,
         dst: UnsafePointer[Image],
@@ -1378,6 +1444,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_rectangle_rec(
         self,
         dst: UnsafePointer[Image],
@@ -1388,6 +1455,7 @@ struct RayLibTextures:
             dst, UnsafePointer.address_of(rec), UnsafePointer.address_of(color)
         )
 
+    @always_inline
     fn image_draw_rectangle_lines(
         self,
         dst: UnsafePointer[Image],
@@ -1402,6 +1470,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw(
         self,
         dst: UnsafePointer[Image],
@@ -1418,6 +1487,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn image_draw_text(
         self,
         dst: UnsafePointer[Image],
@@ -1436,6 +1506,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn image_draw_text_ex(
         self,
         dst: UnsafePointer[Image],
@@ -1456,12 +1527,15 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn load_texture(self, filename: String) -> Texture2D:
         return self._load_texture(filename.unsafe_ptr())
 
+    @always_inline
     fn load_texture_from_image(self, owned image: Image) -> Texture2D:
         return self._load_texture_from_image(UnsafePointer.address_of(image))
 
+    @always_inline
     fn load_texture_cubemap(
         self,
         owned image: Image,
@@ -1472,6 +1546,7 @@ struct RayLibTextures:
             layout,
         )
 
+    @always_inline
     fn load_render_texture(
         self,
         width: Int32,
@@ -1479,18 +1554,23 @@ struct RayLibTextures:
     ) -> RenderTexture2D:
         return self._load_render_texture(width, height)
 
+    @always_inline
     fn is_texture_ready(self, owned texture: Texture2D) -> Bool:
         return self._is_texture_ready(UnsafePointer.address_of(texture))
 
+    @always_inline
     fn unload_texture(self, owned texture: Texture2D) -> None:
         self._unload_texture(UnsafePointer.address_of(texture))
 
+    @always_inline
     fn is_render_texture_ready(self, owned target: RenderTexture2D) -> Bool:
         return self._is_render_texture_ready(UnsafePointer.address_of(target))
 
+    @always_inline
     fn unload_render_texture(self, owned target: RenderTexture2D) -> None:
         self._unload_render_texture(UnsafePointer.address_of(target))
 
+    @always_inline
     fn update_texture(
         self,
         owned texture: Texture2D,
@@ -1501,6 +1581,7 @@ struct RayLibTextures:
             pixels,
         )
 
+    @always_inline
     fn update_texture_rec(
         self,
         owned texture: Texture2D,
@@ -1513,9 +1594,11 @@ struct RayLibTextures:
             pixels,
         )
 
+    @always_inline
     fn gen_texture_mipmaps(self, owned texture: UnsafePointer[Texture2D]):
         self._gen_texture_mipmaps(texture)
 
+    @always_inline
     fn set_texture_filter(
         self,
         owned texture: Texture2D,
@@ -1523,6 +1606,7 @@ struct RayLibTextures:
     ):
         self._set_texture_filter(UnsafePointer.address_of(texture), filterMode)
 
+    @always_inline
     fn set_texture_wrap(
         self,
         owned texture: Texture2D,
@@ -1530,6 +1614,7 @@ struct RayLibTextures:
     ):
         self._set_texture_wrap(UnsafePointer.address_of(texture), wrapMode)
 
+    @always_inline
     fn draw_texture(
         self,
         owned texture: Texture2D,
@@ -1544,6 +1629,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn draw_texture_v(
         self,
         owned texture: Texture2D,
@@ -1556,6 +1642,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn draw_texture_ex(
         self,
         owned texture: Texture2D,
@@ -1572,6 +1659,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn draw_texture_rec(
         self,
         owned texture: Texture2D,
@@ -1586,6 +1674,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn draw_texture_pro(
         self,
         owned texture: Texture2D,
@@ -1604,6 +1693,7 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn draw_texture_n_patch(
         self,
         owned texture: Texture2D,
@@ -1622,40 +1712,51 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn fade(self, owned color: Color, alpha: Float32) -> Color:
         return self._fade(UnsafePointer.address_of(color), alpha)
 
+    @always_inline
     fn color_to_int(self, owned color: Color) -> Int32:
         return self._color_to_int(UnsafePointer.address_of(color))
 
+    @always_inline
     fn color_normalize(self, owned color: Color) -> Vector4:
         return self._color_normalize(UnsafePointer.address_of(color))
 
+    @always_inline
     fn color_from_normalized(self, owned normalized: Vector4) -> Color:
         return self._color_from_normalized(UnsafePointer.address_of(normalized))
 
+    @always_inline
     fn color_to_hsv(self, owned color: Color) -> Vector3:
         return self._color_to_hsv(UnsafePointer.address_of(color))
 
+    @always_inline
     fn color_from_hsv(
         self, hue: Float32, saturation: Float32, value: Float32
     ) -> Color:
         return self._color_from_hsv(hue, saturation, value)
 
+    @always_inline
     fn color_tint(self, owned color: Color, owned tint: Color) -> Color:
         return self._color_tint(
             UnsafePointer.address_of(color), UnsafePointer.address_of(tint)
         )
 
+    @always_inline
     fn color_brightness(self, owned color: Color, facator: Float32) -> Color:
         return self._color_brightness(UnsafePointer.address_of(color), facator)
 
+    @always_inline
     fn color_contrast(self, owned color: Color, contrast: Float32) -> Color:
         return self._color_contrast(UnsafePointer.address_of(color), contrast)
 
+    @always_inline
     fn color_alpha(self, owned color: Color, alpha: Float32) -> Color:
         return self._color_alpha(UnsafePointer.address_of(color), alpha)
 
+    @always_inline
     fn color_alpha_blend(
         self, owned dst: Color, owned src: Color, owned tint: Color
     ) -> Color:
@@ -1665,19 +1766,23 @@ struct RayLibTextures:
             UnsafePointer.address_of(tint),
         )
 
+    @always_inline
     fn get_color(self, hexValue: UInt32) -> Color:
         return self._get_color(hexValue)
 
+    @always_inline
     fn get_pixel_color(
         self, src: UnsafePointer[NoneType], format: Int32
     ) -> Color:
         return self._get_pixel_color(src, format)
 
+    @always_inline
     fn set_pixel_color(
         self, dst: UnsafePointer[NoneType], owned color: Color, format: Int32
     ):
         self._set_pixel_color(dst, UnsafePointer.address_of(color), format)
 
+    @always_inline
     fn get_pixel_data_size(
         self, width: Int32, height: Int32, format: Int32
     ) -> Int32:

@@ -105,7 +105,9 @@ alias c_raylib_MeasureTextEx = fn (
     fontSize: Float32,
     spacing: Float32,
 ) -> Vector2
-alias c_raylib_GetGlyphIndex = fn (font: UnsafePointer[Font], codepoint: Int32) -> Int32
+alias c_raylib_GetGlyphIndex = fn (
+    font: UnsafePointer[Font], codepoint: Int32
+) -> Int32
 alias c_raylib_GetGlyphInfo = fn (
     font: UnsafePointer[Font], glyphIndex: Int32
 ) -> GlyphInfo
@@ -178,7 +180,11 @@ struct RaylibText:
     var _get_codepoint_next: c_raylib_GetCodepointNext
     var _get_codepoint_previous: c_raylib_GetCodepointPrevious
 
-    fn __init__(inout self, raylib_internal: DLHandle, raylib_bindings_internal: DLHandle):
+    fn __init__(
+        inout self,
+        raylib_internal: DLHandle,
+        raylib_bindings_internal: DLHandle,
+    ):
         # Font loading/unloading functions
         self._get_font_default = raylib_internal.get_function[
             c_raylib_GetFontDefault
@@ -207,9 +213,9 @@ struct RaylibText:
         self._unload_font_data = raylib_internal.get_function[
             c_raylib_UnloadFontData
         ]("UnloadFontData")
-        self._unload_font = raylib_bindings_internal.get_function[c_raylib_UnloadFont](
-            "_UnloadFont"
-        )
+        self._unload_font = raylib_bindings_internal.get_function[
+            c_raylib_UnloadFont
+        ]("_UnloadFont")
         self._export_font_as_code = raylib_bindings_internal.get_function[
             c_raylib_ExportFontAsCode
         ]("_ExportFontAsCode")
@@ -218,12 +224,12 @@ struct RaylibText:
         self._draw_fps = raylib_internal.get_function[c_raylib_DrawFPS](
             "DrawFPS"
         )
-        self._draw_text = raylib_bindings_internal.get_function[c_raylib_DrawText](
-            "_DrawText"
-        )
-        self._draw_text_ex = raylib_bindings_internal.get_function[c_raylib_DrawTextEx](
-            "_DrawTextEx"
-        )
+        self._draw_text = raylib_bindings_internal.get_function[
+            c_raylib_DrawText
+        ]("_DrawText")
+        self._draw_text_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawTextEx
+        ]("_DrawTextEx")
         self._draw_text_pro = raylib_bindings_internal.get_function[
             c_raylib_DrawTextPro
         ]("_DrawTextPro")
@@ -280,14 +286,17 @@ struct RaylibText:
             c_raylib_GetCodepointPrevious
         ]("GetCodepointPrevious")
 
+    @always_inline
     fn get_font_default(self) -> Font:
         """Get the default Font."""
         return self._get_font_default()
 
+    @always_inline
     fn load_font(self, file_name: String) -> Font:
         """Load font from file into GPU memory (VRAM)."""
         return self._load_font(file_name.unsafe_ptr())
 
+    @always_inline
     fn load_font_ex(
         self,
         file_name: String,
@@ -302,6 +311,7 @@ struct RaylibText:
         )
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
+    @always_inline
     fn load_font_from_image(
         self, owned image: Image, owned key: Color, first_char: Int32
     ) -> Font:
@@ -312,6 +322,7 @@ struct RaylibText:
             first_char,
         )
 
+    @always_inline
     fn load_font_from_memory(
         self,
         file_type: String,
@@ -329,12 +340,12 @@ struct RaylibText:
         )
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
+    @always_inline
     fn is_font_ready(self, owned font: Font) -> Bool:
         """Check if any font is loaded."""
-        return self._is_font_ready(
-            UnsafePointer.address_of(font)
-        )
+        return self._is_font_ready(UnsafePointer.address_of(font))
 
+    @always_inline
     fn load_font_data(
         self,
         file_type: String,
@@ -357,6 +368,7 @@ struct RaylibText:
             type,
         )
 
+    @always_inline
     fn gen_image_font_atlas(
         self,
         chars: UnsafePointer[GlyphInfo],
@@ -376,25 +388,30 @@ struct RaylibText:
             pack_method,
         )
 
-    fn unload_font_data(self, glyphs: UnsafePointer[GlyphInfo], glyph_count: Int32):
+    @always_inline
+    fn unload_font_data(
+        self, glyphs: UnsafePointer[GlyphInfo], glyph_count: Int32
+    ):
         """Unload font chars info (RAM)."""
         self._unload_font_data(glyphs, glyph_count)
 
+    @always_inline
     fn unload_font(self, owned font: Font):
         """Unload Font from GPU memory (VRAM)."""
         self._unload_font(UnsafePointer.address_of(font))
 
+    @always_inline
     fn export_font_as_code(self, owned font: Font, file_name: String) -> Bool:
         """Export font data to code file."""
         var temp = file_name.unsafe_ptr()
-        return self._export_font_as_code(
-            UnsafePointer.address_of(font), temp
-        )
+        return self._export_font_as_code(UnsafePointer.address_of(font), temp)
 
+    @always_inline
     fn draw_fps(self, x: Int32, y: Int32):
         """Shows current FPS."""
         self._draw_fps(x, y)
 
+    @always_inline
     fn draw_text(
         self,
         text: String,
@@ -413,6 +430,7 @@ struct RaylibText:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn draw_text_ex(
         self,
         owned font: Font,
@@ -433,6 +451,7 @@ struct RaylibText:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn draw_text_pro(
         self,
         owned font: Font,
@@ -457,6 +476,7 @@ struct RaylibText:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn draw_text_codepoint(
         self,
         owned font: Font,
@@ -474,6 +494,7 @@ struct RaylibText:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn draw_text_codepoints(
         self,
         owned font: Font,
@@ -495,10 +516,12 @@ struct RaylibText:
             UnsafePointer.address_of(color),
         )
 
+    @always_inline
     fn set_text_line_spacing(self, spacing: Int32):
         """Set the spacing between characters."""
         self._set_text_line_spacing(spacing)
 
+    @always_inline
     fn measure_text(self, text: String, font_size: Int32) -> Int32:
         """Measure string width for default font."""
         var temp = text.unsafe_ptr()
@@ -506,6 +529,7 @@ struct RaylibText:
         _ = text
         return res
 
+    @always_inline
     fn measure_text_ex(
         self,
         owned font: Font,
@@ -521,20 +545,21 @@ struct RaylibText:
             font_size,
             spacing,
         )
-    
+
+    @always_inline
     fn get_glyph_index(self, owned font: Font, codepoint: Int32) -> Int32:
         """Get index position for a unicode character on font."""
-        return self._get_glyph_index(
-            UnsafePointer.address_of(font), codepoint
-        )
-    
+        return self._get_glyph_index(UnsafePointer.address_of(font), codepoint)
+
+    @always_inline
     fn get_glyph_info(self, owned font: Font, glyph_index: Int32) -> GlyphInfo:
         """Get glyph info for a unicode character on font."""
-        return self._get_glyph_info(
-            UnsafePointer.address_of(font), glyph_index
-        )
+        return self._get_glyph_info(UnsafePointer.address_of(font), glyph_index)
 
-    fn get_glyph_atlas_rec(self, owned font: Font, glyph_index: Int32) -> Rectangle:
+    @always_inline
+    fn get_glyph_atlas_rec(
+        self, owned font: Font, glyph_index: Int32
+    ) -> Rectangle:
         """Get glyph atlas rectangle for a unicode character on font."""
         var temp = self._get_glyph_atlas_rec(
             UnsafePointer.address_of(font), glyph_index
@@ -542,43 +567,64 @@ struct RaylibText:
 
         return UnsafePointer.address_of(temp).bitcast[Rectangle]()[0]
 
-    fn load_utf8(self, codepoints: UnsafePointer[UInt8], length: Int32) -> String:
-        """Load text data from file (codepoints) and return an UTF8 encoded string."""
+    @always_inline
+    fn load_utf8(
+        self, codepoints: UnsafePointer[UInt8], length: Int32
+    ) -> String:
+        """Load text data from file (codepoints) and return an UTF8 encoded string.
+        """
         return StringRef(self._load_utf8(codepoints, length))
 
+    @always_inline
     fn unload_utf8(self, text: String):
         """Unload UTF8 text data."""
         self._unload_utf8(text.unsafe_ptr())
 
-    fn load_codepoints(self, text: String, count: UnsafePointer[Int32]) -> UnsafePointer[Int32]:
+    @always_inline
+    fn load_codepoints(
+        self, text: String, count: UnsafePointer[Int32]
+    ) -> UnsafePointer[Int32]:
         """Load codepoints data for a UTF8 encoded string."""
         var temp = text.unsafe_ptr()
         return self._load_codepoints(temp, count)
 
+    @always_inline
     fn unload_codepoints(self, codepoints: UnsafePointer[Int32]):
         """Unload codepoints data loaded with LoadCodepoints()."""
         self._unload_codepoints(codepoints)
 
+    @always_inline
     fn get_codepoint_count(self, text: String) -> Int32:
-        """Get total number of characters (codepoints) in a UTF8 encoded string."""
+        """Get total number of characters (codepoints) in a UTF8 encoded string.
+        """
         var temp = text.unsafe_ptr()
         return self._get_codepoint_count(temp)
 
-    fn get_codepoint(self, text: String, codepoint_size: UnsafePointer[Int32]) -> Int32:
+    @always_inline
+    fn get_codepoint(
+        self, text: String, codepoint_size: UnsafePointer[Int32]
+    ) -> Int32:
         """Get next codepoint in a UTF8 encoded string."""
         var temp = text.unsafe_ptr()
         return self._get_codepoint(temp, codepoint_size)
-    
-    fn get_codepoint_next(self, text: String, codepoint_size: UnsafePointer[Int32]) -> Int32:
+
+    @always_inline
+    fn get_codepoint_next(
+        self, text: String, codepoint_size: UnsafePointer[Int32]
+    ) -> Int32:
         """Get next codepoint in a UTF8 encoded string."""
         var temp = text.unsafe_ptr()
         return self._get_codepoint_next(temp, codepoint_size)
-    
-    fn get_codepoint_previous(self, text: String, start_codepoint: Int32, codepoint_size: UnsafePointer[Int32]) -> Int32:
+
+    @always_inline
+    fn get_codepoint_previous(
+        self,
+        text: String,
+        start_codepoint: Int32,
+        codepoint_size: UnsafePointer[Int32],
+    ) -> Int32:
         """Get previous codepoint in a UTF8 encoded string."""
         var temp = text.unsafe_ptr()
-        return self._get_codepoint_previous(temp, start_codepoint, codepoint_size)
-    
-
-    
-    
+        return self._get_codepoint_previous(
+            temp, start_codepoint, codepoint_size
+        )
