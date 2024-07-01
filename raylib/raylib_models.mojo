@@ -266,8 +266,8 @@ alias c_raylib_LoadMaterials = fn (
     fileName: UnsafePointer[Int8], materialCount: UnsafePointer[Int32]
 ) -> UnsafePointer[Material]
 alias c_raylib_LoadMaterialDefault = fn () -> Material
-alias c_raylib_IsMaterialReady = fn (material: Material) -> Bool
-alias c_raylib_UnloadMaterial = fn (material: Material) -> None
+alias c_raylib_IsMaterialReady = fn (material: UnsafePointer[Material]) -> Bool
+alias c_raylib_UnloadMaterial = fn (material: UnsafePointer[Material]) -> None
 alias c_raylib_SetMaterialTexture = fn (
     material: UnsafePointer[Material],
     mapType: Int32,
@@ -282,14 +282,18 @@ alias c_raylib_LoadModelAnimations = fn (
     fileName: UnsafePointer[Int8], animCount: UnsafePointer[Int32]
 ) -> UnsafePointer[ModelAnimation]
 alias c_raylib_UpdateModelAnimation = fn (
-    model: Model, anim: ModelAnimation, frame: Int32
+    model: UnsafePointer[Model],
+    anim: UnsafePointer[ModelAnimation],
+    frame: Int32,
 ) -> None
-alias c_raylib_UnloadModelAnimation = fn (anim: ModelAnimation) -> None
+alias c_raylib_UnloadModelAnimation = fn (
+    anim: UnsafePointer[ModelAnimation]
+) -> None
 alias c_raylib_UnloadModelAnimations = fn (
     animations: UnsafePointer[ModelAnimation], animCount: Int32
 ) -> None
 alias c_raylib_IsModelAnimationValid = fn (
-    model: Model, anim: ModelAnimation
+    model: UnsafePointer[Model], anim: UnsafePointer[ModelAnimation]
 ) -> Bool
 
 # Collision detection functions
@@ -308,22 +312,24 @@ alias c_raylib_CheckCollisionBoxSphere = fn (
     radius: Float32,
 ) -> Bool
 alias c_raylib_GetRayCollisionSphere = fn (
-    ray: Ray, center: UnsafePointer[Vector3], radius: Float32
+    ray: UnsafePointer[Ray], center: UnsafePointer[Vector3], radius: Float32
 ) -> RayCollision
 alias c_raylib_GetRayCollisionBox = fn (
-    ray: Ray, box: UnsafePointer[BoundingBox]
+    ray: UnsafePointer[Ray], box: UnsafePointer[BoundingBox]
 ) -> RayCollision
 alias c_raylib_GetRayCollisionMesh = fn (
-    ray: Ray, mesh: Mesh, transform: Matrix
+    ray: UnsafePointer[Ray],
+    mesh: UnsafePointer[Mesh],
+    transform: UnsafePointer[Matrix],
 ) -> RayCollision
 alias c_raylib_GetRayCollisionTriangle = fn (
-    ray: Ray,
+    ray: UnsafePointer[Ray],
     p1: UnsafePointer[Vector3],
     p2: UnsafePointer[Vector3],
     p3: UnsafePointer[Vector3],
 ) -> RayCollision
 alias c_raylib_GetRayCollisionQuad = fn (
-    ray: Ray,
+    ray: UnsafePointer[Ray],
     p1: UnsafePointer[Vector3],
     p2: UnsafePointer[Vector3],
     p3: UnsafePointer[Vector3],
@@ -659,263 +665,361 @@ struct RayLibModels:
     @always_inline
     fn draw_line_3d(
         self,
-        startPos: UnsafePointer[Vector3],
-        endPos: UnsafePointer[Vector3],
-        color: UnsafePointer[Color],
+        owned startPos: Vector3,
+        owned endPos: Vector3,
+        owned color: Color,
     ):
         """Draws a line in 3D space."""
-        self._draw_line_3d(startPos, endPos, color)
+        self._draw_line_3d(
+            UnsafePointer.address_of(startPos),
+            UnsafePointer.address_of(endPos),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
-    fn draw_point_3d(
-        self, position: UnsafePointer[Vector3], color: UnsafePointer[Color]
-    ):
+    fn draw_point_3d(self, owned position: Vector3, owned color: Color):
         """Draws a point in 3D space."""
-        self._draw_point_3d(position, color)
+        self._draw_point_3d(
+            UnsafePointer.address_of(position), UnsafePointer.address_of(color)
+        )
 
     @always_inline
     fn draw_circle_3d(
         self,
-        center: UnsafePointer[Vector3],
+        owned center: Vector3,
         radius: Float32,
-        rotationAxis: UnsafePointer[Vector3],
+        owned rotationAxis: Vector3,
         rotationAngle: Float32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a circle in 3D space."""
-        self._draw_circle_3d(center, radius, rotationAxis, rotationAngle, color)
+        self._draw_circle_3d(
+            UnsafePointer.address_of(center),
+            radius,
+            UnsafePointer.address_of(rotationAxis),
+            rotationAngle,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_triangle_3d(
         self,
-        v1: UnsafePointer[Vector3],
-        v2: UnsafePointer[Vector3],
-        v3: UnsafePointer[Vector3],
-        color: UnsafePointer[Color],
+        owned v1: Vector3,
+        owned v2: Vector3,
+        owned v3: Vector3,
+        owned color: Color,
     ):
         """Draws a triangle in 3D space."""
-        self._draw_triangle_3d(v1, v2, v3, color)
+        self._draw_triangle_3d(
+            UnsafePointer.address_of(v1),
+            UnsafePointer.address_of(v2),
+            UnsafePointer.address_of(v3),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_triangle_strip_3d(
         self,
         points: UnsafePointer[Vector3],
         pointCount: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a triangle strip in 3D space."""
-        self._draw_triangle_strip_3d(points, pointCount, color)
+        self._draw_triangle_strip_3d(
+            points,
+            pointCount,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_cube(
         self,
-        position: UnsafePointer[Vector3],
+        owned position: Vector3,
         width: Float32,
         height: Float32,
         length: Float32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a cube."""
-        self._draw_cube(position, width, height, length, color)
+        self._draw_cube(
+            UnsafePointer.address_of(position),
+            width,
+            height,
+            length,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_cube_v(
         self,
-        position: UnsafePointer[Vector3],
-        size: UnsafePointer[Vector3],
-        color: UnsafePointer[Color],
+        owned position: Vector3,
+        owned size: Vector3,
+        owned color: Color,
     ):
         """Draws a cube with a custom size."""
-        self._draw_cube_v(position, size, color)
+        self._draw_cube_v(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(size),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_cube_wires(
         self,
-        position: UnsafePointer[Vector3],
+        owned position: Vector3,
         width: Float32,
         height: Float32,
         length: Float32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws the wireframe of a cube."""
-        self._draw_cube_wires(position, width, height, length, color)
+        self._draw_cube_wires(
+            UnsafePointer.address_of(position),
+            width,
+            height,
+            length,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_cube_wires_v(
         self,
-        position: UnsafePointer[Vector3],
-        size: UnsafePointer[Vector3],
-        color: UnsafePointer[Color],
+        owned position: Vector3,
+        owned size: Vector3,
+        owned color: Color,
     ):
         """Draws the wireframe of a cube with a custom size."""
-        self._draw_cube_wires_v(position, size, color)
+        self._draw_cube_wires_v(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(size),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_sphere(
         self,
-        center_pos: UnsafePointer[Vector3],
+        owned center_pos: Vector3,
         radius: Float32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a sphere."""
-        self._draw_sphere(center_pos, radius, color)
+        self._draw_sphere(
+            UnsafePointer.address_of(center_pos),
+            radius,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_sphere_ex(
         self,
-        center_pos: UnsafePointer[Vector3],
+        owned center_pos: Vector3,
         radius: Float32,
         rings: Int32,
         slices: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a sphere with extended parameters."""
-        self._draw_sphere_ex(center_pos, radius, rings, slices, color)
+        self._draw_sphere_ex(
+            UnsafePointer.address_of(center_pos),
+            radius,
+            rings,
+            slices,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_sphere_wires(
         self,
-        center_pos: UnsafePointer[Vector3],
+        owned center_pos: Vector3,
         radius: Float32,
         rings: Int32,
         slices: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws the wireframe of a sphere."""
-        self._draw_sphere_wires(center_pos, radius, rings, slices, color)
+        self._draw_sphere_wires(
+            UnsafePointer.address_of(center_pos),
+            radius,
+            rings,
+            slices,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_cylinder(
         self,
-        position: UnsafePointer[Vector3],
+        owned position: Vector3,
         radius_top: Float32,
         radius_bottom: Float32,
         height: Float32,
         slices: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a cylinder."""
         self._draw_cylinder(
-            position, radius_top, radius_bottom, height, slices, color
+            UnsafePointer.address_of(position),
+            radius_top,
+            radius_bottom,
+            height,
+            slices,
+            UnsafePointer.address_of(color),
         )
 
     @always_inline
     fn draw_cylinder_ex(
         self,
-        start_pos: UnsafePointer[Vector3],
-        end_pos: UnsafePointer[Vector3],
+        owned start_pos: Vector3,
+        owned end_pos: Vector3,
         start_radius: Float32,
         end_radius: Float32,
         sides: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a cylinder with extended parameters."""
         self._draw_cylinder_ex(
-            start_pos, end_pos, start_radius, end_radius, sides, color
+            UnsafePointer.address_of(start_pos),
+            UnsafePointer.address_of(end_pos),
+            start_radius,
+            end_radius,
+            sides,
+            UnsafePointer.address_of(color),
         )
 
     @always_inline
     fn draw_cylinder_wires(
         self,
-        position: UnsafePointer[Vector3],
+        owned position: Vector3,
         radius_top: Float32,
         radius_bottom: Float32,
         height: Float32,
         slices: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws the wireframe of a cylinder."""
         self._draw_cylinder_wires(
-            position, radius_top, radius_bottom, height, slices, color
+            UnsafePointer.address_of(position),
+            radius_top,
+            radius_bottom,
+            height,
+            slices,
+            UnsafePointer.address_of(color),
         )
 
     @always_inline
     fn draw_cylinder_wires_ex(
         self,
-        start_pos: UnsafePointer[Vector3],
-        end_pos: UnsafePointer[Vector3],
+        owned start_pos: Vector3,
+        owned end_pos: Vector3,
         start_radius: Float32,
         end_radius: Float32,
         sides: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws the wireframe of a cylinder with extended parameters."""
         self._draw_cylinder_wires_ex(
-            start_pos, end_pos, start_radius, end_radius, sides, color
+            UnsafePointer.address_of(start_pos),
+            UnsafePointer.address_of(end_pos),
+            start_radius,
+            end_radius,
+            sides,
+            UnsafePointer.address_of(color),
         )
 
     @always_inline
     fn draw_capsule(
         self,
-        start_pos: UnsafePointer[Vector3],
-        end_pos: UnsafePointer[Vector3],
+        owned start_pos: Vector3,
+        owned end_pos: Vector3,
         radius: Float32,
         slices: Int32,
         rings: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws a capsule."""
-        self._draw_capsule(start_pos, end_pos, radius, slices, rings, color)
+        self._draw_capsule(
+            UnsafePointer.address_of(start_pos),
+            UnsafePointer.address_of(end_pos),
+            radius,
+            slices,
+            rings,
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
     fn draw_capsule_wires(
         self,
-        start_pos: UnsafePointer[Vector3],
-        end_pos: UnsafePointer[Vector3],
+        owned start_pos: Vector3,
+        owned end_pos: Vector3,
         radius: Float32,
         slices: Int32,
         rings: Int32,
-        color: UnsafePointer[Color],
+        owned color: Color,
     ):
         """Draws the wireframe of a capsule."""
         self._draw_capsule_wires(
-            start_pos, end_pos, radius, slices, rings, color
+            UnsafePointer.address_of(start_pos),
+            UnsafePointer.address_of(end_pos),
+            radius,
+            slices,
+            rings,
+            UnsafePointer.address_of(color),
         )
 
     @always_inline
     fn draw_plane(
         self,
-        center_pos: UnsafePointer[Vector3],
-        size: UnsafePointer[Vector2],
-        color: UnsafePointer[Color],
+        owned center_pos: Vector3,
+        owned size: Vector2,
+        owned color: Color,
     ):
         """Draws a plane."""
-        self._draw_plane(center_pos, size, color)
+        self._draw_plane(
+            UnsafePointer.address_of(center_pos),
+            UnsafePointer.address_of(size),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
-    fn draw_ray(self, ray: UnsafePointer[Ray], color: UnsafePointer[Color]):
+    fn draw_ray(self, owned ray: Ray, owned color: Color):
         """Draws a ray."""
-        self._draw_ray(ray, color)
+        self._draw_ray(
+            UnsafePointer.address_of(ray),
+            UnsafePointer.address_of(color),
+        )
 
     @always_inline
-    fn draw_grid(self, slices: Int32, spacing: Float32):
+    fn draw_grid(
+        self,
+        slices: Int32,
+        spacing: Float32,
+    ):
         """Draws a grid."""
         self._draw_grid(slices, spacing)
 
     @always_inline
-    fn load_model(self, file_name: UnsafePointer[Int8]) -> Model:
+    fn load_model(self, owned file_name: Int8) -> Model:
         """Loads a model from a file."""
-        return self._load_model(file_name)
+        return self._load_model(UnsafePointer.address_of(file_name))
 
     @always_inline
-    fn load_model_from_mesh(self, mesh: UnsafePointer[Mesh]) -> Model:
+    fn load_model_from_mesh(self, owned mesh: Mesh) -> Model:
         """Loads a model from a mesh."""
-        return self._load_model_from_mesh(mesh)
+        return self._load_model_from_mesh(UnsafePointer.address_of(mesh))
 
     @always_inline
-    fn unload_model(self, model: UnsafePointer[Model]):
+    fn unload_model(self, owned model: Model):
         """Unloads a model."""
-        self._unload_model(model)
+        self._unload_model(UnsafePointer.address_of(model))
 
     @always_inline
-    fn is_model_ready(self, model: UnsafePointer[Model]) -> Bool:
+    fn is_model_ready(self, owned model: Model) -> Bool:
         """Checks if a model is ready to be used."""
-        return self._is_model_ready(model)
+        return self._is_model_ready(UnsafePointer.address_of(model))
 
     @always_inline
-    fn get_model_bounding_box(self, model: UnsafePointer[Model]) -> BoundingBox:
+    fn get_model_bounding_box(self, owned model: Model) -> BoundingBox:
         """Gets the bounding box of a model."""
-        return self._get_model_bounding_box(model)
+        return self._get_model_bounding_box(UnsafePointer.address_of(model))
 
     @always_inline
     fn draw_model(
@@ -1162,24 +1266,26 @@ struct RayLibModels:
         return self._load_material_default()
 
     @always_inline
-    fn is_material_ready(self, material: Material) -> Bool:
+    fn is_material_ready(self, owned material: Material) -> Bool:
         """Checks if a material is ready to be used."""
-        return self._is_material_ready(material)
+        return self._is_material_ready(UnsafePointer.address_of(material))
 
     @always_inline
-    fn unload_material(self, material: Material):
+    fn unload_material(self, owned material: Material):
         """Unloads a material."""
-        self._unload_material(material)
+        self._unload_material(UnsafePointer.address_of(material))
 
     @always_inline
     fn set_material_texture(
         self,
         material: UnsafePointer[Material],
         map_type: Int32,
-        texture: UnsafePointer[Texture2D],
+        owned texture: Texture2D,
     ):
         """Sets a texture for a material."""
-        self._set_material_texture(material, map_type, texture)
+        self._set_material_texture(
+            material, map_type, UnsafePointer.address_of(texture)
+        )
 
     @always_inline
     fn set_model_mesh_material(
@@ -1197,15 +1303,19 @@ struct RayLibModels:
 
     @always_inline
     fn update_model_animation(
-        self, model: Model, anim: ModelAnimation, frame: Int32
+        self, owned model: Model, owned anim: ModelAnimation, frame: Int32
     ):
         """Updates a model animation."""
-        self._update_model_animation(model, anim, frame)
+        self._update_model_animation(
+            UnsafePointer.address_of(model),
+            UnsafePointer.address_of(anim),
+            frame,
+        )
 
     @always_inline
-    fn unload_model_animation(self, anim: ModelAnimation):
+    fn unload_model_animation(self, owned anim: ModelAnimation):
         """Unloads a model animation."""
-        self._unload_model_animation(anim)
+        self._unload_model_animation(UnsafePointer.address_of(anim))
 
     @always_inline
     fn unload_model_animations(
@@ -1216,79 +1326,113 @@ struct RayLibModels:
 
     @always_inline
     fn is_model_animation_valid(
-        self, model: Model, anim: ModelAnimation
+        self, owned model: Model, owned anim: ModelAnimation
     ) -> Bool:
         """Checks if a model animation is valid."""
-        return self._is_model_animation_valid(model, anim)
+        return self._is_model_animation_valid(
+            UnsafePointer.address_of(model), UnsafePointer.address_of(anim)
+        )
 
     @always_inline
     fn check_collision_spheres(
         self,
-        center1: UnsafePointer[Vector3],
+        owned center1: Vector3,
         radius1: Float32,
-        center2: UnsafePointer[Vector3],
+        owned center2: Vector3,
         radius2: Float32,
     ) -> Bool:
         """Checks collision between two spheres."""
-        return self._check_collision_spheres(center1, radius1, center2, radius2)
+        return self._check_collision_spheres(
+            UnsafePointer.address_of(center1),
+            radius1,
+            UnsafePointer.address_of(center2),
+            radius2,
+        )
 
     @always_inline
     fn check_collision_boxes(
-        self, box1: UnsafePointer[BoundingBox], box2: UnsafePointer[BoundingBox]
+        self, owned box1: BoundingBox, owned box2: BoundingBox
     ) -> Bool:
-        """Checks collision between two bounding boxes."""
-        return self._check_collision_boxes(box1, box2)
+        """Checks collision between two boxes."""
+        return self._check_collision_boxes(
+            UnsafePointer.address_of(box1), UnsafePointer.address_of(box2)
+        )
 
     @always_inline
     fn check_collision_box_sphere(
         self,
-        box: UnsafePointer[BoundingBox],
-        center: UnsafePointer[Vector3],
+        owned box: BoundingBox,
+        owned center: Vector3,
         radius: Float32,
     ) -> Bool:
         """Checks collision between a box and a sphere."""
-        return self._check_collision_box_sphere(box, center, radius)
+        return self._check_collision_box_sphere(
+            UnsafePointer.address_of(box),
+            UnsafePointer.address_of(center),
+            radius,
+        )
 
     @always_inline
     fn get_ray_collision_sphere(
-        self, ray: Ray, center: UnsafePointer[Vector3], radius: Float32
+        self, owned ray: Ray, owned center: Vector3, radius: Float32
     ) -> RayCollision:
         """Gets the collision between a ray and a sphere."""
-        return self._get_ray_collision_sphere(ray, center, radius)
+        return self._get_ray_collision_sphere(
+            UnsafePointer.address_of(ray),
+            UnsafePointer.address_of(center),
+            radius,
+        )
 
     @always_inline
     fn get_ray_collision_box(
-        self, ray: Ray, box: UnsafePointer[BoundingBox]
+        self, owned ray: Ray, owned box: BoundingBox
     ) -> RayCollision:
         """Gets the collision between a ray and a box."""
-        return self._get_ray_collision_box(ray, box)
+        return self._get_ray_collision_box(
+            UnsafePointer.address_of(ray), UnsafePointer.address_of(box)
+        )
 
     @always_inline
     fn get_ray_collision_mesh(
-        self, ray: Ray, mesh: Mesh, transform: Matrix
+        self, owned ray: Ray, owned mesh: Mesh, owned transform: Matrix
     ) -> RayCollision:
         """Gets the collision between a ray and a mesh."""
-        return self._get_ray_collision_mesh(ray, mesh, transform)
+        return self._get_ray_collision_mesh(
+            UnsafePointer.address_of(ray),
+            UnsafePointer.address_of(mesh),
+            UnsafePointer.address_of(transform),
+        )
 
     @always_inline
     fn get_ray_collision_triangle(
         self,
-        ray: Ray,
-        p1: UnsafePointer[Vector3],
-        p2: UnsafePointer[Vector3],
-        p3: UnsafePointer[Vector3],
+        owned ray: Ray,
+        owned p1: Vector3,
+        owned p2: Vector3,
+        owned p3: Vector3,
     ) -> RayCollision:
         """Gets the collision between a ray and a triangle."""
-        return self._get_ray_collision_triangle(ray, p1, p2, p3)
+        return self._get_ray_collision_triangle(
+            UnsafePointer.address_of(ray),
+            UnsafePointer.address_of(p1),
+            UnsafePointer.address_of(p2),
+            UnsafePointer.address_of(p3),
+        )
 
     @always_inline
     fn get_ray_collision_quad(
         self,
-        ray: Ray,
-        p1: UnsafePointer[Vector3],
-        p2: UnsafePointer[Vector3],
-        p3: UnsafePointer[Vector3],
-        p4: UnsafePointer[Vector3],
+        owned ray: Ray,
+        owned p1: Vector3,
+        owned p2: Vector3,
+        owned p3: Vector3,
+        owned p4: Vector3,
     ) -> RayCollision:
         """Gets the collision between a ray and a quad."""
-        return self._get_ray_collision_quad(ray, p1, p2, p3, p4)
+        return self._get_ray_collision_quad(
+            UnsafePointer.address_of(ray),
+            UnsafePointer.address_of(p1),
+            UnsafePointer.address_of(p2),
+            UnsafePointer.address_of(p3),
+            UnsafePointer.address_of(p4),
+        )

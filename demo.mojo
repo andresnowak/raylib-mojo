@@ -1,5 +1,6 @@
-from raylib import ray_lib_core, ray_lib_text, ray_lib_textures, ray_lib_shapes
-from raylib.shapes import Color, Vector2
+from raylib import ray_lib_core, ray_lib_text, ray_lib_textures, ray_lib_shapes, ray_lib_models
+from raylib.shapes import Color, Vector2, Vector3
+from raylib.space_objects import Camera3D
 from raylib.colors import LIGHTGRAY, BLUE, RED, WHITE
 
 
@@ -30,6 +31,7 @@ fn main() raises:
 
     while not ray_lib_core.window_should_close():
         ray_lib_core.begin_drawing()
+        # ray_lib_core.begin_mode3d(Camera3D(Vector3(0, 4, 10), Vector3(0, 0, 0), Vector3(0, 1, 0), 45, 0))
 
         ray_lib_core.clear_background(WHITE)
 
@@ -40,6 +42,7 @@ fn main() raises:
         ray_lib_text.draw_text_ex(font2, "Hello raylib from mojo", Vector2(40, 40), 30, 8, LIGHTGRAY)
 
         ray_lib_shapes.draw_rectangle_lines(10, 10, 100, 100, BLUE)
+        # ray_lib_models.draw_cube(Vector3(0, 0, 0), 2, 2, 2, BLUE)
 
         # print(ray_lib_text.measure_text("hello raylib from mojo", 20))
 
@@ -50,6 +53,7 @@ fn main() raises:
         # print(ray_lib.get_monitor_position(h))
         # print(ray_lib.get_window_position())
 
+        # ray_lib_core.end_mode3d()
         ray_lib_core.end_drawing()
 
     _ = (window_title, hello)
