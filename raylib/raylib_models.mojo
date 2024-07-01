@@ -206,26 +206,30 @@ alias c_raylib_UploadMesh = fn (
     mesh: UnsafePointer[Mesh], dynamic: Bool
 ) -> None
 alias c_raylib_UpdateMeshBuffer = fn (
-    mesh: Mesh,
+    mesh: UnsafePointer[Mesh],
     index: Int32,
     data: UnsafePointer[NoneType],
     dataSize: Int32,
     offset: Int32,
 ) -> None
-alias c_raylib_UnloadMesh = fn (mesh: Mesh) -> None
+alias c_raylib_UnloadMesh = fn (mesh: UnsafePointer[Mesh]) -> None
 alias c_raylib_DrawMesh = fn (
-    mesh: Mesh, material: Material, transform: Matrix
+    mesh: UnsafePointer[Mesh],
+    material: UnsafePointer[Material],
+    transform: UnsafePointer[Matrix],
 ) -> None
 alias c_raylib_DrawMeshInstanced = fn (
-    mesh: Mesh,
-    material: Material,
+    mesh: UnsafePointer[Mesh],
+    material: UnsafePointer[Material],
     transforms: UnsafePointer[Matrix],
     instances: Int32,
 ) -> None
 alias c_raylib_ExportMesh = fn (
-    mesh: Mesh, fileName: UnsafePointer[Int8]
+    mesh: UnsafePointer[Mesh], fileName: UnsafePointer[Int8]
 ) -> Bool
-alias c_raylib_GetMeshBoundingBox = fn (mesh: Mesh) -> BoundingBox
+alias c_raylib_GetMeshBoundingBox = fn (
+    mesh: UnsafePointer[Mesh]
+) -> BoundingBox
 alias c_raylib_GenMeshTangents = fn (mesh: UnsafePointer[Mesh]) -> None
 
 # Mesh generation functions
@@ -997,9 +1001,9 @@ struct RayLibModels:
         self._draw_grid(slices, spacing)
 
     @always_inline
-    fn load_model(self, owned file_name: Int8) -> Model:
+    fn load_model(self, owned file_name: String) -> Model:
         """Loads a model from a file."""
-        return self._load_model(UnsafePointer.address_of(file_name))
+        return self._load_model(file_name.unsafe_ptr())
 
     @always_inline
     fn load_model_from_mesh(self, owned mesh: Mesh) -> Model:
@@ -1131,45 +1135,63 @@ struct RayLibModels:
     @always_inline
     fn update_mesh_buffer(
         self,
-        mesh: Mesh,
+        owned mesh: Mesh,
         index: Int32,
         data: UnsafePointer[NoneType],
         data_size: Int32,
         offset: Int32,
     ):
         """Updates a mesh buffer with new data."""
-        self._update_mesh_buffer(mesh, index, data, data_size, offset)
+        self._update_mesh_buffer(
+            UnsafePointer.address_of(mesh), index, data, data_size, offset
+        )
 
     @always_inline
-    fn unload_mesh(self, mesh: Mesh):
+    fn unload_mesh(self, owned mesh: Mesh):
         """Unloads a mesh."""
-        self._unload_mesh(mesh)
+        self._unload_mesh(UnsafePointer.address_of(mesh))
 
     @always_inline
-    fn draw_mesh(self, mesh: Mesh, material: Material, transform: Matrix):
+    fn draw_mesh(
+        self,
+        owned mesh: Mesh,
+        owned material: Material,
+        owned transform: Matrix,
+    ):
         """Draws a mesh."""
-        self._draw_mesh(mesh, material, transform)
+        self._draw_mesh(
+            UnsafePointer.address_of(mesh),
+            UnsafePointer.address_of(material),
+            UnsafePointer.address_of(transform),
+        )
 
     @always_inline
     fn draw_mesh_instanced(
         self,
-        mesh: Mesh,
-        material: Material,
+        owned mesh: Mesh,
+        owned material: Material,
         transforms: UnsafePointer[Matrix],
         instances: Int32,
     ):
         """Draws multiple instances of a mesh."""
-        self._draw_mesh_instanced(mesh, material, transforms, instances)
+        self._draw_mesh_instanced(
+            UnsafePointer.address_of(mesh),
+            UnsafePointer.address_of(material),
+            transforms,
+            instances,
+        )
 
     @always_inline
-    fn export_mesh(self, mesh: Mesh, file_name: UnsafePointer[Int8]) -> Bool:
+    fn export_mesh(self, owned mesh: Mesh, file_name: String) -> Bool:
         """Exports a mesh to a file."""
-        return self._export_mesh(mesh, file_name)
+        return self._export_mesh(
+            UnsafePointer.address_of(mesh), file_name.unsafe_ptr()
+        )
 
     @always_inline
-    fn get_mesh_bounding_box(self, mesh: Mesh) -> BoundingBox:
+    fn get_mesh_bounding_box(self, owned mesh: Mesh) -> BoundingBox:
         """Gets the bounding box of a mesh."""
-        return self._get_mesh_bounding_box(mesh)
+        return self._get_mesh_bounding_box(UnsafePointer.address_of(mesh))
 
     @always_inline
     fn gen_mesh_tangents(self, mesh: UnsafePointer[Mesh]):
@@ -1254,11 +1276,11 @@ struct RayLibModels:
     @always_inline
     fn load_materials(
         self,
-        file_name: UnsafePointer[Int8],
+        file_name: String,
         material_count: UnsafePointer[Int32],
     ) -> UnsafePointer[Material]:
         """Loads materials from a file."""
-        return self._load_materials(file_name, material_count)
+        return self._load_materials(file_name.unsafe_ptr(), material_count)
 
     @always_inline
     fn load_material_default(self) -> Material:
@@ -1296,10 +1318,10 @@ struct RayLibModels:
 
     @always_inline
     fn load_model_animations(
-        self, file_name: UnsafePointer[Int8], anim_count: UnsafePointer[Int32]
+        self, file_name: String, anim_count: UnsafePointer[Int32]
     ) -> UnsafePointer[ModelAnimation]:
         """Loads model animations from a file."""
-        return self._load_model_animations(file_name, anim_count)
+        return self._load_model_animations(file_name.unsafe_ptr(), anim_count)
 
     @always_inline
     fn update_model_animation(
