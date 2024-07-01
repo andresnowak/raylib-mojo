@@ -138,7 +138,9 @@ alias c_raylib_LoadModel = fn (fileName: UnsafePointer[Int8]) -> Model
 alias c_raylib_LoadModelFromMesh = fn (mesh: UnsafePointer[Mesh]) -> Model
 alias c_raylib_IsModelReady = fn (model: UnsafePointer[Model]) -> Bool
 alias c_raylib_UnloadModel = fn (model: UnsafePointer[Model]) -> None
-alias c_raylib_GetModelBoundingBox = fn (model: UnsafePointer[Model]) -> BoundingBox
+alias c_raylib_GetModelBoundingBox = fn (
+    model: UnsafePointer[Model]
+) -> BoundingBox
 
 # Mesh management functions
 alias c_raylib_DrawModel = fn (
@@ -376,7 +378,7 @@ struct RayLibModels:
     var _export_mesh: c_raylib_ExportMesh
     var _get_mesh_bounding_box: c_raylib_GetMeshBoundingBox
     var _gen_mesh_tangents: c_raylib_GenMeshTangents
-    
+
     var _gen_mesh_poly: c_raylib_GenMeshPoly
     var _gen_mesh_plane: c_raylib_GenMeshPlane
     var _gen_mesh_cube: c_raylib_GenMeshCube
@@ -411,103 +413,264 @@ struct RayLibModels:
     var _get_ray_collision_triangle: c_raylib_GetRayCollisionTriangle
     var _get_ray_collision_quad: c_raylib_GetRayCollisionQuad
 
-    fn __init__(inout self, raylib_internal: DLHandle, raylib_bindings_internal: DLHandle):
+    fn __init__(
+        inout self,
+        raylib_internal: DLHandle,
+        raylib_bindings_internal: DLHandle,
+    ):
         # Basic geometric 3D shapes drawing functions
-        self._draw_line_3d = raylib_bindings_internal.get_function[c_raylib_DrawLine3D]("_DrawLine3D")
-        self._draw_point_3d = raylib_bindings_internal.get_function[c_raylib_DrawPoint3D]("_DrawPoint3D")
-        self._draw_circle_3d = raylib_bindings_internal.get_function[c_raylib_DrawCircle3D]("_DrawCircle3D")
-        self._draw_triangle_3d = raylib_bindings_internal.get_function[c_raylib_DrawTriangle3D]("_DrawTriangle3D")
-        self._draw_triangle_strip_3d = raylib_bindings_internal.get_function[c_raylib_DrawTriangleStrip3D]("_DrawTriangleStrip3D")
-        self._draw_cube = raylib_bindings_internal.get_function[c_raylib_DrawCube]("_DrawCube")
-        self._draw_cube_v = raylib_bindings_internal.get_function[c_raylib_DrawCubeV]("_DrawCubeV")
-        self._draw_cube_wires = raylib_bindings_internal.get_function[c_raylib_DrawCubeWires]("_DrawCubeWires")
-        self._draw_cube_wires_v = raylib_bindings_internal.get_function[c_raylib_DrawCubeWiresV]("_DrawCubeWiresV")
-        self._draw_sphere = raylib_bindings_internal.get_function[c_raylib_DrawSphere]("_DrawSphere")
-        self._draw_sphere_ex = raylib_bindings_internal.get_function[c_raylib_DrawSphereEx]("_DrawSphereEx")
-        self._draw_sphere_wires = raylib_bindings_internal.get_function[c_raylib_DrawSphereWires]("_DrawSphereWires")
-        self._draw_cylinder = raylib_bindings_internal.get_function[c_raylib_DrawCylinder]("_DrawCylinder")
-        self._draw_cylinder_ex = raylib_bindings_internal.get_function[c_raylib_DrawCylinderEx]("_DrawCylinderEx")
-        self._draw_cylinder_wires = raylib_bindings_internal.get_function[c_raylib_DrawCylinderWires]("_DrawCylinderWires")
-        self._draw_cylinder_wires_ex = raylib_bindings_internal.get_function[c_raylib_DrawCylinderWiresEx]("_DrawCylinderWiresEx")
-        self._draw_capsule = raylib_bindings_internal.get_function[c_raylib_DrawCapsule]("_DrawCapsule")
-        self._draw_capsule_wires = raylib_bindings_internal.get_function[c_raylib_DrawCapsuleWires]("_DrawCapsuleWires")
-        self._draw_plane = raylib_bindings_internal.get_function[c_raylib_DrawPlane]("_DrawPlane")
-        self._draw_ray = raylib_bindings_internal.get_function[c_raylib_DrawRay]("_DrawRay")
-        self._draw_grid = raylib_bindings_internal.get_function[c_raylib_DrawGrid]("_DrawGrid")
+        self._draw_line_3d = raylib_bindings_internal.get_function[
+            c_raylib_DrawLine3D
+        ]("_DrawLine3D")
+        self._draw_point_3d = raylib_bindings_internal.get_function[
+            c_raylib_DrawPoint3D
+        ]("_DrawPoint3D")
+        self._draw_circle_3d = raylib_bindings_internal.get_function[
+            c_raylib_DrawCircle3D
+        ]("_DrawCircle3D")
+        self._draw_triangle_3d = raylib_bindings_internal.get_function[
+            c_raylib_DrawTriangle3D
+        ]("_DrawTriangle3D")
+        self._draw_triangle_strip_3d = raylib_bindings_internal.get_function[
+            c_raylib_DrawTriangleStrip3D
+        ]("_DrawTriangleStrip3D")
+        self._draw_cube = raylib_bindings_internal.get_function[
+            c_raylib_DrawCube
+        ]("_DrawCube")
+        self._draw_cube_v = raylib_bindings_internal.get_function[
+            c_raylib_DrawCubeV
+        ]("_DrawCubeV")
+        self._draw_cube_wires = raylib_bindings_internal.get_function[
+            c_raylib_DrawCubeWires
+        ]("_DrawCubeWires")
+        self._draw_cube_wires_v = raylib_bindings_internal.get_function[
+            c_raylib_DrawCubeWiresV
+        ]("_DrawCubeWiresV")
+        self._draw_sphere = raylib_bindings_internal.get_function[
+            c_raylib_DrawSphere
+        ]("_DrawSphere")
+        self._draw_sphere_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawSphereEx
+        ]("_DrawSphereEx")
+        self._draw_sphere_wires = raylib_bindings_internal.get_function[
+            c_raylib_DrawSphereWires
+        ]("_DrawSphereWires")
+        self._draw_cylinder = raylib_bindings_internal.get_function[
+            c_raylib_DrawCylinder
+        ]("_DrawCylinder")
+        self._draw_cylinder_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawCylinderEx
+        ]("_DrawCylinderEx")
+        self._draw_cylinder_wires = raylib_bindings_internal.get_function[
+            c_raylib_DrawCylinderWires
+        ]("_DrawCylinderWires")
+        self._draw_cylinder_wires_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawCylinderWiresEx
+        ]("_DrawCylinderWiresEx")
+        self._draw_capsule = raylib_bindings_internal.get_function[
+            c_raylib_DrawCapsule
+        ]("_DrawCapsule")
+        self._draw_capsule_wires = raylib_bindings_internal.get_function[
+            c_raylib_DrawCapsuleWires
+        ]("_DrawCapsuleWires")
+        self._draw_plane = raylib_bindings_internal.get_function[
+            c_raylib_DrawPlane
+        ]("_DrawPlane")
+        self._draw_ray = raylib_bindings_internal.get_function[
+            c_raylib_DrawRay
+        ]("_DrawRay")
+        self._draw_grid = raylib_bindings_internal.get_function[
+            c_raylib_DrawGrid
+        ]("_DrawGrid")
 
         # Model 3D loading and drawing functions (Module: models)
 
         # Model management functions
-        self._load_model = raylib_internal.get_function[c_raylib_LoadModel]("LoadModel")
-        self._load_model_from_mesh = raylib_bindings_internal.get_function[c_raylib_LoadModelFromMesh]("_LoadModelFromMesh")
-        self._is_model_ready = raylib_bindings_internal.get_function[c_raylib_IsModelReady]("_IsModelReady")
-        self._unload_model = raylib_bindings_internal.get_function[c_raylib_UnloadModel]("_UnloadModel")
-        self._get_model_bounding_box = raylib_bindings_internal.get_function[c_raylib_GetModelBoundingBox]("_GetModelBoundingBox")
+        self._load_model = raylib_internal.get_function[c_raylib_LoadModel](
+            "LoadModel"
+        )
+        self._load_model_from_mesh = raylib_bindings_internal.get_function[
+            c_raylib_LoadModelFromMesh
+        ]("_LoadModelFromMesh")
+        self._is_model_ready = raylib_bindings_internal.get_function[
+            c_raylib_IsModelReady
+        ]("_IsModelReady")
+        self._unload_model = raylib_bindings_internal.get_function[
+            c_raylib_UnloadModel
+        ]("_UnloadModel")
+        self._get_model_bounding_box = raylib_bindings_internal.get_function[
+            c_raylib_GetModelBoundingBox
+        ]("_GetModelBoundingBox")
 
         # Model drawing functions
-        self._draw_model = raylib_bindings_internal.get_function[c_raylib_DrawModel]("_DrawModel")
-        self._draw_model_ex = raylib_bindings_internal.get_function[c_raylib_DrawModelEx]("_DrawModelEx")
-        self._draw_model_wires = raylib_bindings_internal.get_function[c_raylib_DrawModelWires]("_DrawModelWires")
-        self._draw_model_wires_ex = raylib_bindings_internal.get_function[c_raylib_DrawModelWiresEx]("_DrawModelWiresEx")
-        self._draw_bounding_box = raylib_bindings_internal.get_function[c_raylib_DrawBoundingBox]("_DrawBoundingBox")
-        self._draw_billboard = raylib_bindings_internal.get_function[c_raylib_DrawBillboard]("_DrawBillboard")
-        self._draw_billboard_rec = raylib_bindings_internal.get_function[c_raylib_DrawBillboardRec]("_DrawBillboardRec")
-        self._draw_billboard_pro = raylib_bindings_internal.get_function[c_raylib_DrawBillboardPro]("_DrawBillboardPro")
+        self._draw_model = raylib_bindings_internal.get_function[
+            c_raylib_DrawModel
+        ]("_DrawModel")
+        self._draw_model_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawModelEx
+        ]("_DrawModelEx")
+        self._draw_model_wires = raylib_bindings_internal.get_function[
+            c_raylib_DrawModelWires
+        ]("_DrawModelWires")
+        self._draw_model_wires_ex = raylib_bindings_internal.get_function[
+            c_raylib_DrawModelWiresEx
+        ]("_DrawModelWiresEx")
+        self._draw_bounding_box = raylib_bindings_internal.get_function[
+            c_raylib_DrawBoundingBox
+        ]("_DrawBoundingBox")
+        self._draw_billboard = raylib_bindings_internal.get_function[
+            c_raylib_DrawBillboard
+        ]("_DrawBillboard")
+        self._draw_billboard_rec = raylib_bindings_internal.get_function[
+            c_raylib_DrawBillboardRec
+        ]("_DrawBillboardRec")
+        self._draw_billboard_pro = raylib_bindings_internal.get_function[
+            c_raylib_DrawBillboardPro
+        ]("_DrawBillboardPro")
 
         # Mesh management functions
-        self._upload_mesh = raylib_internal.get_function[c_raylib_UploadMesh]("UploadMesh")
-        self._update_mesh_buffer = raylib_bindings_internal.get_function[c_raylib_UpdateMeshBuffer]("_UpdateMeshBuffer")
-        self._unload_mesh = raylib_internal.get_function[c_raylib_UnloadMesh]("UnloadMesh")
-        self._draw_mesh = raylib_bindings_internal.get_function[c_raylib_DrawMesh]("_DrawMesh")
-        self._draw_mesh_instanced = raylib_bindings_internal.get_function[c_raylib_DrawMeshInstanced]("_DrawMeshInstanced")
-        self._export_mesh = raylib_bindings_internal.get_function[c_raylib_ExportMesh]("_ExportMesh")
-        self._get_mesh_bounding_box = raylib_bindings_internal.get_function[c_raylib_GetMeshBoundingBox]("_GetMeshBoundingBox")
-        self._gen_mesh_tangents = raylib_bindings_internal.get_function[c_raylib_GenMeshTangents]("_GenMeshTangents")
-        
+        self._upload_mesh = raylib_internal.get_function[c_raylib_UploadMesh](
+            "UploadMesh"
+        )
+        self._update_mesh_buffer = raylib_bindings_internal.get_function[
+            c_raylib_UpdateMeshBuffer
+        ]("_UpdateMeshBuffer")
+        self._unload_mesh = raylib_internal.get_function[c_raylib_UnloadMesh](
+            "UnloadMesh"
+        )
+        self._draw_mesh = raylib_bindings_internal.get_function[
+            c_raylib_DrawMesh
+        ]("_DrawMesh")
+        self._draw_mesh_instanced = raylib_bindings_internal.get_function[
+            c_raylib_DrawMeshInstanced
+        ]("_DrawMeshInstanced")
+        self._export_mesh = raylib_bindings_internal.get_function[
+            c_raylib_ExportMesh
+        ]("_ExportMesh")
+        self._get_mesh_bounding_box = raylib_bindings_internal.get_function[
+            c_raylib_GetMeshBoundingBox
+        ]("_GetMeshBoundingBox")
+        self._gen_mesh_tangents = raylib_bindings_internal.get_function[
+            c_raylib_GenMeshTangents
+        ]("_GenMeshTangents")
+
         # Mesh generation functions
-        self._gen_mesh_poly = raylib_internal.get_function[c_raylib_GenMeshPoly]("GenMeshPoly")
-        self._gen_mesh_plane = raylib_internal.get_function[c_raylib_GenMeshPlane]("GenMeshPlane")
-        self._gen_mesh_cube = raylib_internal.get_function[c_raylib_GenMeshCube]("GenMeshCube")
-        self._gen_mesh_sphere = raylib_internal.get_function[c_raylib_GenMeshSphere]("GenMeshSphere")
-        self._gen_mesh_hemi_sphere = raylib_internal.get_function[c_raylib_GenMeshHemiSphere]("GenMeshHemiSphere")
-        self._gen_mesh_cylinder = raylib_internal.get_function[c_raylib_GenMeshCylinder]("GenMeshCylinder")
-        self._gen_mesh_cone = raylib_internal.get_function[c_raylib_GenMeshCone]("GenMeshCone")
-        self._gen_mesh_torus = raylib_internal.get_function[c_raylib_GenMeshTorus]("GenMeshTorus")
-        self._gen_mesh_knot = raylib_internal.get_function[c_raylib_GenMeshKnot]("GenMeshKnot")
-        self._gen_mesh_heightmap = raylib_bindings_internal.get_function[c_raylib_GenMeshHeightmap]("_GenMeshHeightmap")
-        self._gen_mesh_cubicmap = raylib_bindings_internal.get_function[c_raylib_GenMeshCubicmap]("_GenMeshCubicmap")
+        self._gen_mesh_poly = raylib_internal.get_function[
+            c_raylib_GenMeshPoly
+        ]("GenMeshPoly")
+        self._gen_mesh_plane = raylib_internal.get_function[
+            c_raylib_GenMeshPlane
+        ]("GenMeshPlane")
+        self._gen_mesh_cube = raylib_internal.get_function[
+            c_raylib_GenMeshCube
+        ]("GenMeshCube")
+        self._gen_mesh_sphere = raylib_internal.get_function[
+            c_raylib_GenMeshSphere
+        ]("GenMeshSphere")
+        self._gen_mesh_hemi_sphere = raylib_internal.get_function[
+            c_raylib_GenMeshHemiSphere
+        ]("GenMeshHemiSphere")
+        self._gen_mesh_cylinder = raylib_internal.get_function[
+            c_raylib_GenMeshCylinder
+        ]("GenMeshCylinder")
+        self._gen_mesh_cone = raylib_internal.get_function[
+            c_raylib_GenMeshCone
+        ]("GenMeshCone")
+        self._gen_mesh_torus = raylib_internal.get_function[
+            c_raylib_GenMeshTorus
+        ]("GenMeshTorus")
+        self._gen_mesh_knot = raylib_internal.get_function[
+            c_raylib_GenMeshKnot
+        ]("GenMeshKnot")
+        self._gen_mesh_heightmap = raylib_bindings_internal.get_function[
+            c_raylib_GenMeshHeightmap
+        ]("_GenMeshHeightmap")
+        self._gen_mesh_cubicmap = raylib_bindings_internal.get_function[
+            c_raylib_GenMeshCubicmap
+        ]("_GenMeshCubicmap")
 
         # Material loading/unloading functions
-        self._load_materials = raylib_bindings_internal.get_function[c_raylib_LoadMaterials]("_LoadMaterials")
-        self._load_material_default = raylib_bindings_internal.get_function[c_raylib_LoadMaterialDefault]("_LoadMaterialDefault")
-        self._is_material_ready = raylib_bindings_internal.get_function[c_raylib_IsMaterialReady]("_IsMaterialReady")
-        self._unload_material = raylib_bindings_internal.get_function[c_raylib_UnloadMaterial]("_UnloadMaterial")
-        self._set_material_texture = raylib_bindings_internal.get_function[c_raylib_SetMaterialTexture]("_SetMaterialTexture")
-        self._set_model_mesh_material = raylib_bindings_internal.get_function[c_raylib_SetModelMeshMaterial]("_SetModelMeshMaterial")
+        self._load_materials = raylib_bindings_internal.get_function[
+            c_raylib_LoadMaterials
+        ]("_LoadMaterials")
+        self._load_material_default = raylib_bindings_internal.get_function[
+            c_raylib_LoadMaterialDefault
+        ]("_LoadMaterialDefault")
+        self._is_material_ready = raylib_bindings_internal.get_function[
+            c_raylib_IsMaterialReady
+        ]("_IsMaterialReady")
+        self._unload_material = raylib_bindings_internal.get_function[
+            c_raylib_UnloadMaterial
+        ]("_UnloadMaterial")
+        self._set_material_texture = raylib_bindings_internal.get_function[
+            c_raylib_SetMaterialTexture
+        ]("_SetMaterialTexture")
+        self._set_model_mesh_material = raylib_bindings_internal.get_function[
+            c_raylib_SetModelMeshMaterial
+        ]("_SetModelMeshMaterial")
 
         # Model animations loading/unloading functions
-        self._load_model_animations = raylib_internal.get_function[c_raylib_LoadModelAnimations]("LoadModelAnimations")
-        self._update_model_animation = raylib_bindings_internal.get_function[c_raylib_UpdateModelAnimation]("_UpdateModelAnimation")
-        self._unload_model_animation = raylib_bindings_internal.get_function[c_raylib_UnloadModelAnimation]("_UnloadModelAnimation")
-        self._unload_model_animations = raylib_bindings_internal.get_function[c_raylib_UnloadModelAnimations]("_UnloadModelAnimations")
-        self._is_model_animation_valid = raylib_bindings_internal.get_function[c_raylib_IsModelAnimationValid]("_IsModelAnimationValid")
+        self._load_model_animations = raylib_internal.get_function[
+            c_raylib_LoadModelAnimations
+        ]("LoadModelAnimations")
+        self._update_model_animation = raylib_bindings_internal.get_function[
+            c_raylib_UpdateModelAnimation
+        ]("_UpdateModelAnimation")
+        self._unload_model_animation = raylib_bindings_internal.get_function[
+            c_raylib_UnloadModelAnimation
+        ]("_UnloadModelAnimation")
+        self._unload_model_animations = raylib_bindings_internal.get_function[
+            c_raylib_UnloadModelAnimations
+        ]("_UnloadModelAnimations")
+        self._is_model_animation_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsModelAnimationValid
+        ]("_IsModelAnimationValid")
 
         # Collision detection functions
-        self._check_collision_spheres = raylib_bindings_internal.get_function[c_raylib_CheckCollisionSpheres]("_CheckCollisionSpheres")
-        self._check_collision_boxes = raylib_bindings_internal.get_function[c_raylib_CheckCollisionBoxes]("_CheckCollisionBoxes")
-        self._check_collision_box_sphere = raylib_bindings_internal.get_function[c_raylib_CheckCollisionBoxSphere]("_CheckCollisionBoxSphere")
-        self._get_ray_collision_sphere = raylib_bindings_internal.get_function[c_raylib_GetRayCollisionSphere]("_GetRayCollisionSphere")
-        self._get_ray_collision_box = raylib_bindings_internal.get_function[c_raylib_GetRayCollisionBox]("_GetRayCollisionBox")
-        self._get_ray_collision_mesh = raylib_bindings_internal.get_function[c_raylib_GetRayCollisionMesh]("_GetRayCollisionMesh")
-        self._get_ray_collision_triangle = raylib_bindings_internal.get_function[c_raylib_GetRayCollisionTriangle]("_GetRayCollisionTriangle")
-        self._get_ray_collision_quad = raylib_bindings_internal.get_function[c_raylib_GetRayCollisionQuad]("_GetRayCollisionQuad")
+        self._check_collision_spheres = raylib_bindings_internal.get_function[
+            c_raylib_CheckCollisionSpheres
+        ]("_CheckCollisionSpheres")
+        self._check_collision_boxes = raylib_bindings_internal.get_function[
+            c_raylib_CheckCollisionBoxes
+        ]("_CheckCollisionBoxes")
+        self._check_collision_box_sphere = (
+            raylib_bindings_internal.get_function[
+                c_raylib_CheckCollisionBoxSphere
+            ]("_CheckCollisionBoxSphere")
+        )
+        self._get_ray_collision_sphere = raylib_bindings_internal.get_function[
+            c_raylib_GetRayCollisionSphere
+        ]("_GetRayCollisionSphere")
+        self._get_ray_collision_box = raylib_bindings_internal.get_function[
+            c_raylib_GetRayCollisionBox
+        ]("_GetRayCollisionBox")
+        self._get_ray_collision_mesh = raylib_bindings_internal.get_function[
+            c_raylib_GetRayCollisionMesh
+        ]("_GetRayCollisionMesh")
+        self._get_ray_collision_triangle = (
+            raylib_bindings_internal.get_function[
+                c_raylib_GetRayCollisionTriangle
+            ]("_GetRayCollisionTriangle")
+        )
+        self._get_ray_collision_quad = raylib_bindings_internal.get_function[
+            c_raylib_GetRayCollisionQuad
+        ]("_GetRayCollisionQuad")
 
     @always_inline
-    fn draw_line_3d(self, startPos: UnsafePointer[Vector3], endPos: UnsafePointer[Vector3], color: UnsafePointer[Color]):
+    fn draw_line_3d(
+        self,
+        startPos: UnsafePointer[Vector3],
+        endPos: UnsafePointer[Vector3],
+        color: UnsafePointer[Color],
+    ):
+        """Draws a line in 3D space."""
         self._draw_line_3d(startPos, endPos, color)
 
     @always_inline
-    fn draw_point_3d(self, position: UnsafePointer[Vector3], color: UnsafePointer[Color]):
+    fn draw_point_3d(
+        self, position: UnsafePointer[Vector3], color: UnsafePointer[Color]
+    ):
+        """Draws a point in 3D space."""
         self._draw_point_3d(position, color)
 
     @always_inline
@@ -519,6 +682,7 @@ struct RayLibModels:
         rotationAngle: Float32,
         color: UnsafePointer[Color],
     ):
+        """Draws a circle in 3D space."""
         self._draw_circle_3d(center, radius, rotationAxis, rotationAngle, color)
 
     @always_inline
@@ -529,12 +693,17 @@ struct RayLibModels:
         v3: UnsafePointer[Vector3],
         color: UnsafePointer[Color],
     ):
+        """Draws a triangle in 3D space."""
         self._draw_triangle_3d(v1, v2, v3, color)
 
     @always_inline
     fn draw_triangle_strip_3d(
-        self, points: UnsafePointer[Vector3], pointCount: Int32, color: UnsafePointer[Color]
+        self,
+        points: UnsafePointer[Vector3],
+        pointCount: Int32,
+        color: UnsafePointer[Color],
     ):
+        """Draws a triangle strip in 3D space."""
         self._draw_triangle_strip_3d(points, pointCount, color)
 
     @always_inline
@@ -546,8 +715,9 @@ struct RayLibModels:
         length: Float32,
         color: UnsafePointer[Color],
     ):
+        """Draws a cube."""
         self._draw_cube(position, width, height, length, color)
-    
+
     @always_inline
     fn draw_cube_v(
         self,
@@ -555,6 +725,7 @@ struct RayLibModels:
         size: UnsafePointer[Vector3],
         color: UnsafePointer[Color],
     ):
+        """Draws a cube with a custom size."""
         self._draw_cube_v(position, size, color)
 
     @always_inline
@@ -566,6 +737,7 @@ struct RayLibModels:
         length: Float32,
         color: UnsafePointer[Color],
     ):
+        """Draws the wireframe of a cube."""
         self._draw_cube_wires(position, width, height, length, color)
 
     @always_inline
@@ -575,12 +747,17 @@ struct RayLibModels:
         size: UnsafePointer[Vector3],
         color: UnsafePointer[Color],
     ):
+        """Draws the wireframe of a cube with a custom size."""
         self._draw_cube_wires_v(position, size, color)
 
     @always_inline
     fn draw_sphere(
-        self, center_pos: UnsafePointer[Vector3], radius: Float32, color: UnsafePointer[Color]
+        self,
+        center_pos: UnsafePointer[Vector3],
+        radius: Float32,
+        color: UnsafePointer[Color],
     ):
+        """Draws a sphere."""
         self._draw_sphere(center_pos, radius, color)
 
     @always_inline
@@ -592,6 +769,7 @@ struct RayLibModels:
         slices: Int32,
         color: UnsafePointer[Color],
     ):
+        """Draws a sphere with extended parameters."""
         self._draw_sphere_ex(center_pos, radius, rings, slices, color)
 
     @always_inline
@@ -603,8 +781,9 @@ struct RayLibModels:
         slices: Int32,
         color: UnsafePointer[Color],
     ):
+        """Draws the wireframe of a sphere."""
         self._draw_sphere_wires(center_pos, radius, rings, slices, color)
-    
+
     @always_inline
     fn draw_cylinder(
         self,
@@ -615,7 +794,10 @@ struct RayLibModels:
         slices: Int32,
         color: UnsafePointer[Color],
     ):
-        self._draw_cylinder(position, radius_top, radius_bottom, height, slices, color)
+        """Draws a cylinder."""
+        self._draw_cylinder(
+            position, radius_top, radius_bottom, height, slices, color
+        )
 
     @always_inline
     fn draw_cylinder_ex(
@@ -627,7 +809,10 @@ struct RayLibModels:
         sides: Int32,
         color: UnsafePointer[Color],
     ):
-        self._draw_cylinder_ex(start_pos, end_pos, start_radius, end_radius, sides, color)
+        """Draws a cylinder with extended parameters."""
+        self._draw_cylinder_ex(
+            start_pos, end_pos, start_radius, end_radius, sides, color
+        )
 
     @always_inline
     fn draw_cylinder_wires(
@@ -639,7 +824,10 @@ struct RayLibModels:
         slices: Int32,
         color: UnsafePointer[Color],
     ):
-        self._draw_cylinder_wires(position, radius_top, radius_bottom, height, slices, color)
+        """Draws the wireframe of a cylinder."""
+        self._draw_cylinder_wires(
+            position, radius_top, radius_bottom, height, slices, color
+        )
 
     @always_inline
     fn draw_cylinder_wires_ex(
@@ -651,7 +839,10 @@ struct RayLibModels:
         sides: Int32,
         color: UnsafePointer[Color],
     ):
-        self._draw_cylinder_wires_ex(start_pos, end_pos, start_radius, end_radius, sides, color)
+        """Draws the wireframe of a cylinder with extended parameters."""
+        self._draw_cylinder_wires_ex(
+            start_pos, end_pos, start_radius, end_radius, sides, color
+        )
 
     @always_inline
     fn draw_capsule(
@@ -663,6 +854,7 @@ struct RayLibModels:
         rings: Int32,
         color: UnsafePointer[Color],
     ):
+        """Draws a capsule."""
         self._draw_capsule(start_pos, end_pos, radius, slices, rings, color)
 
     @always_inline
@@ -675,7 +867,10 @@ struct RayLibModels:
         rings: Int32,
         color: UnsafePointer[Color],
     ):
-        self._draw_capsule_wires(start_pos, end_pos, radius, slices, rings, color)
+        """Draws the wireframe of a capsule."""
+        self._draw_capsule_wires(
+            start_pos, end_pos, radius, slices, rings, color
+        )
 
     @always_inline
     fn draw_plane(
@@ -684,34 +879,42 @@ struct RayLibModels:
         size: UnsafePointer[Vector2],
         color: UnsafePointer[Color],
     ):
+        """Draws a plane."""
         self._draw_plane(center_pos, size, color)
 
     @always_inline
     fn draw_ray(self, ray: UnsafePointer[Ray], color: UnsafePointer[Color]):
+        """Draws a ray."""
         self._draw_ray(ray, color)
 
     @always_inline
     fn draw_grid(self, slices: Int32, spacing: Float32):
+        """Draws a grid."""
         self._draw_grid(slices, spacing)
 
     @always_inline
     fn load_model(self, file_name: UnsafePointer[Int8]) -> Model:
+        """Loads a model from a file."""
         return self._load_model(file_name)
-    
+
     @always_inline
     fn load_model_from_mesh(self, mesh: UnsafePointer[Mesh]) -> Model:
+        """Loads a model from a mesh."""
         return self._load_model_from_mesh(mesh)
 
     @always_inline
     fn unload_model(self, model: UnsafePointer[Model]):
+        """Unloads a model."""
         self._unload_model(model)
 
     @always_inline
     fn is_model_ready(self, model: UnsafePointer[Model]) -> Bool:
+        """Checks if a model is ready to be used."""
         return self._is_model_ready(model)
 
     @always_inline
     fn get_model_bounding_box(self, model: UnsafePointer[Model]) -> BoundingBox:
+        """Gets the bounding box of a model."""
         return self._get_model_bounding_box(model)
 
     @always_inline
@@ -722,6 +925,7 @@ struct RayLibModels:
         scale: Float32,
         tint: UnsafePointer[Color],
     ):
+        """Draws a model."""
         self._draw_model(model, position, scale, tint)
 
     @always_inline
@@ -734,7 +938,10 @@ struct RayLibModels:
         scale: UnsafePointer[Vector3],
         tint: UnsafePointer[Color],
     ):
-        self._draw_model_ex(model, position, rotation_axis, rotation_angle, scale, tint)
+        """Draws a model with extended parameters."""
+        self._draw_model_ex(
+            model, position, rotation_axis, rotation_angle, scale, tint
+        )
 
     @always_inline
     fn draw_model_wires(
@@ -744,8 +951,9 @@ struct RayLibModels:
         scale: Float32,
         tint: UnsafePointer[Color],
     ):
+        """Draws the wireframe of a model."""
         self._draw_model_wires(model, position, scale, tint)
-    
+
     @always_inline
     fn draw_model_wires_ex(
         self,
@@ -756,12 +964,18 @@ struct RayLibModels:
         scale: UnsafePointer[Vector3],
         tint: UnsafePointer[Color],
     ):
-        self._draw_model_wires_ex(model, position, rotation_axis, rotation_angle, scale, tint)
+        """Draws the wireframe of a model with extended parameters."""
+        self._draw_model_wires_ex(
+            model, position, rotation_axis, rotation_angle, scale, tint
+        )
 
     @always_inline
-    fn draw_bounding_box(self, box: UnsafePointer[BoundingBox], color: UnsafePointer[Color]):
+    fn draw_bounding_box(
+        self, box: UnsafePointer[BoundingBox], color: UnsafePointer[Color]
+    ):
+        """Draws a bounding box."""
         self._draw_bounding_box(box, color)
-    
+
     @always_inline
     fn draw_billboard(
         self,
@@ -771,6 +985,7 @@ struct RayLibModels:
         size: Float32,
         tint: UnsafePointer[Color],
     ):
+        """Draws a billboard."""
         self._draw_billboard(camera, texture, position, size, tint)
 
     @always_inline
@@ -783,6 +998,7 @@ struct RayLibModels:
         size: UnsafePointer[Vector2],
         tint: UnsafePointer[Color],
     ):
+        """Draws a billboard with a source rectangle."""
         self._draw_billboard_rec(camera, texture, source, position, size, tint)
 
     @always_inline
@@ -798,10 +1014,14 @@ struct RayLibModels:
         rotation: Float32,
         tint: UnsafePointer[Color],
     ):
-        self._draw_billboard_pro(camera, texture, source, position, up, size, origin, rotation, tint)
+        """Draws a billboard with extended parameters."""
+        self._draw_billboard_pro(
+            camera, texture, source, position, up, size, origin, rotation, tint
+        )
 
     @always_inline
     fn upload_mesh(self, mesh: UnsafePointer[Mesh], dynamic: Bool):
+        """Uploads mesh data to GPU memory."""
         self._upload_mesh(mesh, dynamic)
 
     @always_inline
@@ -813,14 +1033,17 @@ struct RayLibModels:
         data_size: Int32,
         offset: Int32,
     ):
+        """Updates a mesh buffer with new data."""
         self._update_mesh_buffer(mesh, index, data, data_size, offset)
 
     @always_inline
     fn unload_mesh(self, mesh: Mesh):
+        """Unloads a mesh."""
         self._unload_mesh(mesh)
 
     @always_inline
     fn draw_mesh(self, mesh: Mesh, material: Material, transform: Matrix):
+        """Draws a mesh."""
         self._draw_mesh(mesh, material, transform)
 
     @always_inline
@@ -831,140 +1054,171 @@ struct RayLibModels:
         transforms: UnsafePointer[Matrix],
         instances: Int32,
     ):
+        """Draws multiple instances of a mesh."""
         self._draw_mesh_instanced(mesh, material, transforms, instances)
 
     @always_inline
     fn export_mesh(self, mesh: Mesh, file_name: UnsafePointer[Int8]) -> Bool:
+        """Exports a mesh to a file."""
         return self._export_mesh(mesh, file_name)
 
     @always_inline
     fn get_mesh_bounding_box(self, mesh: Mesh) -> BoundingBox:
+        """Gets the bounding box of a mesh."""
         return self._get_mesh_bounding_box(mesh)
 
     @always_inline
     fn gen_mesh_tangents(self, mesh: UnsafePointer[Mesh]):
+        """Generates mesh tangents."""
         self._gen_mesh_tangents(mesh)
 
     @always_inline
     fn gen_mesh_poly(self, sides: Int32, radius: Float32) -> Mesh:
+        """Generates a polygon mesh."""
         return self._gen_mesh_poly(sides, radius)
 
     @always_inline
     fn gen_mesh_plane(
         self, width: Float32, length: Float32, res_x: Int32, res_z: Int32
     ) -> Mesh:
+        """Generates a plane mesh."""
         return self._gen_mesh_plane(width, length, res_x, res_z)
-    
+
     @always_inline
     fn gen_mesh_cube(
         self, width: Float32, height: Float32, length: Float32
     ) -> Mesh:
+        """Generates a cube mesh."""
         return self._gen_mesh_cube(width, height, length)
 
     @always_inline
     fn gen_mesh_sphere(
         self, radius: Float32, rings: Int32, slices: Int32
     ) -> Mesh:
+        """Generates a sphere mesh."""
         return self._gen_mesh_sphere(radius, rings, slices)
 
     @always_inline
     fn gen_mesh_hemi_sphere(
         self, radius: Float32, rings: Int32, slices: Int32
     ) -> Mesh:
+        """Generates a hemisphere sphere mesh."""
         return self._gen_mesh_hemi_sphere(radius, rings, slices)
-    
+
     @always_inline
     fn gen_mesh_cylinder(
         self, radius: Float32, height: Float32, slices: Int32
     ) -> Mesh:
+        """Generates a cylinder mesh."""
         return self._gen_mesh_cylinder(radius, height, slices)
-    
+
     @always_inline
     fn gen_mesh_cone(
         self, radius: Float32, height: Float32, slices: Int32
     ) -> Mesh:
+        """Generates a cone mesh."""
         return self._gen_mesh_cone(radius, height, slices)
 
     @always_inline
     fn gen_mesh_torus(
         self, radius: Float32, size: Float32, rad_seg: Int32, sides: Int32
     ) -> Mesh:
+        """Generates a torus mesh."""
         return self._gen_mesh_torus(radius, size, rad_seg, sides)
 
     @always_inline
     fn gen_mesh_knot(
         self, radius: Float32, size: Float32, rad_seg: Int32, sides: Int32
     ) -> Mesh:
+        """Generates a knot mesh."""
         return self._gen_mesh_knot(radius, size, rad_seg, sides)
 
     @always_inline
     fn gen_mesh_heightmap(
         self, heightmap: UnsafePointer[Image], size: UnsafePointer[Vector3]
     ) -> Mesh:
+        """Generates a mesh from a heightmap image."""
         return self._gen_mesh_heightmap(heightmap, size)
 
     @always_inline
     fn gen_mesh_cubicmap(
         self, cubicmap: UnsafePointer[Image], cube_size: UnsafePointer[Vector3]
     ) -> Mesh:
+        """Generates a mesh from a cubicmap image."""
         return self._gen_mesh_cubicmap(cubicmap, cube_size)
 
     @always_inline
     fn load_materials(
-        self, file_name: UnsafePointer[Int8], material_count: UnsafePointer[Int32]
+        self,
+        file_name: UnsafePointer[Int8],
+        material_count: UnsafePointer[Int32],
     ) -> UnsafePointer[Material]:
+        """Loads materials from a file."""
         return self._load_materials(file_name, material_count)
-    
+
     @always_inline
     fn load_material_default(self) -> Material:
+        """Loads the default material."""
         return self._load_material_default()
 
     @always_inline
     fn is_material_ready(self, material: Material) -> Bool:
+        """Checks if a material is ready to be used."""
         return self._is_material_ready(material)
 
     @always_inline
     fn unload_material(self, material: Material):
+        """Unloads a material."""
         self._unload_material(material)
 
     @always_inline
     fn set_material_texture(
-        self, material: UnsafePointer[Material], map_type: Int32, texture: UnsafePointer[Texture2D]
+        self,
+        material: UnsafePointer[Material],
+        map_type: Int32,
+        texture: UnsafePointer[Texture2D],
     ):
+        """Sets a texture for a material."""
         self._set_material_texture(material, map_type, texture)
 
     @always_inline
     fn set_model_mesh_material(
         self, model: UnsafePointer[Model], mesh_id: Int32, material_id: Int32
     ):
+        """Sets the material for a model mesh."""
         self._set_model_mesh_material(model, mesh_id, material_id)
 
     @always_inline
     fn load_model_animations(
         self, file_name: UnsafePointer[Int8], anim_count: UnsafePointer[Int32]
     ) -> UnsafePointer[ModelAnimation]:
+        """Loads model animations from a file."""
         return self._load_model_animations(file_name, anim_count)
-    
+
     @always_inline
     fn update_model_animation(
         self, model: Model, anim: ModelAnimation, frame: Int32
     ):
+        """Updates a model animation."""
         self._update_model_animation(model, anim, frame)
 
     @always_inline
     fn unload_model_animation(self, anim: ModelAnimation):
+        """Unloads a model animation."""
         self._unload_model_animation(anim)
-    
+
     @always_inline
     fn unload_model_animations(
         self, animations: UnsafePointer[ModelAnimation], anim_count: Int32
     ):
+        """Unloads multiple model animations."""
         self._unload_model_animations(animations, anim_count)
-    
+
     @always_inline
     fn is_model_animation_valid(
         self, model: Model, anim: ModelAnimation
     ) -> Bool:
+        """Checks if a model animation is valid."""
         return self._is_model_animation_valid(model, anim)
 
     @always_inline
@@ -975,14 +1229,16 @@ struct RayLibModels:
         center2: UnsafePointer[Vector3],
         radius2: Float32,
     ) -> Bool:
+        """Checks collision between two spheres."""
         return self._check_collision_spheres(center1, radius1, center2, radius2)
 
     @always_inline
     fn check_collision_boxes(
         self, box1: UnsafePointer[BoundingBox], box2: UnsafePointer[BoundingBox]
     ) -> Bool:
+        """Checks collision between two bounding boxes."""
         return self._check_collision_boxes(box1, box2)
-    
+
     @always_inline
     fn check_collision_box_sphere(
         self,
@@ -990,24 +1246,28 @@ struct RayLibModels:
         center: UnsafePointer[Vector3],
         radius: Float32,
     ) -> Bool:
+        """Checks collision between a box and a sphere."""
         return self._check_collision_box_sphere(box, center, radius)
 
     @always_inline
     fn get_ray_collision_sphere(
         self, ray: Ray, center: UnsafePointer[Vector3], radius: Float32
     ) -> RayCollision:
+        """Gets the collision between a ray and a sphere."""
         return self._get_ray_collision_sphere(ray, center, radius)
 
     @always_inline
     fn get_ray_collision_box(
         self, ray: Ray, box: UnsafePointer[BoundingBox]
     ) -> RayCollision:
+        """Gets the collision between a ray and a box."""
         return self._get_ray_collision_box(ray, box)
-    
+
     @always_inline
     fn get_ray_collision_mesh(
         self, ray: Ray, mesh: Mesh, transform: Matrix
     ) -> RayCollision:
+        """Gets the collision between a ray and a mesh."""
         return self._get_ray_collision_mesh(ray, mesh, transform)
 
     @always_inline
@@ -1018,6 +1278,7 @@ struct RayLibModels:
         p2: UnsafePointer[Vector3],
         p3: UnsafePointer[Vector3],
     ) -> RayCollision:
+        """Gets the collision between a ray and a triangle."""
         return self._get_ray_collision_triangle(ray, p1, p2, p3)
 
     @always_inline
@@ -1029,15 +1290,5 @@ struct RayLibModels:
         p3: UnsafePointer[Vector3],
         p4: UnsafePointer[Vector3],
     ) -> RayCollision:
+        """Gets the collision between a ray and a quad."""
         return self._get_ray_collision_quad(ray, p1, p2, p3, p4)
-
-    
-
-
-
-
-
-
-
-
-
