@@ -57,6 +57,8 @@ Rectangle _GetGlyphAtlasRec(Font *font, int codepoint) {
 const char *_TextFormat(const char *text, ...) {
     va_list args;
     va_start(args, text);
-    TextFormat(text, args);
+    const char *temp = TextFormat(text, args);
     va_end(args);
+
+    return temp;
 }
