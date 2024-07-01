@@ -29,6 +29,7 @@ add_library(raylib_bindings SHARED
     rtext_bindings.c
     rtextures_bindings.c
     rshapes_bindings.c
+    rmodels_bindings.c
 )
 
 # Include raylib header directory
@@ -38,7 +39,7 @@ target_include_directories(raylib_bindings PRIVATE ${RAYLIB_INCLUDE_DIR})
 target_link_libraries(raylib_bindings PRIVATE ${RAYLIB})
 
 set_target_properties(raylib_bindings PROPERTIES
-    PUBLIC_HEADER "rtext_bindings.h;rtextures_bindings.h;rshapes_bindings.h"
+    PUBLIC_HEADER "rtext_bindings.h;rtextures_bindings.h;rshapes_bindings.h;rmodels_bindings.h"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
     LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib
