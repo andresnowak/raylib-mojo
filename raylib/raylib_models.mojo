@@ -899,7 +899,7 @@ struct RayLibModels:
         slices: Int32,
         owned color: Color,
     ):
-        """Draws the wireframe of a cylinder."""
+        """Draw a cylinder/cone wires."""
         self._draw_cylinder_wires(
             UnsafePointer.address_of(position),
             radius_top,
@@ -919,7 +919,7 @@ struct RayLibModels:
         sides: Int32,
         owned color: Color,
     ):
-        """Draws the wireframe of a cylinder with extended parameters."""
+        """Draw a cylinder wires with base at startPos and top at endPos."""
         self._draw_cylinder_wires_ex(
             UnsafePointer.address_of(start_pos),
             UnsafePointer.address_of(end_pos),
@@ -959,7 +959,7 @@ struct RayLibModels:
         rings: Int32,
         owned color: Color,
     ):
-        """Draws the wireframe of a capsule."""
+        """Draw capsule wireframe with the center of its sphere caps at startPos and endPos."""
         self._draw_capsule_wires(
             UnsafePointer.address_of(start_pos),
             UnsafePointer.address_of(end_pos),
@@ -976,7 +976,7 @@ struct RayLibModels:
         owned size: Vector2,
         owned color: Color,
     ):
-        """Draws a plane."""
+        """Draws a plane XZ."""
         self._draw_plane(
             UnsafePointer.address_of(center_pos),
             UnsafePointer.address_of(size),
@@ -985,7 +985,7 @@ struct RayLibModels:
 
     @always_inline
     fn draw_ray(self, owned ray: Ray, owned color: Color):
-        """Draws a ray."""
+        """Draws a ray line."""
         self._draw_ray(
             UnsafePointer.address_of(ray),
             UnsafePointer.address_of(color),
@@ -997,22 +997,22 @@ struct RayLibModels:
         slices: Int32,
         spacing: Float32,
     ):
-        """Draws a grid."""
+        """Draws a grid centered at (0, 0, 0)."""
         self._draw_grid(slices, spacing)
 
     @always_inline
     fn load_model(self, owned file_name: String) -> Model:
-        """Loads a model from a file."""
+        """Loads a model from a file (meshes and materials)."""
         return self._load_model(file_name.unsafe_ptr())
 
     @always_inline
     fn load_model_from_mesh(self, owned mesh: Mesh) -> Model:
-        """Loads a model from a mesh."""
+        """Loads a model from a mesh (default material)."""
         return self._load_model_from_mesh(UnsafePointer.address_of(mesh))
 
     @always_inline
     fn unload_model(self, owned model: Model):
-        """Unloads a model."""
+        """Unloads a model (including meshes) from memory (RAM and/or VRAM)."""
         self._unload_model(UnsafePointer.address_of(model))
 
     @always_inline
@@ -1022,7 +1022,7 @@ struct RayLibModels:
 
     @always_inline
     fn get_model_bounding_box(self, owned model: Model) -> BoundingBox:
-        """Gets the bounding box of a model."""
+        """Compute model bounding box limits (considers all meshes)."""
         return self._get_model_bounding_box(UnsafePointer.address_of(model))
 
     @always_inline
@@ -1033,7 +1033,7 @@ struct RayLibModels:
         scale: Float32,
         tint: UnsafePointer[Color],
     ):
-        """Draws a model."""
+        """Draw a model (with texture if set)."""
         self._draw_model(model, position, scale, tint)
 
     @always_inline
@@ -1059,7 +1059,7 @@ struct RayLibModels:
         scale: Float32,
         tint: UnsafePointer[Color],
     ):
-        """Draws the wireframe of a model."""
+        """Draws the wireframe of a model (with textures if set)."""
         self._draw_model_wires(model, position, scale, tint)
 
     @always_inline
@@ -1081,7 +1081,7 @@ struct RayLibModels:
     fn draw_bounding_box(
         self, box: UnsafePointer[BoundingBox], color: UnsafePointer[Color]
     ):
-        """Draws a bounding box."""
+        """Draws a bounding box (wires)."""
         self._draw_bounding_box(box, color)
 
     @always_inline
@@ -1093,7 +1093,7 @@ struct RayLibModels:
         size: Float32,
         tint: UnsafePointer[Color],
     ):
-        """Draws a billboard."""
+        """Draws a billboard (texture)."""
         self._draw_billboard(camera, texture, position, size, tint)
 
     @always_inline
