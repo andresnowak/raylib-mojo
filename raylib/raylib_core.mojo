@@ -28,9 +28,9 @@ alias c_raylib_ToggleBorderlessWindowed = fn () -> None
 alias c_raylib_MaximizeWindow = fn () -> None
 alias c_raylib_MinimizeWindow = fn () -> None
 alias c_raylib_RestoreWindow = fn () -> None
-alias c_raylib_SetWindowIcon = fn (image: SYSTEM_SIZE) -> None
+alias c_raylib_SetWindowIcon = fn (image: UnsafePointer[Image]) -> None
 alias c_raylib_SetWindowIcons = fn (
-    icons: UnsafePointer[SYSTEM_SIZE], count: Int32
+    icons: UnsafePointer[Image], count: Int32
 ) -> None
 alias c_raylib_SetWindowTitle = fn (title: UnsafePointer[Int8]) -> None
 alias c_raylib_SetWindowPosition = fn (x: Int32, y: Int32) -> None
@@ -40,21 +40,21 @@ alias c_raylib_SetWindowMaxSize = fn (width: Int32, height: Int32) -> None
 alias c_raylib_SetWindowSize = fn (width: Int32, height: Int32) -> None
 alias c_raylib_SetWindowOpacity = fn (alpha: Float32) -> None
 alias c_raylib_SetWindowFocused = fn () -> None
-alias c_raylib_GetWindowHandle = fn () -> UnsafePointer[SYSTEM_SIZE]
+alias c_raylib_GetWindowHandle = fn () -> UnsafePointer[NoneType]
 alias c_raylib_GetScreenWidth = fn () -> Int32
 alias c_raylib_GetScreenHeight = fn () -> Int32
 alias c_raylib_GetRenderWidth = fn () -> Int32
 alias c_raylib_GetRenderHeight = fn () -> Int32
 alias c_raylib_GetMonitorCount = fn () -> Int32
 alias c_raylib_GetCurrentMonitor = fn () -> Int32
-alias c_raylib_GetMonitorPosition = fn (monitor: Int32) -> SYSTEM_SIZE
+alias c_raylib_GetMonitorPosition = fn (monitor: Int32) -> Vector2
 alias c_raylib_GetMonitorWidth = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorHeight = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorPhysicalWidth = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorPhysicalHeight = fn (monitor: Int32) -> Int32
 alias c_raylib_GetMonitorRefreshRate = fn (monitor: Int32) -> Int32
-alias c_raylib_GetWindowPosition = fn () -> SYSTEM_SIZE
-alias c_raylib_GetWindowScaleDPI = fn () -> SYSTEM_SIZE
+alias c_raylib_GetWindowPosition = fn () -> Vector2
+alias c_raylib_GetWindowScaleDPI = fn () -> Vector2
 alias c_raylib_GetMonitorName = fn (monitor: Int32) -> UnsafePointer[Int8]
 alias c_raylib_SetClipboardText = fn (text: UnsafePointer[Int8]) -> None
 alias c_raylib_GetClipboardText = fn () -> UnsafePointer[Int8]
@@ -72,16 +72,18 @@ alias c_raylib_IsCursorOnScreen = fn () -> Bool
 
 
 # Drawing-related functions
-alias c_raylib_ClearBackground = fn (color: SYSTEM_SIZE) -> None
+alias c_raylib_ClearBackground = fn (color: UnsafePointer[Color]) -> None
 alias c_raylib_BeginDrawing = fn () -> None
 alias c_raylib_EndDrawing = fn () -> None
-alias c_raylib_BeginMode2D = fn (camera: SYSTEM_SIZE) -> None
+alias c_raylib_BeginMode2D = fn (camera: UnsafePointer[Camera2D]) -> None
 alias c_raylib_EndMode2D = fn () -> None
-alias c_raylib_BeginMode3D = fn (camera: SYSTEM_SIZE) -> None
+alias c_raylib_BeginMode3D = fn (camera: UnsafePointer[Camera]) -> None
 alias c_raylib_EndMode3D = fn () -> None
-alias c_raylib_BeginTextureMode = fn (target: SYSTEM_SIZE) -> None
+alias c_raylib_BeginTextureMode = fn (
+    target: UnsafePointer[RenderTexture2D]
+) -> None
 alias c_raylib_EndTextureMode = fn () -> None
-alias c_raylib_BeginShaderMode = fn (shader: SYSTEM_SIZE) -> None
+alias c_raylib_BeginShaderMode = fn (shader: UnsafePointer[Shader]) -> None
 alias c_raylib_EndShaderMode = fn () -> None
 alias c_raylib_BeginBlendMode = fn (mode: Int32) -> None
 alias c_raylib_EndBlendMode = fn () -> None
@@ -89,69 +91,82 @@ alias c_raylib_BeginScissorMode = fn (
     x: Int32, y: Int32, width: Int32, height: Int32
 ) -> None
 alias c_raylib_EndScissorMode = fn () -> None
-alias c_raylib_BeginVrStereoMode = fn (config: SYSTEM_SIZE) -> None
+alias c_raylib_BeginVrStereoMode = fn (
+    config: UnsafePointer[VrStereoConfig]
+) -> None
 alias c_raylib_EndVrStereoMode = fn () -> None
 
 
 # VR stereo config functions for VR simulator
-alias c_raylib_LoadVrStereoConfig = fn (device: SYSTEM_SIZE) -> SYSTEM_SIZE
-alias c_raylib_UnloadVrStereoConfig = fn (config: SYSTEM_SIZE) -> None
+alias c_raylib_LoadVrStereoConfig = fn (
+    device: UnsafePointer[VrDeviceInfo]
+) -> VrStereoConfig
+alias c_raylib_UnloadVrStereoConfig = fn (
+    config: UnsafePointer[VrStereoConfig]
+) -> None
 
 
 # Shader management functions
 alias c_raylib_LoadShader = fn (
     vsFileName: UnsafePointer[Int8], fsFileName: UnsafePointer[Int8]
-) -> SYSTEM_SIZE
+) -> Shader
 alias c_raylib_LoadShaderFromMemory = fn (
     vsCode: UnsafePointer[Int8], fsCode: UnsafePointer[Int8]
-) -> SYSTEM_SIZE
-alias c_raylib_IsShaderReady = fn (shader: SYSTEM_SIZE) -> Bool
+) -> Shader
+alias c_raylib_IsShaderReady = fn (shader: UnsafePointer[Shader]) -> Bool
 alias c_raylib_GetShaderLocation = fn (
-    shader: SYSTEM_SIZE, uniformName: UnsafePointer[Int8]
+    shader: UnsafePointer[Shader], uniformName: UnsafePointer[Int8]
 ) -> Int32
 alias c_raylib_GetShaderLocationAttrib = fn (
-    shader: SYSTEM_SIZE, attribName: UnsafePointer[Int8]
+    shader: UnsafePointer[Shader], attribName: UnsafePointer[Int8]
 ) -> Int32
 alias c_raylib_SetShaderValue = fn (
-    shader: SYSTEM_SIZE,
+    shader: UnsafePointer[Shader],
     uniformLoc: Int32,
-    value: UnsafePointer[SYSTEM_SIZE],
+    value: UnsafePointer[NoneType],
     uniformType: Int32,
 ) -> None
 alias c_raylib_SetShaderValueV = fn (
-    shader: SYSTEM_SIZE,
+    shader: UnsafePointer[Shader],
     uniformLoc: Int32,
-    value: UnsafePointer[SYSTEM_SIZE],
+    value: UnsafePointer[NoneType],
     uniformType: Int32,
     count: Int32,
 ) -> None
 alias c_raylib_SetShaderValueMatrix = fn (
-    shader: SYSTEM_SIZE, uniformLoc: Int32, mat: SYSTEM_SIZE
+    shader: UnsafePointer[Shader], uniformLoc: Int32, mat: UnsafePointer[Matrix]
 ) -> None
 alias c_raylib_SetShaderValueTexture = fn (
-    shader: SYSTEM_SIZE, uniformLoc: Int32, texture: SYSTEM_SIZE
+    shader: UnsafePointer[Shader],
+    uniformLoc: Int32,
+    texture: UnsafePointer[Texture2D],
 ) -> None
-alias c_raylib_UnloadShader = fn (shader: SYSTEM_SIZE) -> None
+alias c_raylib_UnloadShader = fn (shader: UnsafePointer[Shader]) -> None
 
 
 # Screen-space-related functions
 alias c_raylib_GetMouseRay = fn (
-    mousePosition: SYSTEM_SIZE, camera: SYSTEM_SIZE
-) -> SYSTEM_SIZE
-alias c_raylib_GetCameraMatrix = fn (camera: SYSTEM_SIZE) -> SYSTEM_SIZE
-alias c_raylib_GetCameraMatrix2D = fn (camera: SYSTEM_SIZE) -> SYSTEM_SIZE
+    mousePosition: UnsafePointer[Vector2], camera: UnsafePointer[Camera]
+) -> Ray
+alias c_raylib_GetCameraMatrix = fn (camera: UnsafePointer[Camera]) -> Matrix
+alias c_raylib_GetCameraMatrix2D = fn (
+    camera: UnsafePointer[Camera2D]
+) -> Matrix
 alias c_raylib_GetWorldToScreen = fn (
-    position: SYSTEM_SIZE, camera: SYSTEM_SIZE
-) -> SYSTEM_SIZE
+    position: UnsafePointer[Vector3], camera: UnsafePointer[Camera]
+) -> Vector2
 alias c_raylib_GetScreenWorldToScreen2D = fn (
-    position: SYSTEM_SIZE, camera: SYSTEM_SIZE
-) -> SYSTEM_SIZE
+    position: UnsafePointer[Vector2], camera: UnsafePointer[Camera2D]
+) -> Vector2
 alias c_raylib_GetWorldToScreenEx = fn (
-    position: SYSTEM_SIZE, camera: SYSTEM_SIZE, width: Int32, height: Int32
-) -> SYSTEM_SIZE
+    position: UnsafePointer[Vector3],
+    camera: UnsafePointer[Camera],
+    width: Int32,
+    height: Int32,
+) -> Vector2
 alias c_raylib_GetWorldToScreen2D = fn (
-    position: SYSTEM_SIZE, camera: SYSTEM_SIZE
-) -> SYSTEM_SIZE
+    position: UnsafePointer[Vector2], camera: UnsafePointer[Camera2D]
+) -> Vector2
 
 # Timing-related functions
 alias c_raylib_SetTargetFPS = fn (fps: Int32) -> None
@@ -182,7 +197,9 @@ alias c_raylib_TakeScreenshot = fn (fileName: UnsafePointer[Int8]) -> None
 alias c_raylib_SetConfigFlags = fn (flags: UInt32) -> None
 alias c_raylib_OpenURL = fn (url: UnsafePointer[Int8]) -> None
 # Note: Following functions implemented in module [utils]
-alias c_raylib_TraceLog = fn (logType: Int32, text: UnsafePointer[Int8]) -> None # missing extras ...
+alias c_raylib_TraceLog = fn (
+    logType: Int32, text: UnsafePointer[Int8]
+) -> None  # missing extras ...
 alias c_raylib_SetTraceLogLevel = fn (logType: Int32) -> None
 alias c_raylib_MemAlloc = fn (size: UInt32) -> UnsafePointer[SYSTEM_SIZE]
 alias c_raylib_MemRealloc = fn (
@@ -190,9 +207,11 @@ alias c_raylib_MemRealloc = fn (
 ) -> UnsafePointer[SYSTEM_SIZE]
 alias c_raylib_MemFree = fn (ptr: UnsafePointer[SYSTEM_SIZE]) -> None
 
+# Set custom callbacks
+
 
 @value
-struct Raylib:
+struct RaylibCore:
     var _init_window: c_raylib_InitWindow
     var _close_window: c_raylib_CloseWindow
     var _window_should_close: c_raylib_WindowShouldClose
@@ -310,7 +329,11 @@ struct Raylib:
     var _mem_realloc: c_raylib_MemRealloc
     var _mem_free: c_raylib_MemFree
 
-    fn __init__(inout self, raylib_internal: DLHandle):
+    fn __init__(
+        inout self,
+        raylib_internal: DLHandle,
+        raylib_bindings_internal: DLHandle,
+    ):
         # window-related functions
         self._init_window = raylib_internal.get_function[c_raylib_InitWindow](
             "InitWindow"
@@ -366,9 +389,9 @@ struct Raylib:
         self._restore_window = raylib_internal.get_function[
             c_raylib_RestoreWindow
         ]("RestoreWindow")
-        self._set_window_icon = raylib_internal.get_function[
+        self._set_window_icon = raylib_bindings_internal.get_function[
             c_raylib_SetWindowIcon
-        ]("SetWindowIcon")
+        ]("_SetWindowIcon")
         self._set_window_icons = raylib_internal.get_function[
             c_raylib_SetWindowIcons
         ]("SetWindowIcons")
@@ -478,36 +501,36 @@ struct Raylib:
         ]("IsCursorOnScreen")
 
         # drawing-related functions
-        self._clear_background = raylib_internal.get_function[
+        self._clear_background = raylib_bindings_internal.get_function[
             c_raylib_ClearBackground
-        ]("ClearBackground")
+        ]("_ClearBackground")
         self._begin_drawing = raylib_internal.get_function[
             c_raylib_BeginDrawing
         ]("BeginDrawing")
         self._end_drawing = raylib_internal.get_function[c_raylib_EndDrawing](
             "EndDrawing"
         )
-        self._begin_mode2d = raylib_internal.get_function[c_raylib_BeginMode2D](
-            "BeginMode2D"
-        )
+        self._begin_mode2d = raylib_bindings_internal.get_function[
+            c_raylib_BeginMode2D
+        ]("_BeginMode2D")
         self._end_mode2d = raylib_internal.get_function[c_raylib_EndMode2D](
             "EndMode2D"
         )
-        self._begin_mode3d = raylib_internal.get_function[c_raylib_BeginMode3D](
-            "BeginMode3D"
-        )
+        self._begin_mode3d = raylib_bindings_internal.get_function[
+            c_raylib_BeginMode3D
+        ]("_BeginMode3D")
         self._end_mode3d = raylib_internal.get_function[c_raylib_EndMode3D](
             "EndMode3D"
         )
-        self._begin_texture_mode = raylib_internal.get_function[
+        self._begin_texture_mode = raylib_bindings_internal.get_function[
             c_raylib_BeginTextureMode
-        ]("BeginTextureMode")
+        ]("_BeginTextureMode")
         self._end_texture_mode = raylib_internal.get_function[
             c_raylib_EndTextureMode
         ]("EndTextureMode")
-        self._begin_shader_mode = raylib_internal.get_function[
+        self._begin_shader_mode = raylib_bindings_internal.get_function[
             c_raylib_BeginShaderMode
-        ]("BeginShaderMode")
+        ]("_BeginShaderMode")
         self._end_shader_mode = raylib_internal.get_function[
             c_raylib_EndShaderMode
         ]("EndShaderMode")
@@ -523,73 +546,79 @@ struct Raylib:
         self._end_scissor_mode = raylib_internal.get_function[
             c_raylib_EndScissorMode
         ]("EndScissorMode")
-        self._begin_vr_stereo_mode = raylib_internal.get_function[
+        self._begin_vr_stereo_mode = raylib_bindings_internal.get_function[
             c_raylib_BeginVrStereoMode
-        ]("BeginVrStereoMode")
+        ]("_BeginVrStereoMode")
         self._end_vr_stereo_mode = raylib_internal.get_function[
             c_raylib_EndVrStereoMode
         ]("EndVrStereoMode")
 
-        # shader management functions
-        self._load_vr_stereo_config = raylib_internal.get_function[
+        # VR stereo config functions for VR simulator
+        self._load_vr_stereo_config = raylib_bindings_internal.get_function[
             c_raylib_LoadVrStereoConfig
-        ]("LoadVrStereoConfig")
-        self._unload_vr_stereo_config = raylib_internal.get_function[
+        ]("_LoadVrStereoConfig")
+        self._unload_vr_stereo_config = raylib_bindings_internal.get_function[
             c_raylib_UnloadVrStereoConfig
-        ]("UnloadVrStereoConfig")
+        ]("_UnloadVrStereoConfig")
+
+        # Shader management functions
         self._load_shader = raylib_internal.get_function[c_raylib_LoadShader](
             "LoadShader"
         )
         self._load_shader_from_memory = raylib_internal.get_function[
             c_raylib_LoadShaderFromMemory
         ]("LoadShaderFromMemory")
-        self._is_shader_ready = raylib_internal.get_function[
+        self._is_shader_ready = raylib_bindings_internal.get_function[
             c_raylib_IsShaderReady
-        ]("IsShaderReady")
-        self._get_shader_location = raylib_internal.get_function[
+        ]("_IsShaderReady")
+        self._get_shader_location = raylib_bindings_internal.get_function[
             c_raylib_GetShaderLocation
-        ]("GetShaderLocation")
-        self._get_shader_location_attrib = raylib_internal.get_function[
-            c_raylib_GetShaderLocationAttrib
-        ]("GetShaderLocationAttrib")
-        self._set_shader_value = raylib_internal.get_function[
+        ]("_GetShaderLocation")
+        self._get_shader_location_attrib = (
+            raylib_bindings_internal.get_function[
+                c_raylib_GetShaderLocationAttrib
+            ]("_GetShaderLocationAttrib")
+        )
+        self._set_shader_value = raylib_bindings_internal.get_function[
             c_raylib_SetShaderValue
-        ]("SetShaderValue")
-        self._set_shader_value_v = raylib_internal.get_function[
+        ]("_SetShaderValue")
+        self._set_shader_value_v = raylib_bindings_internal.get_function[
             c_raylib_SetShaderValueV
-        ]("SetShaderValueV")
-        self._set_shader_value_matrix = raylib_internal.get_function[
+        ]("_SetShaderValueV")
+        self._set_shader_value_matrix = raylib_bindings_internal.get_function[
             c_raylib_SetShaderValueMatrix
-        ]("SetShaderValueMatrix")
-        self._set_shader_value_texture = raylib_internal.get_function[
+        ]("_SetShaderValueMatrix")
+        self._set_shader_value_texture = raylib_bindings_internal.get_function[
             c_raylib_SetShaderValueTexture
-        ]("SetShaderValueTexture")
-        self._unload_shader = raylib_internal.get_function[
+        ]("_SetShaderValueTexture")
+        self._unload_shader = raylib_bindings_internal.get_function[
             c_raylib_UnloadShader
-        ]("UnloadShader")
+        ]("_UnloadShader")
 
         # screen-space-related functions
-        self._get_mouse_ray = raylib_internal.get_function[
+        self._get_mouse_ray = raylib_bindings_internal.get_function[
             c_raylib_GetMouseRay
-        ]("GetMouseRay")
-        self._get_camera_matrix = raylib_internal.get_function[
+        ]("_GetMouseRay")
+        self._get_camera_matrix = raylib_bindings_internal.get_function[
             c_raylib_GetCameraMatrix
-        ]("GetCameraMatrix")
-        self._get_camera_matrix2d = raylib_internal.get_function[
+        ]("_GetCameraMatrix")
+        self._get_camera_matrix2d = raylib_bindings_internal.get_function[
             c_raylib_GetCameraMatrix2D
-        ]("GetCameraMatrix2D")
-        self._get_world_to_screen = raylib_internal.get_function[
+        ]("_GetCameraMatrix2D")
+        self._get_world_to_screen = raylib_bindings_internal.get_function[
             c_raylib_GetWorldToScreen
-        ]("GetWorldToScreen")
-        self._get_screen_world_to_screen2d = raylib_internal.get_function[
-            c_raylib_GetScreenWorldToScreen2D
-        ]("GetScreenWorldToScreen2D")
-        self._get_world_to_screen_ex = raylib_internal.get_function[
+        ]("_GetWorldToScreen")
+        self._get_screen_world_to_screen2d = (
+            raylib_bindings_internal.get_function[
+                c_raylib_GetScreenWorldToScreen2D
+            ]("_GetScreenWorldToScreen2D")
+        )
+        self._get_world_to_screen_ex = raylib_bindings_internal.get_function[
             c_raylib_GetWorldToScreenEx
-        ]("GetWorldToScreenEx")
-        self._get_world_to_screen2d = raylib_internal.get_function[
+        ]("_GetWorldToScreenEx")
+        self._get_world_to_screen2d = raylib_bindings_internal.get_function[
             c_raylib_GetWorldToScreen2D
-        ]("GetWorldToScreen2D")
+        ]("_GetWorldToScreen2D")
 
         # timing-related functions
         self._set_target_fps = raylib_internal.get_function[
@@ -730,13 +759,11 @@ struct Raylib:
 
     fn set_window_icon(self, owned image: Image):
         """Set icon for window (only PLATFORM_DESKTOP)."""
-        self._set_window_icon(
-            UnsafePointer.address_of(image).bitcast[SYSTEM_SIZE]()[0]
-        )
+        self._set_window_icon(UnsafePointer.address_of(image))
 
     fn set_window_icons(self, icons: UnsafePointer[Image], count: Int32):
         """Set icons for window (only PLATFORM_DESKTOP)."""
-        self._set_window_icons(icons.bitcast[SYSTEM_SIZE](), count)
+        self._set_window_icons(icons, count)
 
     fn set_window_title(self, title: String):
         """Set title for window (only PLATFORM_DESKTOP)."""
@@ -770,7 +797,7 @@ struct Raylib:
         """Set window focus flag (only PLATFORM_DESKTOP)."""
         self._set_window_focused()
 
-    fn get_window_handle(self) -> UnsafePointer[SYSTEM_SIZE]:
+    fn get_window_handle(self) -> UnsafePointer[NoneType]:
         """Get native window handle."""
         return self._get_window_handle()
 
@@ -881,9 +908,7 @@ struct Raylib:
 
     fn clear_background(self, owned color: Color):
         """Clear the background with a color."""
-        self._clear_background(
-            UnsafePointer.address_of(color).bitcast[SYSTEM_SIZE]()[0]
-        )
+        self._clear_background(UnsafePointer.address_of(color))
 
     fn begin_drawing(self):
         """Setup canvas (framebuffer) to start drawing."""
@@ -895,9 +920,7 @@ struct Raylib:
 
     fn begin_mode2d(self, owned camera: Camera2D):
         """Begin 2D mode with custom camera."""
-        self._begin_mode2d(
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[0]
-        )
+        self._begin_mode2d(UnsafePointer.address_of(camera))
 
     fn end_mode2d(self):
         """End 2D mode with custom camera."""
@@ -905,9 +928,7 @@ struct Raylib:
 
     fn begin_mode3d(self, owned camera: Camera3D):
         """Begin 3D mode with custom camera."""
-        self._begin_mode3d(
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[0]
-        )
+        self._begin_mode3d(UnsafePointer.address_of(camera))
 
     fn end_mode3d(self):
         """End 3D mode and return to default 2D mode."""
@@ -915,9 +936,7 @@ struct Raylib:
 
     fn begin_texture_mode(self, owned target: RenderTexture2D):
         """Begin texture drawing to render texture."""
-        self._begin_texture_mode(
-            UnsafePointer.address_of(target).bitcast[SYSTEM_SIZE]()[]
-        )
+        self._begin_texture_mode(UnsafePointer.address_of(target))
 
     fn end_texture_mode(self):
         """End texture drawing and return to default render texture."""
@@ -925,9 +944,7 @@ struct Raylib:
 
     fn begin_shader_mode(self, owned shader: Shader):
         """Begin custom shader drawing."""
-        self._begin_shader_mode(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
-        )
+        self._begin_shader_mode(UnsafePointer.address_of(shader))
 
     fn end_shader_mode(self):
         """End custom shader drawing."""
@@ -953,26 +970,21 @@ struct Raylib:
 
     fn begin_vr_stereo_mode(self, owned config: VrStereoConfig):
         """Begin VR stereo rendering."""
-        self._begin_vr_stereo_mode(
-            UnsafePointer.address_of(config).bitcast[SYSTEM_SIZE]()[]
-        )
+        self._begin_vr_stereo_mode(UnsafePointer.address_of(config))
 
     fn end_vr_stereo_mode(self):
         """End VR stereo rendering."""
         self._end_vr_stereo_mode()
 
-    fn load_vr_stereo_config(self, owned device: VrDeviceInfo) -> VrStereoConfig:
+    fn load_vr_stereo_config(
+        self, owned device: VrDeviceInfo
+    ) -> VrStereoConfig:
         """Load VR stereo config for VR simulator."""
-        var temp = self._load_vr_stereo_config(
-            UnsafePointer.address_of(device).bitcast[SYSTEM_SIZE]()[]
-        )
-        return UnsafePointer.address_of(temp).bitcast[VrStereoConfig]()[]
+        return self._load_vr_stereo_config(UnsafePointer.address_of(device))
 
     fn unload_vr_stereo_config(self, owned config: VrStereoConfig):
         """Unload VR stereo config for VR simulator."""
-        self._unload_vr_stereo_config(
-            UnsafePointer.address_of(config).bitcast[SYSTEM_SIZE]()[]
-        )
+        self._unload_vr_stereo_config(UnsafePointer.address_of(config))
 
     fn load_shader(self, vsFileName: String, fsFileName: String) -> Shader:
         """Load shader from files and bind default locations."""
@@ -983,21 +995,20 @@ struct Raylib:
 
     fn load_shader_from_memory(self, vsCode: String, fsCode: String) -> Shader:
         """Load shader from code strings and bind default locations."""
-        var temp = self._load_shader_from_memory(
+        return self._load_shader_from_memory(
             vsCode.unsafe_ptr(), fsCode.unsafe_ptr()
         )
-        return UnsafePointer.address_of(temp).bitcast[Shader]()[]
 
     fn is_shader_ready(self, owned shader: Shader) -> Bool:
         """Check if a shader is ready."""
-        return self._is_shader_ready(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
-        )
+        return self._is_shader_ready(UnsafePointer.address_of(shader))
 
-    fn get_shader_location(self, owned shader: Shader, uniformName: String) -> Int32:
+    fn get_shader_location(
+        self, owned shader: Shader, uniformName: String
+    ) -> Int32:
         """Get shader uniform location."""
         return self._get_shader_location(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             uniformName.unsafe_ptr(),
         )
 
@@ -1006,7 +1017,7 @@ struct Raylib:
     ) -> Int32:
         """Get shader attribute location."""
         return self._get_shader_location_attrib(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             attribName.unsafe_ptr(),
         )
 
@@ -1014,12 +1025,12 @@ struct Raylib:
         self,
         owned shader: Shader,
         uniformLoc: Int32,
-        value: UnsafePointer[SYSTEM_SIZE],
+        value: UnsafePointer[NoneType],
         uniformType: Int32,
     ):
         """Set shader uniform value."""
         self._set_shader_value(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             uniformLoc,
             value,
             uniformType,
@@ -1029,13 +1040,13 @@ struct Raylib:
         self,
         owned shader: Shader,
         uniformLoc: Int32,
-        value: UnsafePointer[SYSTEM_SIZE],
+        value: UnsafePointer[NoneType],
         uniformType: Int32,
         count: Int32,
     ):
         """Set shader uniform value vector."""
         self._set_shader_value_v(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             uniformLoc,
             value,
             uniformType,
@@ -1047,9 +1058,9 @@ struct Raylib:
     ):
         """Set shader uniform value (matrix 4x4)."""
         self._set_shader_value_matrix(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             uniformLoc,
-            UnsafePointer.address_of(mat).bitcast[SYSTEM_SIZE]()[0],
+            UnsafePointer.address_of(mat),
         )
 
     fn set_shader_value_texture(
@@ -1057,58 +1068,49 @@ struct Raylib:
     ):
         """Set shader uniform value for texture."""
         self._set_shader_value_texture(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(shader),
             uniformLoc,
-            UnsafePointer.address_of(texture).bitcast[SYSTEM_SIZE]()[],
+            UnsafePointer.address_of(texture),
         )
 
     fn unload_shader(self, owned shader: Shader):
         """Unload shader from GPU memory (VRAM)."""
-        self._unload_shader(
-            UnsafePointer.address_of(shader).bitcast[SYSTEM_SIZE]()[]
-        )
+        self._unload_shader(UnsafePointer.address_of(shader))
 
-    fn get_mouse_ray(self, owned mousePosition: Vector2, owned camera: Camera) -> Ray:
+    fn get_mouse_ray(
+        self, owned mousePosition: Vector2, owned camera: Camera
+    ) -> Ray:
         """Get a ray trace from mouse."""
-        var temp = self._get_mouse_ray(
-            UnsafePointer.address_of(mousePosition).bitcast[SYSTEM_SIZE]()[],
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[],
+        return self._get_mouse_ray(
+            UnsafePointer.address_of(mousePosition),
+            UnsafePointer.address_of(camera),
         )
-        return UnsafePointer.address_of(temp).bitcast[Ray]()[]
 
     fn get_camera_matrix(self, owned camera: Camera) -> Matrix:
         """Get camera transform matrix (view matrix)."""
-        var temp = self._get_camera_matrix(
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[]
-        )
-        return UnsafePointer.address_of(temp).bitcast[Matrix]()[]
+        return self._get_camera_matrix(UnsafePointer.address_of(camera))
 
     fn get_camera_matrix2d(self, owned camera: Camera2D) -> Matrix:
         """Get camera 2d transform matrix."""
-        var temp = self._get_camera_matrix2d(
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[]
-        )
-        return UnsafePointer.address_of(temp).bitcast[Matrix]()[]
+        return self._get_camera_matrix2d(UnsafePointer.address_of(camera))
 
     fn get_world_to_screen(
         self, owned position: Vector3, owned camera: Camera
     ) -> Vector2:
         """Get the screen space position for a 3d world space position."""
-        var temp = self._get_world_to_screen(
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[],
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[],
+        return self._get_world_to_screen(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(camera),
         )
-        return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_screen_world_to_screen2d(
-        self, owned position: Vector3, owned camera: Camera
+        self, owned position: Vector2, owned camera: Camera2D
     ) -> Vector2:
         """Get the screen space position for a 3d world space position."""
-        var temp = self._get_screen_world_to_screen2d(
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[],
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[],
+        return self._get_screen_world_to_screen2d(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(camera),
         )
-        return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_world_to_screen_ex(
         self,
@@ -1118,24 +1120,22 @@ struct Raylib:
         height: Int32,
     ) -> Vector2:
         """Get the screen space position for a 3d world space position."""
-        var temp = self._get_world_to_screen_ex(
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[],
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[],
+        return self._get_world_to_screen_ex(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(camera),
             width,
             height,
         )
-        return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn get_world_to_screen2d(
         self, owned position: Vector2, owned camera: Camera2D
     ) -> Vector2:
         """Get the screen space position for a 2d camera world space position.
         """
-        var temp = self._get_world_to_screen2d(
-            UnsafePointer.address_of(position).bitcast[SYSTEM_SIZE]()[],
-            UnsafePointer.address_of(camera).bitcast[SYSTEM_SIZE]()[],
+        return self._get_world_to_screen2d(
+            UnsafePointer.address_of(position),
+            UnsafePointer.address_of(camera),
         )
-        return UnsafePointer.address_of(temp).bitcast[Vector2]()[0]
 
     fn set_target_fps(self, fps: Int32):
         """Set target FPS (maximum)."""
@@ -1173,7 +1173,9 @@ struct Raylib:
         """Get a random value between min and max (both included)."""
         return self._get_random_value(min, max)
 
-    fn load_random_sequence(self, count: UInt32, min: Int32, max: Int32) -> UnsafePointer[Int32]:
+    fn load_random_sequence(
+        self, count: UInt32, min: Int32, max: Int32
+    ) -> UnsafePointer[Int32]:
         """Load a random sequence for the random number generator."""
         return self._load_random_sequence(count, min, max)
 

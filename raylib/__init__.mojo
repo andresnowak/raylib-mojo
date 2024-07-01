@@ -1,5 +1,5 @@
 from sys.ffi import DLHandle, RTLD
-from .raylib import *
+from .raylib_core import *
 from .raylib_text import *
 from .raylib_shapes import *
 from .raylib_textures import *
@@ -21,7 +21,7 @@ alias SYSTEM_SIZE = Scalar[check_system_size()]
 var raylib_internal = DLHandle(RAYLIB_PATH, RTLD.NOW)
 var raylib_bindings_internal = DLHandle(RAYLIB_BINDINGS_PATH, RTLD.NOW)
 
-var ray_lib = Raylib(raylib_internal)
+var ray_lib_core = RaylibCore(raylib_internal, raylib_bindings_internal)
 var ray_lib_text = RaylibText(raylib_internal, raylib_bindings_internal)
 var ray_lib_textures = RayLibTextures(raylib_internal, raylib_bindings_internal)
 var ray_lib_shapes = RayLibShapes(raylib_bindings_internal)

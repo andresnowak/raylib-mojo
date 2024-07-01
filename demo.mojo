@@ -1,4 +1,4 @@
-from raylib import ray_lib, ray_lib_text, ray_lib_textures, ray_lib_shapes
+from raylib import ray_lib_core, ray_lib_text, ray_lib_textures, ray_lib_shapes
 from raylib.shapes import Color, Vector2
 from raylib.colors import LIGHTGRAY, BLUE, RED, WHITE
 
@@ -10,9 +10,9 @@ fn main() raises:
     var window_title = String(
         "RayLib"
     )  # if its a string the pointer gets freed by mojo
-    ray_lib.init_window(width, height, window_title)
+    ray_lib_core.init_window(width, height, window_title)
 
-    ray_lib.set_target_fps(144)
+    ray_lib_core.set_target_fps(144)
 
     ray_lib_text.set_text_line_spacing(22)
     print(window_title)
@@ -28,10 +28,10 @@ fn main() raises:
     var xbox = ray_lib_textures.load_texture("resources/xbox.png") # This function crashes on macos, when returning the value from c to mojo it seems an error happens from the mojo side. (because the value is successfully loaded on the c side but moving the value from c world to mojo world seems to be the problem)
     print(xbox)
 
-    while not ray_lib.window_should_close():
-        ray_lib.begin_drawing()
+    while not ray_lib_core.window_should_close():
+        ray_lib_core.begin_drawing()
 
-        ray_lib.clear_background(WHITE)
+        ray_lib_core.clear_background(WHITE)
 
         ray_lib_text.draw_fps(20, 110)
         ray_lib_textures.draw_texture(xbox, 100, 100, RED)
@@ -50,7 +50,7 @@ fn main() raises:
         # print(ray_lib.get_monitor_position(h))
         # print(ray_lib.get_window_position())
 
-        ray_lib.end_drawing()
+        ray_lib_core.end_drawing()
 
     _ = (window_title, hello)
 
@@ -60,4 +60,4 @@ fn main() raises:
     ray_lib_textures.unload_texture(xbox)
 
 
-    ray_lib.close_window()
+    ray_lib_core.close_window()
