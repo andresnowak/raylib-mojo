@@ -140,3 +140,89 @@ struct AutomationEventList:
             + str(self.count)
             + ")"
         )
+
+
+@value
+@register_passable
+struct rlVertexBuffer:
+    var element_count: Int32
+
+    var vertices: UnsafePointer[Float32]
+    var texcoords: UnsafePointer[Float32]
+    var normals: UnsafePointer[Float32]
+    var colors: UnsafePointer[UInt8]
+
+    var indices: UnsafePointer[UInt32]
+
+    var vao_id: UInt32
+    var vbo_id: StaticTuple[UInt32, 6]
+
+    fn __init__(
+        inout self,
+        element_count: Int32,
+        vertices: UnsafePointer[Float32],
+        texcoords: UnsafePointer[Float32],
+        normals: UnsafePointer[Float32],
+        colors: UnsafePointer[UInt8],
+        indices: UnsafePointer[UInt32],
+        vao_id: UInt32,
+        vbo_id: StaticTuple[UInt32, 6],
+    ):
+        self.element_count = element_count
+        self.vertices = vertices
+        self.texcoords = texcoords
+        self.normals = normals
+        self.colors = colors
+        self.indices = indices
+        self.vao_id = vao_id
+        self.vbo_id = vbo_id
+
+
+@value
+@register_passable
+struct rlDrawCall:
+    var mode: Int32
+    var vertex_count: Int32
+    var vertex_alignment: Int32
+
+    var texture_id: UInt32
+
+    fn __init__(
+        inout self,
+        mode: Int32,
+        vertex_count: Int32,
+        vertex_alignment: Int32,
+        texture_id: UInt32,
+    ):
+        self.mode = mode
+        self.vertex_count = vertex_count
+        self.vertex_alignment = vertex_alignment
+        self.texture_id = texture_id
+
+
+@value
+@register_passable
+struct rlRenderBatch:
+    var buffer_count: Int32
+    var current_buffer: Int32
+    var buffers: UnsafePointer[rlVertexBuffer]
+
+    var draws: UnsafePointer[rlDrawCall]
+    var draw_counter: Int32
+    var current_depth: Float32
+
+    fn __init__(
+        inout self,
+        buffer_count: Int32,
+        current_buffer: Int32,
+        buffers: UnsafePointer[rlVertexBuffer],
+        draws: UnsafePointer[rlDrawCall],
+        draw_counter: Int32,
+        current_depth: Float32,
+    ):
+        self.buffer_count = buffer_count
+        self.current_buffer = current_buffer
+        self.buffers = buffers
+        self.draws = draws
+        self.draw_counter = draw_counter
+        self.current_depth = current_depth

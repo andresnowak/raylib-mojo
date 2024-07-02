@@ -342,7 +342,7 @@ alias c_raylib_GetRayCollisionQuad = fn (
 
 
 @value
-struct RayLibModels:
+struct RaylibModels:
     var _draw_line_3d: c_raylib_DrawLine3D
     var _draw_point_3d: c_raylib_DrawPoint3D
     var _draw_circle_3d: c_raylib_DrawCircle3D

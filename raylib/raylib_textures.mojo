@@ -412,7 +412,7 @@ alias c_raylib_GetPixelDataSize = fn (
 
 
 @value
-struct RayLibTextures:
+struct RaylibTextures:
     var _load_image: c_raylib_LoadImage
     var _load_image_raw: c_raylib_LoadImageRaw
     var _load_image_svg: c_raylib_LoadImageSvg

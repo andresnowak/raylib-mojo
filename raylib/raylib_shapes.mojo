@@ -378,7 +378,7 @@ alias c_raylib_GetCollisionRec = fn (
 
 
 @value
-struct RayLibShapes:
+struct RaylibShapes:
     var _set_shapes_texture: c_raylib_SetShapesTexture
 
     var _draw_pixel: c_raylib_DrawPixel
