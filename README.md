@@ -52,7 +52,7 @@
 
 ## Contributing
   
-As there are still things missing and some things are incorrectly implemented and maybe some things could be better implemented, any help is appreciated.
+As there are still things missing and some things are incorrectly implemented and maybe some things could be better implemented, any fix and improvement is appreciated.
 
 ### Creating A Pull Request
 
