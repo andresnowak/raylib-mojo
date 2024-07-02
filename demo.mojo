@@ -56,8 +56,6 @@ fn main() raises:
         # ray_lib_core.end_mode3d()
         ray_lib_core.end_drawing()
 
-    _ = (window_title, hello)
-
     print("Exiting")
 
     ray_lib_text.unload_font(font2)
