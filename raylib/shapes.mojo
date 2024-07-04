@@ -1,5 +1,7 @@
 alias Quaternion = Vector4
 
+
+@value
 @register_passable("trivial")
 struct Vector2(CollectionElement):
     var x: Float32
@@ -13,6 +15,7 @@ struct Vector2(CollectionElement):
         return "Vector2(" + str(self.x) + ", " + str(self.y) + ")"
 
 
+@value
 @register_passable("trivial")
 struct Vector3:
     var x: Float32
@@ -25,9 +28,18 @@ struct Vector3:
         self.z = z
 
     fn __str__(self) -> String:
-        return "Vector3(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
+        return (
+            "Vector3("
+            + str(self.x)
+            + ", "
+            + str(self.y)
+            + ", "
+            + str(self.z)
+            + ")"
+        )
 
 
+@value
 @register_passable("trivial")
 struct Vector4:
     var x: Float32
@@ -42,7 +54,17 @@ struct Vector4:
         self.w = w
 
     fn __str__(self) -> String:
-        return "Vector4(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ", " + str(self.w) + ")"
+        return (
+            "Vector4("
+            + str(self.x)
+            + ", "
+            + str(self.y)
+            + ", "
+            + str(self.z)
+            + ", "
+            + str(self.w)
+            + ")"
+        )
 
 
 @value
@@ -60,6 +82,7 @@ struct Matrix(CollectionElement):
         return "Matrix(" + str(self.data) + ")"
 
 
+@value
 @register_passable("trivial")
 struct Color(CollectionElement):
     """Color, 4 components, R8G8B8A8 (32bit)."""
@@ -68,7 +91,7 @@ struct Color(CollectionElement):
     var g: UInt8
     var b: UInt8
     var a: UInt8
-    
+
     @always_inline
     fn __init__(inout self, r: UInt8, g: UInt8, b: UInt8, a: UInt8):
         """Constructs a Color from r, g, b, and a values."""
@@ -78,9 +101,20 @@ struct Color(CollectionElement):
         self.a = a
 
     fn __str__(self) -> String:
-        return "Color(" + str(self.r) + ", " + str(self.g) + ", " + str(self.b) + ", " + str(self.a) + ")"
+        return (
+            "Color("
+            + str(self.r)
+            + ", "
+            + str(self.g)
+            + ", "
+            + str(self.b)
+            + ", "
+            + str(self.a)
+            + ")"
+        )
 
 
+@value
 @register_passable("trivial")
 struct Rectangle:
     var x: Float32
@@ -97,4 +131,14 @@ struct Rectangle:
         self.height = height
 
     fn __str__(self) -> String:
-        return "Rectangle(" + str(self.x) + ", " + str(self.y) + ", " + str(self.width) + ", " + str(self.height) + ")"
+        return (
+            "Rectangle("
+            + str(self.x)
+            + ", "
+            + str(self.y)
+            + ", "
+            + str(self.width)
+            + ", "
+            + str(self.height)
+            + ")"
+        )
