@@ -8,7 +8,7 @@ alias TextureCubemap = Texture
 @value
 @register_passable
 struct Image(CollectionElement):
-    var data: DTypePointer[DType.uint8]
+    var data: UnsafePointer[Scalar[DType.uint8]]
     var width: Int32
     var height: Int32
     var mipmaps: Int32
@@ -16,7 +16,7 @@ struct Image(CollectionElement):
 
     fn __init__(
         inout self,
-        data: DTypePointer[DType.uint8],
+        data: UnsafePointer[Scalar[DType.uint8]],
         width: Int32,
         height: Int32,
         mipmaps: Int32,
@@ -81,6 +81,9 @@ struct Texture:
             + str(self.format)
             + ")"
         )
+
+    fn format_to(self, inout writer: Formatter):
+        writer.write(self.__str__())
 
 
 @value
@@ -200,3 +203,6 @@ struct Font(CollectionElement):
             + str(self.texture)
             + ")"
         )
+
+    fn format_to(self, inout writer: Formatter):
+        writer.write(self.__str__())

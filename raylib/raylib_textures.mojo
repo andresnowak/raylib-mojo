@@ -866,7 +866,7 @@ struct RaylibTextures:
 
     @always_inline
     fn load_image(self, file_name: String) -> Image:
-        return self._load_image(file_name.unsafe_ptr())
+        return self._load_image(file_name.unsafe_cstr_ptr())
 
     @always_inline
     fn load_image_raw(
@@ -878,7 +878,7 @@ struct RaylibTextures:
         headerSize: Int32,
     ) -> Image:
         return self._load_image_raw(
-            file_name.unsafe_ptr(),
+            file_name.unsafe_cstr_ptr(),
             width,
             height,
             format,
@@ -890,14 +890,14 @@ struct RaylibTextures:
         self, file_name_or_string: String, width: Int32, height: Int32
     ) -> Image:
         return self._load_image_svg(
-            file_name_or_string.unsafe_ptr(), width, height
+            file_name_or_string.unsafe_cstr_ptr(), width, height
         )
 
     @always_inline
     fn load_image_anim(
         self, file_name: String, frames: UnsafePointer[Int32]
     ) -> Image:
-        return self._load_image_anim(file_name.unsafe_ptr(), frames)
+        return self._load_image_anim(file_name.unsafe_cstr_ptr(), frames)
 
     @always_inline
     fn load_image_from_memory(
@@ -907,7 +907,7 @@ struct RaylibTextures:
         data_size: Int32,
     ) -> Image:
         return self._load_image_from_memory(
-            file_type.unsafe_ptr(),
+            file_type.unsafe_cstr_ptr(),
             file_data,
             data_size,
         )
@@ -931,7 +931,7 @@ struct RaylibTextures:
     @always_inline
     fn export_image(self, owned image: Image, file_name: String) -> Bool:
         return self._export_image(
-            UnsafePointer.address_of(image), file_name.unsafe_ptr()
+            UnsafePointer.address_of(image), file_name.unsafe_cstr_ptr()
         )
 
     @always_inline
@@ -942,7 +942,7 @@ struct RaylibTextures:
         file_size: UnsafePointer[Int32],
     ) -> UnsafePointer[UInt8]:
         return self._export_image_to_memory(
-            UnsafePointer.address_of(image), file_type.unsafe_ptr(), file_size
+            UnsafePointer.address_of(image), file_type.unsafe_cstr_ptr(), file_size
         )
 
     @always_inline
@@ -950,7 +950,7 @@ struct RaylibTextures:
         self, owned image: Image, file_name: String
     ) -> Bool:
         return self._export_image_as_code(
-            UnsafePointer.address_of(image), file_name.unsafe_ptr()
+            UnsafePointer.address_of(image), file_name.unsafe_cstr_ptr()
         )
 
     @always_inline
@@ -1066,7 +1066,7 @@ struct RaylibTextures:
         height: Int32,
         text: String,
     ) -> Image:
-        return self._gen_image_text(widht, height, text.unsafe_ptr())
+        return self._gen_image_text(widht, height, text.unsafe_cstr_ptr())
 
     @always_inline
     fn image_copy(self, owned image: Image) -> Image:
@@ -1088,7 +1088,7 @@ struct RaylibTextures:
         owned color: Color,
     ) -> Image:
         return self._image_text(
-            text.unsafe_ptr(),
+            text.unsafe_cstr_ptr(),
             fontSize,
             UnsafePointer.address_of(color),
         )
@@ -1104,7 +1104,7 @@ struct RaylibTextures:
     ) -> Image:
         return self._image_text_ex(
             UnsafePointer.address_of(font),
-            text.unsafe_ptr(),
+            text.unsafe_cstr_ptr(),
             fontSize,
             spacing,
             UnsafePointer.address_of(tint),
@@ -1499,7 +1499,7 @@ struct RaylibTextures:
     ):
         self._image_draw_text(
             dst,
-            text.unsafe_ptr(),
+            text.unsafe_cstr_ptr(),
             posX,
             posY,
             fontSize,
@@ -1520,7 +1520,7 @@ struct RaylibTextures:
         self._image_draw_text_ex(
             dst,
             UnsafePointer.address_of(font),
-            text.unsafe_ptr(),
+            text.unsafe_cstr_ptr(),
             UnsafePointer.address_of(position),
             fontSize,
             spacing,
@@ -1529,7 +1529,7 @@ struct RaylibTextures:
 
     @always_inline
     fn load_texture(self, filename: String) -> Texture2D:
-        return self._load_texture(filename.unsafe_ptr())
+        return self._load_texture(filename.unsafe_cstr_ptr())
 
     @always_inline
     fn load_texture_from_image(self, owned image: Image) -> Texture2D:
@@ -1561,6 +1561,8 @@ struct RaylibTextures:
     @always_inline
     fn unload_texture(self, owned texture: Texture2D) -> None:
         self._unload_texture(UnsafePointer.address_of(texture))
+
+        _ = texture
 
     @always_inline
     fn is_render_texture_ready(self, owned target: RenderTexture2D) -> Bool:
@@ -1622,12 +1624,16 @@ struct RaylibTextures:
         posY: Int32,
         owned tint: Color,
     ) -> None:
+
         self._draw_texture(
             UnsafePointer.address_of(texture),
             posX,
             posY,
             UnsafePointer.address_of(tint),
         )
+        
+        _ = texture
+        _ = tint
 
     @always_inline
     fn draw_texture_v(
@@ -1718,7 +1724,9 @@ struct RaylibTextures:
 
     @always_inline
     fn color_to_int(self, owned color: Color) -> Int32:
-        return self._color_to_int(UnsafePointer.address_of(color))
+        var temp = self._color_to_int(UnsafePointer.address_of(color))
+        _ = color
+        return temp
 
     @always_inline
     fn color_normalize(self, owned color: Color) -> Vector4:
@@ -1730,7 +1738,9 @@ struct RaylibTextures:
 
     @always_inline
     fn color_to_hsv(self, owned color: Color) -> Vector3:
-        return self._color_to_hsv(UnsafePointer.address_of(color))
+        var temp = self._color_to_hsv(UnsafePointer.address_of(color))
+        _ = color
+        return temp
 
     @always_inline
     fn color_from_hsv(

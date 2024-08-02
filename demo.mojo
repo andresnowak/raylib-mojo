@@ -28,6 +28,13 @@ fn main() raises:
 
     var xbox = ray_lib_textures.load_texture("resources/xbox.png") # This function crashes on macos, when returning the value from c to mojo it seems an error happens from the mojo side. (because the value is successfully loaded on the c side but moving the value from c world to mojo world seems to be the problem)
     print(xbox)
+    
+    print(ray_lib_textures.color_to_hsv(Color(60, 45, 32, 255)))
+    print(ray_lib_textures.color_normalize(RED))
+    print("yeah", ray_lib_textures.color_to_int(Color(255, 0, 0, 255)))
+    var mesa = Vector3(0, 0, 0)
+
+    print(UnsafePointer.address_of(WHITE))
 
     while not ray_lib_core.window_should_close():
         ray_lib_core.begin_drawing()
@@ -42,6 +49,7 @@ fn main() raises:
         ray_lib_text.draw_text_ex(font2, "Hello raylib from mojo", Vector2(40, 40), 30, 8, LIGHTGRAY)
 
         ray_lib_shapes.draw_rectangle_lines(10, 10, 100, 100, BLUE)
+
         # ray_lib_models.draw_cube(Vector3(0, 0, 0), 2, 2, 2, BLUE)
 
         # print(ray_lib_text.measure_text("hello raylib from mojo", 20))

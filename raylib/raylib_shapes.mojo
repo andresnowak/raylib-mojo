@@ -1063,6 +1063,8 @@ struct RaylibShapes:
             posX, posY, width, height, UnsafePointer.address_of(color)
         )
 
+        _ = color
+
     @always_inline
     fn draw_rectangle_lines_ex(
         self, owned rec: Rectangle, lineThick: Float32, owned color: Color

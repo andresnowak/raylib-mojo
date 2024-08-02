@@ -34,10 +34,10 @@ alias c_raylib_rlViewport = fn (
     x: Int32, y: Int32, width: Int32, height: Int32
 ) -> None
 alias c_raylib_rlSetClipPlanes = fn (
-    nearPlane: Float32, farPlane: Float32
+    nearPlane: Float64, farPlane: Float64
 ) -> None
-alias c_raylib_rlGetCullDistanceNear = fn () -> Float32
-alias c_raylib_rlGetCullDistanceFar = fn () -> Float32
+alias c_raylib_rlGetCullDistanceNear = fn () -> Float64
+alias c_raylib_rlGetCullDistanceFar = fn () -> Float64
 
 # Vertex level operations
 alias c_raylib_rlBegin = fn (mode: Int32) -> None
@@ -1880,7 +1880,7 @@ struct RaylibGLFW:
     ) -> Int32:
         """Get shader location uniform."""
         return self._rl_get_location_uniform(
-            shader_id, uniform_name.unsafe_ptr()
+            shader_id, uniform_name.unsafe_cstr_ptr()
         )
 
     @always_inline
@@ -1888,7 +1888,7 @@ struct RaylibGLFW:
         self, shader_id: UInt32, attrib_name: String
     ) -> Int32:
         """Get shader location attribute."""
-        return self._rl_get_location_attrib(shader_id, attrib_name.unsafe_ptr())
+        return self._rl_get_location_attrib(shader_id, attrib_name.unsafe_cstr_ptr())
 
     @always_inline
     fn rl_set_uniform(

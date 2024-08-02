@@ -87,41 +87,19 @@ struct Mesh(CollectionElement):
     var triangleCount: Int32  # Number of triangles stored (indexed or not)
 
     # Vertex attributes data
-    var vertices: DTypePointer[
-        DType.float32
-    ]  # Vertex position (XYZ - 3 components per vertex) (shader-location = 0)
-    var texcoords: DTypePointer[
-        DType.float32
-    ]  # Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1)
-    var texcoords2: DTypePointer[
-        DType.float32
-    ]  # Vertex second texture coordinates (useful for lightmaps) (shader-location = 5)
-    var normals: DTypePointer[
-        DType.float32
-    ]  # Vertex normals (XYZ - 3 components per vertex) (shader-location = 2)
-    var tangents: DTypePointer[
-        DType.float32
-    ]  # Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4)
-    var colors: DTypePointer[
-        DType.uint8
-    ]  # Vertex colors (RGBA - 4 components per vertex) (shader-location = 3)
-    var indices: DTypePointer[
-        DType.uint16
-    ]  # Vertex indices (in case vertex data comes indexed)
+    var vertices: UnsafePointer[Scalar[DType.float32]]  # Vertex position (XYZ - 3 components per vertex) (shader-location = 0)
+    var texcoords: UnsafePointer[Scalar[DType.float32]]  # Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1)
+    var texcoords2: UnsafePointer[Scalar[DType.float32]]  # Vertex second texture coordinates (useful for lightmaps) (shader-location = 5)
+    var normals: UnsafePointer[Scalar[DType.float32]]  # Vertex normals (XYZ - 3 components per vertex) (shader-location = 2)
+    var tangents: UnsafePointer[Scalar[DType.float32]]  # Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4)
+    var colors: UnsafePointer[Scalar[DType.uint8]]  # Vertex colors (RGBA - 4 components per vertex) (shader-location = 3)
+    var indices: UnsafePointer[Scalar[DType.uint16]]  # Vertex indices (in case vertex data comes indexed)
 
     # Animation vertex data
-    var animVertices: DTypePointer[
-        DType.float32
-    ]  # Animated vertex positions (after bones transformations)
-    var animNormals: DTypePointer[
-        DType.float32
-    ]  # Animated normals (after bones transformations)
-    var boneIds: DTypePointer[
-        DType.int8
-    ]  # Vertex bone ids, up to 4 bones influence by vertex (skinning)
-    var boneWeights: DTypePointer[
-        DType.float32
-    ]  # Vertex bone weight, up to 4 bones influence by vertex (skinning)
+    var animVertices: UnsafePointer[Scalar[DType.float32]]  # Animated vertex positions (after bones transformations)
+    var animNormals: UnsafePointer[Scalar[DType.float32]]  # Animated normals (after bones transformations)
+    var boneIds: UnsafePointer[Scalar[DType.int8]]  # Vertex bone ids, up to 4 bones influence by vertex (skinning)
+    var boneWeights: UnsafePointer[Scalar[DType.float32]]  # Vertex bone weight, up to 4 bones influence by vertex (skinning)
 
     # OpenGL identifiers
     var vaoId: UInt32  # OpenGL Vertex Array Object id
@@ -131,17 +109,17 @@ struct Mesh(CollectionElement):
         inout self,
         vertexCount: Int32,
         triangleCount: Int32,
-        vertices: DTypePointer[DType.float32],
-        texcoords: DTypePointer[DType.float32],
-        texcoords2: DTypePointer[DType.float32],
-        normals: DTypePointer[DType.float32],
-        tangents: DTypePointer[DType.float32],
-        colors: DTypePointer[DType.uint8],
-        indices: DTypePointer[DType.uint16],
-        animVertices: DTypePointer[DType.float32],
-        animNormals: DTypePointer[DType.float32],
-        boneIds: DTypePointer[DType.int8],
-        boneWeights: DTypePointer[DType.float32],
+        vertices: UnsafePointer[Scalar[DType.float32]],
+        texcoords: UnsafePointer[Scalar[DType.float32]],
+        texcoords2: UnsafePointer[Scalar[DType.float32]],
+        normals: UnsafePointer[Scalar[DType.float32]],
+        tangents: UnsafePointer[Scalar[DType.float32]],
+        colors: UnsafePointer[Scalar[DType.uint8]],
+        indices: UnsafePointer[Scalar[DType.uint16]],
+        animVertices: UnsafePointer[Scalar[DType.float32]],
+        animNormals: UnsafePointer[Scalar[DType.float32]],
+        boneIds: UnsafePointer[Scalar[DType.int8]],
+        boneWeights: UnsafePointer[Scalar[DType.float32]],
         vaoId: UInt32,
         vboId: UInt32,
     ):
@@ -179,9 +157,9 @@ struct Mesh(CollectionElement):
 @register_passable
 struct Shader(CollectionElement):
     var id: UInt32
-    var locs: DTypePointer[DType.int32]
+    var locs: UnsafePointer[Scalar[DType.int32]]
 
-    fn __init__(inout self, id: UInt32, locs: DTypePointer[DType.int32]):
+    fn __init__(inout self, id: UInt32, locs: UnsafePointer[Scalar[DType.int32]]):
         self.id = id
         self.locs = locs
 
@@ -268,7 +246,7 @@ struct BoneInfo(CollectionElement):
         var n = min(len(name), 32)
 
         for i in range(n):
-            self.name[i] = name[i]
+            self.name[i] = name.unsafe_cstr_ptr()[i]
 
     fn __str__(self) -> String:
         var result: String = "BoneInfo("
@@ -289,7 +267,7 @@ struct Model(CollectionElement):
     var meshes: UnsafePointer[Mesh]
     var materialCount: Int32
     var materials: UnsafePointer[Material]
-    var meshMaterial: DTypePointer[DType.int32]
+    var meshMaterial: UnsafePointer[Scalar[DType.int32]]
     var boneCount: Int32
     var bones: UnsafePointer[BoneInfo]
 
@@ -300,7 +278,7 @@ struct Model(CollectionElement):
         meshes: UnsafePointer[Mesh],
         materialCount: Int32,
         materials: UnsafePointer[Material],
-        meshMaterial: DTypePointer[DType.int32],
+        meshMaterial: UnsafePointer[Scalar[DType.int32]],
         boneCount: Int32,
         bones: UnsafePointer[BoneInfo],
     ):

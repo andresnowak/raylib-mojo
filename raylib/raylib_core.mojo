@@ -286,7 +286,7 @@ alias c_raylib_UnloadDirectoryFiles = fn (files: UnsafePointer[FilePathList]) ->
 alias c_raylib_IsFileDropped = fn () -> Bool
 alias c_raylib_LoadDroppedFiles = fn () -> FilePathList
 alias c_raylib_UnloadDroppedFiles = fn (files: UnsafePointer[FilePathList]) -> None
-alias c_raylib_GetFileModTime = fn (fileName: UnsafePointer[Int8]) -> Float32
+alias c_raylib_GetFileModTime = fn (fileName: UnsafePointer[Int8]) -> Int64
 
 # Compression/Encoding functions
 alias c_raylib_CompressData = fn (
@@ -1284,7 +1284,7 @@ struct RaylibCore:
     @always_inline
     fn init_window(self, width: Int32, height: Int32, title: String):
         """Initialize window and OpenGL context."""
-        self._init_window(width, height, title.unsafe_ptr())
+        self._init_window(width, height, title.unsafe_cstr_ptr())
 
     @always_inline
     fn close_window(self):
@@ -1386,7 +1386,7 @@ struct RaylibCore:
     @always_inline
     fn set_window_title(self, title: String):
         """Set title for window (only PLATFORM_DESKTOP)."""
-        self._set_window_title(title.unsafe_ptr())
+        self._set_window_title(title.unsafe_cstr_ptr())
 
     @always_inline
     fn set_window_position(self, x: Int32, y: Int32):
@@ -1510,7 +1510,7 @@ struct RaylibCore:
     @always_inline
     fn set_clipboard_text(self, text: StringLiteral):
         """Set clipboard text content."""
-        self._set_clipboard_text(text.unsafe_ptr())
+        self._set_clipboard_text(text.unsafe_cstr_ptr())
 
     @always_inline
     fn get_clipboard_text(self) -> String:
@@ -1562,6 +1562,7 @@ struct RaylibCore:
     fn clear_background(self, owned color: Color):
         """Clear the background with a color."""
         self._clear_background(UnsafePointer.address_of(color))
+        _ = color
 
     @always_inline
     fn begin_drawing(self):
@@ -1661,7 +1662,7 @@ struct RaylibCore:
     fn load_shader(self, vsFileName: String, fsFileName: String) -> Shader:
         """Load shader from files and bind default locations."""
         var temp = self._load_shader(
-            vsFileName.unsafe_ptr(), fsFileName.unsafe_ptr()
+            vsFileName.unsafe_cstr_ptr(), fsFileName.unsafe_cstr_ptr()
         )
         return UnsafePointer.address_of(temp).bitcast[Shader]()[]
 
@@ -1669,7 +1670,7 @@ struct RaylibCore:
     fn load_shader_from_memory(self, vsCode: String, fsCode: String) -> Shader:
         """Load shader from code strings and bind default locations."""
         return self._load_shader_from_memory(
-            vsCode.unsafe_ptr(), fsCode.unsafe_ptr()
+            vsCode.unsafe_cstr_ptr(), fsCode.unsafe_cstr_ptr()
         )
 
     @always_inline
@@ -1684,7 +1685,7 @@ struct RaylibCore:
         """Get shader uniform location."""
         return self._get_shader_location(
             UnsafePointer.address_of(shader),
-            uniformName.unsafe_ptr(),
+            uniformName.unsafe_cstr_ptr(),
         )
 
     @always_inline
@@ -1694,7 +1695,7 @@ struct RaylibCore:
         """Get shader attribute location."""
         return self._get_shader_location_attrib(
             UnsafePointer.address_of(shader),
-            attribName.unsafe_ptr(),
+            attribName.unsafe_cstr_ptr(),
         )
 
     @always_inline
@@ -1885,7 +1886,7 @@ struct RaylibCore:
     @always_inline
     fn take_screenshot(self, file_name: String):
         """Take a screenshot of current screen (saved a .png)."""
-        self._take_screenshot(file_name.unsafe_ptr())
+        self._take_screenshot(file_name.unsafe_cstr_ptr())
 
     @always_inline
     fn set_config_flags(self, flags: UInt32):
@@ -1895,13 +1896,13 @@ struct RaylibCore:
     @always_inline
     fn open_url(self, url: String):
         """Open URL with default system browser (if available)."""
-        self._open_url(url.unsafe_ptr())
+        self._open_url(url.unsafe_cstr_ptr())
 
     @always_inline
     fn trace_log(self, log_type: Int32, text: String):
         """Show trace log messages (LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_DEBUG).
         Missing extras: Keyword arguments."""
-        self._trace_log(log_type, text.unsafe_ptr())
+        self._trace_log(log_type, text.unsafe_cstr_ptr())
 
     @always_inline
     fn set_trace_log_level(self, log_type: Int32):
@@ -1965,7 +1966,7 @@ struct RaylibCore:
         self, file_name: String, owned data_size: UnsafePointer[Int32]
     ) -> UnsafePointer[UInt8]:
         """Load file data as byte array (read)."""
-        return self._load_file_data(file_name.unsafe_ptr(), data_size)
+        return self._load_file_data(file_name.unsafe_cstr_ptr(), data_size)
 
     @always_inline
     fn unload_file_data(self, owned data: UnsafePointer[UInt8]):
@@ -1977,74 +1978,74 @@ struct RaylibCore:
         self, file_name: String, data: UnsafePointer[NoneType], data_size: UInt32
     ) -> Bool:
         """Save data to file from byte array (write)."""
-        return self._save_file_data(file_name.unsafe_ptr(), data, data_size)
+        return self._save_file_data(file_name.unsafe_cstr_ptr(), data, data_size)
 
     @always_inline
     fn export_data_as_code(
         self, data: UnsafePointer[UInt8], data_size: UInt32, var_name: String
     ) -> String:
         """Export image data as code file defining an array of bytes."""
-        return self._export_data_as_code(data, data_size, var_name.unsafe_ptr())
+        return self._export_data_as_code(data, data_size, var_name.unsafe_cstr_ptr())
 
     @always_inline
     fn load_file_text(self, file_name: String) -> String:
         """Load text data from file (read)."""
-        var temp = self._load_file_text(file_name.unsafe_ptr())
+        var temp = self._load_file_text(file_name.unsafe_cstr_ptr())
         return StringRef(temp)
     
     @always_inline
     fn unload_file_text(self, owned text: String):
         """Unload file text data (free memory)."""
-        self._unload_file_text(text.unsafe_ptr())
+        self._unload_file_text(text.unsafe_cstr_ptr())
 
     @always_inline
     fn save_file_text(self, file_name: String, text: String) -> Bool:
         """Save text data to file (write)."""
-        return self._save_file_text(file_name.unsafe_ptr(), text.unsafe_ptr())
+        return self._save_file_text(file_name.unsafe_cstr_ptr(), text.unsafe_cstr_ptr())
     
     @always_inline
     fn file_exists(self, file_name: String) -> Bool:
         """Check if file exists."""
-        return self._file_exists(file_name.unsafe_ptr())
+        return self._file_exists(file_name.unsafe_cstr_ptr())
 
     @always_inline
     fn directory_exists(self, dir_path: String) -> Bool:
         """Check if a directory path exists."""
-        return self._directory_exists(dir_path.unsafe_ptr())
+        return self._directory_exists(dir_path.unsafe_cstr_ptr())
 
     @always_inline
     fn is_file_extension(self, file_name: String, ext: String) -> Bool:
         """Check file extension (including point: .png, .wav)."""
-        return self._is_file_extension(file_name.unsafe_ptr(), ext.unsafe_ptr())
+        return self._is_file_extension(file_name.unsafe_cstr_ptr(), ext.unsafe_cstr_ptr())
 
     @always_inline
     fn get_file_extension(self, file_name: String) -> String:
         """Get pointer to extension for a filename string."""
-        var temp = self._get_file_extension(file_name.unsafe_ptr())
+        var temp = self._get_file_extension(file_name.unsafe_cstr_ptr())
         return StringRef(temp)
 
     @always_inline
     fn get_file_name(self, file_path: String) -> String:
         """Get pointer to filename for a path string."""
-        var temp = self._get_file_name(file_path.unsafe_ptr())
+        var temp = self._get_file_name(file_path.unsafe_cstr_ptr())
         return StringRef(temp)
 
     @always_inline
     fn get_file_name_without_ext(self, file_path: String) -> String:
         """Get filename string without extension (uses static string)."""
-        var temp = self._get_file_name_without_ext(file_path.unsafe_ptr())
+        var temp = self._get_file_name_without_ext(file_path.unsafe_cstr_ptr())
         return StringRef(temp)
 
     @always_inline
     fn get_directory_path(self, file_path: String) -> String:
         """Get full path for a given fileName with path."""
-        var temp = self._get_directory_path(file_path.unsafe_ptr())
+        var temp = self._get_directory_path(file_path.unsafe_cstr_ptr())
         return StringRef(temp)
 
     @always_inline
     fn get_prev_directory_path(self, dir_path: String) -> String:
         """Get previous directory path for a given path."""
-        var temp = self._get_prev_directory_path(dir_path.unsafe_ptr())
+        var temp = self._get_prev_directory_path(dir_path.unsafe_cstr_ptr())
         return StringRef(temp)
 
     @always_inline
@@ -2062,23 +2063,23 @@ struct RaylibCore:
     @always_inline
     fn change_directory(self, dir: String) -> Bool:
         """Change working directory, returns true if success."""
-        return self._change_directory(dir.unsafe_ptr())
+        return self._change_directory(dir.unsafe_cstr_ptr())
 
     @always_inline
     fn is_path_file(self, file_path: String) -> Bool:
         """Check if a file path is a file."""
-        return self._is_path_file(file_path.unsafe_ptr())
+        return self._is_path_file(file_path.unsafe_cstr_ptr())
 
     fn load_directory_files(self, dir_path: String) -> FilePathList:
         """Load files paths from a directory path."""
-        return self._load_directory_files(dir_path.unsafe_ptr())
+        return self._load_directory_files(dir_path.unsafe_cstr_ptr())
 
     fn load_directory_files_ex(
         self, base_path: String, filter: String, scan_sub_dirs: Bool
     ) -> FilePathList:
         """Load files paths from a directory path with filter."""
         return self._load_directory_files_ex(
-            base_path.unsafe_ptr(), filter.unsafe_ptr(), scan_sub_dirs
+            base_path.unsafe_cstr_ptr(), filter.unsafe_cstr_ptr(), scan_sub_dirs
         )
 
     fn unload_directory_files(self, owned files: FilePathList):
@@ -2101,9 +2102,9 @@ struct RaylibCore:
         self._unload_dropped_files(UnsafePointer.address_of(files))
 
     @always_inline
-    fn get_file_mod_time(self, file_name: String) -> UInt64:
+    fn get_file_mod_time(self, file_name: String) -> Int64:
         """Get file modification time (last write time)."""
-        return self._get_file_mod_time(file_name.unsafe_ptr())
+        return self._get_file_mod_time(file_name.unsafe_cstr_ptr())
     
     @always_inline
     fn compress_data(
@@ -2135,7 +2136,7 @@ struct RaylibCore:
     @always_inline
     fn load_automation_event_list(self, file_name: String) -> AutomationEventList:
         """Load automation event list from file."""
-        return self._load_automation_event_list(file_name.unsafe_ptr())
+        return self._load_automation_event_list(file_name.unsafe_cstr_ptr())
     
     @always_inline
     fn unload_automation_event_list(self, owned events: AutomationEventList):
@@ -2145,7 +2146,7 @@ struct RaylibCore:
     @always_inline
     fn export_automation_event_list(self, owned events: AutomationEventList, file_name: String) -> Bool:
         """Export automation event list to file."""
-        return self._export_automation_event_list(UnsafePointer.address_of(events), file_name.unsafe_ptr())
+        return self._export_automation_event_list(UnsafePointer.address_of(events), file_name.unsafe_cstr_ptr())
 
     @always_inline
     fn set_automation_event_list(self, owned events: AutomationEventList):
@@ -2261,7 +2262,7 @@ struct RaylibCore:
     @always_inline
     fn sset_gamepad_mappings(self, mappings: String) -> Int32:
         """Set internal gamepad mappings (SDL_GameControllerDB)."""
-        return self._set_gamepad_mappings(mappings.unsafe_ptr())
+        return self._set_gamepad_mappings(mappings.unsafe_cstr_ptr())
 
     @always_inline
     fn is_mouse_button_pressed(self, button: Int32) -> Bool:
@@ -2315,7 +2316,7 @@ struct RaylibCore:
         self._set_mouse_scale(x, y)
 
     @always_inline
-    fn get_mouse_wheel_move(self) -> Int32:
+    fn get_mouse_wheel_move(self) -> Float32:
         """Get the mouse wheel movement Y."""
         return self._get_mouse_wheel_move()
 

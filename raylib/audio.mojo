@@ -2,30 +2,30 @@
 @value
 @register_passable
 struct MaResampler(CollectionElement):
-    var p_backend: DTypePointer[SYSTEM_SIZE.type]
-    var p_backend_v_table: DTypePointer[SYSTEM_SIZE.type]
-    var p_backend_user_data: DTypePointer[SYSTEM_SIZE.type]
+    var p_backend: UnsafePointer[SYSTEM_SIZE]
+    var p_backend_v_table: UnsafePointer[SYSTEM_SIZE]
+    var p_backend_user_data: UnsafePointer[SYSTEM_SIZE]
     var format: UInt8
     var channels: UInt32
     var sample_rate_in: UInt32
     var sample_rate_out: UInt32
 
-    var state: DTypePointer[SYSTEM_SIZE.type]
+    var state: UnsafePointer[SYSTEM_SIZE]
 
-    var p_heap: DTypePointer[SYSTEM_SIZE.type]
+    var p_heap: UnsafePointer[SYSTEM_SIZE]
     var owns_heap: UInt32
 
     fn __init__(
         inout self,
-        p_backend: DTypePointer[SYSTEM_SIZE.type],
-        p_backend_v_table: DTypePointer[SYSTEM_SIZE.type],
-        p_backend_user_data: DTypePointer[SYSTEM_SIZE.type],
+        p_backend: UnsafePointer[SYSTEM_SIZE],
+        p_backend_v_table: UnsafePointer[SYSTEM_SIZE],
+        p_backend_user_data: UnsafePointer[SYSTEM_SIZE],
         format: UInt8,
         channels: UInt32,
         sample_rate_in: UInt32,
         sample_rate_out: UInt32,
-        state: DTypePointer[SYSTEM_SIZE.type],
-        p_heap: DTypePointer[SYSTEM_SIZE.type],
+        state: UnsafePointer[SYSTEM_SIZE],
+        p_heap: UnsafePointer[SYSTEM_SIZE],
         owns_heap: UInt32,
     ):
         self.p_backend = p_backend
@@ -46,8 +46,8 @@ struct MaChannelConverter(CollectionElement):
     var channelsIn: UInt32
     var channelsOut: UInt32
     var channelCount: UInt32
-    var channelMapIn: DTypePointer[SYSTEM_SIZE.type]
-    var channelMapOut: DTypePointer[SYSTEM_SIZE.type]
+    var channelMapIn: UnsafePointer[SYSTEM_SIZE]
+    var channelMapOut: UnsafePointer[SYSTEM_SIZE]
 
     fn __init__(
         inout self,
@@ -55,8 +55,8 @@ struct MaChannelConverter(CollectionElement):
         channelsIn: UInt32,
         channelsOut: UInt32,
         channelCount: UInt32,
-        channelMapIn: DTypePointer[SYSTEM_SIZE.type],
-        channelMapOut: DTypePointer[SYSTEM_SIZE.type],
+        channelMapIn: UnsafePointer[SYSTEM_SIZE],
+        channelMapOut: UnsafePointer[SYSTEM_SIZE],
     ):
         self.format = format
         self.channelsIn = channelsIn
@@ -86,7 +86,7 @@ struct MaDataConverter(CollectionElement):
     var isPassthrough: UInt8
 
     var ownsHeap: UInt8
-    var pHeap: DTypePointer[SYSTEM_SIZE.type]
+    var pHeap: UnsafePointer[SYSTEM_SIZE]
 
     fn __init__(
         inout self,
@@ -106,7 +106,7 @@ struct MaDataConverter(CollectionElement):
         hasResampler: UInt8,
         isPassthrough: UInt8,
         ownsHeap: UInt8,
-        pHeap: DTypePointer[SYSTEM_SIZE.type],
+        pHeap: UnsafePointer[SYSTEM_SIZE],
     ):
         self.formatIn = formatIn
         self.formatOut = formatOut
@@ -136,7 +136,7 @@ struct Wave(CollectionElement):
     var sampleRate: UInt32
     var sampleSize: UInt32
     var channels: UInt32
-    var data: DTypePointer[SYSTEM_SIZE.type]
+    var data: UnsafePointer[SYSTEM_SIZE]
 
     fn __init__(
         inout self,
@@ -144,7 +144,7 @@ struct Wave(CollectionElement):
         sampleRate: UInt32,
         sampleSize: UInt32,
         channels: UInt32,
-        data: DTypePointer[SYSTEM_SIZE.type],
+        data: UnsafePointer[SYSTEM_SIZE],
     ):
         self.frameCount = frameCount
         self.sampleRate = sampleRate
@@ -171,11 +171,11 @@ struct Wave(CollectionElement):
 @value
 @register_passable
 struct AudioCallback(CollectionElement):
-    var buffer_data: DTypePointer[SYSTEM_SIZE.type]
+    var buffer_data: UnsafePointer[SYSTEM_SIZE]
     var frames: UInt32
 
     fn __init__(
-        inout self, buffer_data: DTypePointer[SYSTEM_SIZE.type], frames: UInt32
+        inout self, buffer_data: UnsafePointer[SYSTEM_SIZE], frames: UInt32
     ):
         self.buffer_data = buffer_data
         self.frames = frames
@@ -317,7 +317,7 @@ struct Music(CollectionElement):
     var looping: Bool
 
     var ctx_type: Int32
-    var ctx_data: DTypePointer[SYSTEM_SIZE.type]
+    var ctx_data: UnsafePointer[SYSTEM_SIZE]
 
     fn __init__(
         inout self,
@@ -325,7 +325,7 @@ struct Music(CollectionElement):
         fram_count: UInt32,
         looping: Bool,
         ctx_type: Int32,
-        ctx_data: DTypePointer[SYSTEM_SIZE.type],
+        ctx_data: UnsafePointer[SYSTEM_SIZE],
     ):
         self.stream = stream
         self.fram_count = fram_count

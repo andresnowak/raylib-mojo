@@ -14,57 +14,59 @@ struct Vector2(CollectionElement):
     fn __str__(self) -> String:
         return "Vector2(" + str(self.x) + ", " + str(self.y) + ")"
 
+    fn format_to(self, inout writer: Formatter):
+        writer.write(self.__str__())
+
 
 @value
 @register_passable("trivial")
 struct Vector3:
-    var x: Float32
-    var y: Float32
-    var z: Float32
+    # var x: Float32
+    # var y: Float32
+    # var z: Float32
+    var xyz: SIMD[DType.float32, 4]
 
     fn __init__(inout self, x: Float32, y: Float32, z: Float32):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.xyz = SIMD[DType.float32, 4](x, y, z, 0)
 
     fn __str__(self) -> String:
         return (
             "Vector3("
-            + str(self.x)
+            + str(self.xyz[0])
             + ", "
-            + str(self.y)
+            + str(self.xyz[1])
             + ", "
-            + str(self.z)
+            + str(self.xyz[2])
             + ")"
         )
+
+    fn format_to(self, inout writer: Formatter):
+        writer.write(self.__str__())
 
 
 @value
 @register_passable("trivial")
 struct Vector4:
-    var x: Float32
-    var y: Float32
-    var z: Float32
-    var w: Float32
+    var xyzw: SIMD[DType.float32, 4]
 
     fn __init__(inout self, x: Float32, y: Float32, z: Float32, w: Float32):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
+        self.xyzw = SIMD[DType.float32, 4](x, y, z, w)
 
     fn __str__(self) -> String:
         return (
             "Vector4("
-            + str(self.x)
+            + str(self.xyzw[0])
             + ", "
-            + str(self.y)
+            + str(self.xyzw[1])
             + ", "
-            + str(self.z)
+            + str(self.xyzw[2])
             + ", "
-            + str(self.w)
+            + str(self.xyzw[3])
             + ")"
         )
+
+    fn format_to(self, inout writer: Formatter):
+        writer.write(self.__str__())
 
 
 @value

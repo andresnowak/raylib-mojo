@@ -1003,7 +1003,7 @@ struct RaylibModels:
     @always_inline
     fn load_model(self, owned file_name: String) -> Model:
         """Loads a model from a file (meshes and materials)."""
-        return self._load_model(file_name.unsafe_ptr())
+        return self._load_model(file_name.unsafe_cstr_ptr())
 
     @always_inline
     fn load_model_from_mesh(self, owned mesh: Mesh) -> Model:
@@ -1185,7 +1185,7 @@ struct RaylibModels:
     fn export_mesh(self, owned mesh: Mesh, file_name: String) -> Bool:
         """Exports a mesh to a file."""
         return self._export_mesh(
-            UnsafePointer.address_of(mesh), file_name.unsafe_ptr()
+            UnsafePointer.address_of(mesh), file_name.unsafe_cstr_ptr()
         )
 
     @always_inline
@@ -1280,7 +1280,7 @@ struct RaylibModels:
         material_count: UnsafePointer[Int32],
     ) -> UnsafePointer[Material]:
         """Loads materials from a file."""
-        return self._load_materials(file_name.unsafe_ptr(), material_count)
+        return self._load_materials(file_name.unsafe_cstr_ptr(), material_count)
 
     @always_inline
     fn load_material_default(self) -> Material:
@@ -1321,7 +1321,7 @@ struct RaylibModels:
         self, file_name: String, anim_count: UnsafePointer[Int32]
     ) -> UnsafePointer[ModelAnimation]:
         """Loads model animations from a file."""
-        return self._load_model_animations(file_name.unsafe_ptr(), anim_count)
+        return self._load_model_animations(file_name.unsafe_cstr_ptr(), anim_count)
 
     @always_inline
     fn update_model_animation(
