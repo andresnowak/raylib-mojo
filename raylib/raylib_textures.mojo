@@ -1730,7 +1730,9 @@ struct RaylibTextures:
 
     @always_inline
     fn color_normalize(self, owned color: Color) -> Vector4:
-        return self._color_normalize(UnsafePointer.address_of(color))
+        var temp = self._color_normalize(UnsafePointer.address_of(color))
+        _ = color
+        return temp
 
     @always_inline
     fn color_from_normalized(self, owned normalized: Vector4) -> Color:
