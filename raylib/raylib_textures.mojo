@@ -1,3 +1,5 @@
+from memory import UnsafePointer
+
 from .texture import Texture2D, TextureCubemap, RenderTexture2D
 
 # Image loading functions

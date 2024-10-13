@@ -1,4 +1,5 @@
 from sys.ffi import DLHandle
+from utils import StringRef
 
 from .texture import Font, GlyphInfo, Image, Rectangle
 from .shapes import Color
@@ -238,7 +239,7 @@ struct RaylibText:
         ]("_DrawTextCodepoint")
         self._draw_text_codepoints = raylib_bindings_internal.get_function[
             c_raylib_DrawTextCodepoints
-        ]("_DrawTextCodepointEx")
+        ]("_DrawTextCodepoints")
 
         # Text font info functions
         self._set_text_line_spacing = raylib_internal.get_function[

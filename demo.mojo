@@ -1,3 +1,5 @@
+from memory import UnsafePointer
+
 from raylib import ray_lib_core, ray_lib_text, ray_lib_textures, ray_lib_shapes, ray_lib_models
 from raylib.shapes import Color, Vector2, Vector3
 from raylib.space_objects import Camera3D

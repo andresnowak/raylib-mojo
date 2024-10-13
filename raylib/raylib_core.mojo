@@ -1,5 +1,6 @@
 from sys.ffi import DLHandle, external_call
 from sys.info import is_64bit
+from utils import StringRef
 
 from .shapes import *
 from .texture import *
@@ -156,7 +157,7 @@ alias c_raylib_GetCameraMatrix2D = fn (
 alias c_raylib_GetWorldToScreen = fn (
     position: UnsafePointer[Vector3], camera: UnsafePointer[Camera]
 ) -> Vector2
-alias c_raylib_GetScreenWorldToScreen2D = fn (
+alias c_raylib_GetScreenToWorld2D = fn (
     position: UnsafePointer[Vector2], camera: UnsafePointer[Camera2D]
 ) -> Vector2
 alias c_raylib_GetWorldToScreenEx = fn (
@@ -254,7 +255,7 @@ alias c_raylib_DirectoryExists = fn (dirPath: UnsafePointer[Int8]) -> Bool
 alias c_raylib_IsFileExtension = fn (
     fileName: UnsafePointer[Int8], ext: UnsafePointer[Int8]
 ) -> Bool
-alias c_raylib_GetFilelength = fn (fileName: UnsafePointer[Int8]) -> Int64
+alias c_raylib_GetFileLength = fn (fileName: UnsafePointer[Int8]) -> Int64
 alias c_raylib_GetFileExtension = fn (
     fileName: UnsafePointer[Int8]
 ) -> UnsafePointer[Int8]
@@ -493,7 +494,7 @@ struct RaylibCore:
     var _get_camera_matrix: c_raylib_GetCameraMatrix
     var _get_camera_matrix2d: c_raylib_GetCameraMatrix2D
     var _get_world_to_screen: c_raylib_GetWorldToScreen
-    var _get_screen_world_to_screen2d: c_raylib_GetScreenWorldToScreen2D
+    var _get_screen_to_world_2d: c_raylib_GetScreenToWorld2D
     var _get_world_to_screen_ex: c_raylib_GetWorldToScreenEx
     var _get_world_to_screen2d: c_raylib_GetWorldToScreen2D
 
@@ -537,7 +538,7 @@ struct RaylibCore:
     var _file_exists: c_raylib_FileExists
     var _directory_exists: c_raylib_DirectoryExists
     var _is_file_extension: c_raylib_IsFileExtension
-    var _get_filelength: c_raylib_GetFilelength
+    var _get_filelength: c_raylib_GetFileLength
     var _get_file_extension: c_raylib_GetFileExtension
     var _get_file_name: c_raylib_GetFileName
     var _get_file_name_without_ext: c_raylib_GetFileNameWithoutExt
@@ -901,10 +902,10 @@ struct RaylibCore:
         self._get_world_to_screen = raylib_bindings_internal.get_function[
             c_raylib_GetWorldToScreen
         ]("_GetWorldToScreen")
-        self._get_screen_world_to_screen2d = (
+        self._get_screen_to_world_2d = (
             raylib_bindings_internal.get_function[
-                c_raylib_GetScreenWorldToScreen2D
-            ]("_GetScreenWorldToScreen2D")
+                c_raylib_GetScreenToWorld2D
+            ]("_GetScreenToWorld2D")
         )
         self._get_world_to_screen_ex = raylib_bindings_internal.get_function[
             c_raylib_GetWorldToScreenEx
@@ -1035,8 +1036,8 @@ struct RaylibCore:
             c_raylib_IsFileExtension
         ]("IsFileExtension")
         self._get_filelength = raylib_internal.get_function[
-            c_raylib_GetFilelength
-        ]("GetFilelength")
+            c_raylib_GetFileLength
+        ]("GetFileLength")
         self._get_file_extension = raylib_internal.get_function[
             c_raylib_GetFileExtension
         ]("GetFileExtension")
@@ -1076,9 +1077,9 @@ struct RaylibCore:
         self._is_file_dropped = raylib_internal.get_function[
             c_raylib_IsFileDropped
         ]("IsFileDropped")
-        self._load_dropped_files = raylib_bindings_internal.get_function[
+        self._load_dropped_files = raylib_internal.get_function[
             c_raylib_LoadDroppedFiles
-        ]("_LoadDroppedFiles")
+        ]("LoadDroppedFiles")
         self._unload_dropped_files = raylib_internal.get_function[
             c_raylib_UnloadDroppedFiles
         ]("UnloadDroppedFiles")
@@ -1983,7 +1984,7 @@ struct RaylibCore:
     @always_inline
     fn export_data_as_code(
         self, data: UnsafePointer[UInt8], data_size: UInt32, var_name: String
-    ) -> String:
+    ) -> Bool:
         """Export image data as code file defining an array of bytes."""
         return self._export_data_as_code(data, data_size, var_name.unsafe_cstr_ptr())
 

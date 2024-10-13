@@ -20,7 +20,7 @@ fn check_system_size() -> DType:
 alias SYSTEM_SIZE = Scalar[check_system_size()]
 
 var raylib_internal = DLHandle(RAYLIB_PATH, RTLD.NOW)
-var raylib_bindings_internal = DLHandle(RAYLIB_BINDINGS_PATH, RTLD.NOW)
+var raylib_bindings_internal = DLHandle(RAYLIB_BINDINGS_PATH)
 
 var ray_lib_core = RaylibCore(raylib_internal, raylib_bindings_internal)
 var ray_lib_text = RaylibText(raylib_internal, raylib_bindings_internal)

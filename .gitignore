@@ -2,4 +2,10 @@
 /raylib/raylib_bindings/lib
 /raylib/raylib_bindings/config.cmake
 /raylib/env_variables.mojo
-/.vscode
+/.vscode# pixi environments
+.pixi
+*.egg-info
+# magic environments
+.magic
+*.DS_Store
+.vscode
