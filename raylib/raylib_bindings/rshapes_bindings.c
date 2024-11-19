@@ -145,9 +145,9 @@ void _DrawRectangleRounded(Rectangle *rec, float roundness, int segments, Color 
     DrawRectangleRounded(*rec, roundness, segments, *color);
 }
 
-void _DrawRectangleRoundedLines(Rectangle *rec, float roundness, int segments, float lineThick, Color *color)
+void _DrawRectangleRoundedLines(Rectangle *rec, float roundness, int segments, Color *color)
 {
-    DrawRectangleRoundedLines(*rec, roundness, segments, lineThick, *color);
+    DrawRectangleRoundedLines(*rec, roundness, segments, *color);
 }
 
 void _DrawTriangle(Vector2 *v1, Vector2 *v2, Vector2 *v3, Color *color)

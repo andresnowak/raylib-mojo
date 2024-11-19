@@ -40,8 +40,8 @@ void _UnloadVrStereoConfig(VrStereoConfig *config) {
 }
 
 // Shader management functions
-bool _IsShaderReady(Shader *shader) {
-    return IsShaderReady(*shader);
+bool _IsShaderValid(Shader *shader) {
+    return IsShaderValid(*shader);
 }
 
 int _GetShaderLocation(Shader *shader, const char *uniformName) {

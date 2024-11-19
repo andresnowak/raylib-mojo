@@ -27,7 +27,7 @@ void _DrawRay(Ray *ray, Color *color);
 // Model management functions
 Model _LoadModelFromMesh(Mesh *mesh);
 void _UnloadModel(Model *model);
-bool _IsModelReady(Model *model);
+bool _IsModelValid(Model *model);
 BoundingBox _GetModelBoundingBox(Model *model);
 
 // Model drawing functions
@@ -54,7 +54,7 @@ Mesh _GenMeshHeightmap(Image *heightmap, Vector3 *size);
 Mesh _GenMeshCubicmap(Image *cubicmap, Vector3 *cubeSize);
 
 // Material loading/unloading functions
-bool _IsMaterialReady(Material *material);
+bool _IsMaterialValid(Material *material);
 void _UnloadMaterial(Material *material);
 void _SetMaterialTexture(Material *material, int mapType, Texture2D *texture);
 void _SetModelMeshMaterial(Model *model, int meshId, int materialId);

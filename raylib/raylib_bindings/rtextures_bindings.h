@@ -4,7 +4,7 @@
 
 // Image loading functions
 Image _LoadImageFromTexture(Texture2D *texture);
-bool _IsImageReady(Image *image);
+bool _IsImageValid(Image *image);
 void _UnloadImage(Image *image);
 bool _ExportImage(Image *image, const char *fileName);
 unsigned char *_ExportImageToMemory(Image *image, const char *fileType, int *fileSize);
@@ -59,9 +59,9 @@ void _ImageDrawTextEx(Image *dst, Font *font, const char *text, Vector2 *positio
 // Texture functions
 Texture2D _LoadTextureFromImage(Image *image);
 TextureCubemap _LoadTextureCubemap(Image *image, int layout); 
-bool _IsTextureReady(Texture2D *texture);
+bool _IsTextureValid(Texture2D *texture);
 void _UnloadTexture(Texture2D *texture);
-bool _IsRenderTextureReady(RenderTexture2D *target);
+bool _IsRenderTextureValid(RenderTexture2D *target);
 void _UnloadRenderTexture(RenderTexture2D *target);
 void _UpdateTexture(Texture2D *texture, const void *pixels);
 void _UpdateTextureRec(Texture2D *texture, Rectangle *rec, const void *pixels);

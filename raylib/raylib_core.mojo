@@ -115,7 +115,7 @@ alias c_raylib_LoadShader = fn (
 alias c_raylib_LoadShaderFromMemory = fn (
     vsCode: UnsafePointer[Int8], fsCode: UnsafePointer[Int8]
 ) -> Shader
-alias c_raylib_IsShaderReady = fn (shader: UnsafePointer[Shader]) -> Bool
+alias c_raylib_IsShaderValid = fn (shader: UnsafePointer[Shader]) -> Bool
 alias c_raylib_GetShaderLocation = fn (
     shader: UnsafePointer[Shader], uniformName: UnsafePointer[Int8]
 ) -> Int32
@@ -482,7 +482,7 @@ struct RaylibCore:
     var _unload_vr_stereo_config: c_raylib_UnloadVrStereoConfig
     var _load_shader: c_raylib_LoadShader
     var _load_shader_from_memory: c_raylib_LoadShaderFromMemory
-    var _is_shader_ready: c_raylib_IsShaderReady
+    var _is_shader_valid: c_raylib_IsShaderValid
     var _get_shader_location: c_raylib_GetShaderLocation
     var _get_shader_location_attrib: c_raylib_GetShaderLocationAttrib
     var _set_shader_value: c_raylib_SetShaderValue
@@ -862,9 +862,9 @@ struct RaylibCore:
         self._load_shader_from_memory = raylib_internal.get_function[
             c_raylib_LoadShaderFromMemory
         ]("LoadShaderFromMemory")
-        self._is_shader_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsShaderReady
-        ]("_IsShaderReady")
+        self._is_shader_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsShaderValid
+        ]("_IsShaderValid")
         self._get_shader_location = raylib_bindings_internal.get_function[
             c_raylib_GetShaderLocation
         ]("_GetShaderLocation")
@@ -1675,9 +1675,9 @@ struct RaylibCore:
         )
 
     @always_inline
-    fn is_shader_ready(self, owned shader: Shader) -> Bool:
+    fn is_shader_valid(self, owned shader: Shader) -> Bool:
         """Check if a shader is ready."""
-        return self._is_shader_ready(UnsafePointer.address_of(shader))
+        return self._is_shader_valid(UnsafePointer.address_of(shader))
 
     @always_inline
     fn get_shader_location(

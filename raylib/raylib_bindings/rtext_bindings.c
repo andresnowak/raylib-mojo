@@ -6,8 +6,8 @@ Font _LoadFontFromImage(Image *image, Color *key, int firstChar) {
     return LoadFontFromImage(*image, *key, firstChar);
 }
 
-bool _IsFontReady(Font *font) {
-    return IsFontReady(*font);
+bool _IsFontValid(Font *font) {
+    return IsFontValid(*font);
 }
 
 void _UnloadFont(Font *font) {

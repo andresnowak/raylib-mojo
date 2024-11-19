@@ -24,7 +24,7 @@ alias c_raylib_LoadFontFromMemory = fn (
     codepoints: UnsafePointer[Int32],
     codepointCount: Int32,
 ) -> Font
-alias c_raylib_IsFontReady = fn (font: UnsafePointer[Font]) -> Bool
+alias c_raylib_IsFontValid = fn (font: UnsafePointer[Font]) -> Bool
 alias c_raylib_LoadFontData = fn (
     fileType: UnsafePointer[UInt8],
     fileData: UnsafePointer[UInt8],
@@ -151,7 +151,7 @@ struct RaylibText:
     var _load_font_ex: c_raylib_LoadFontEx
     var _load_font_from_image: c_raylib_LoadFontFromImage
     var _load_font_from_memory: c_raylib_LoadFontFromMemory
-    var _is_font_ready: c_raylib_IsFontReady
+    var _is_font_valid: c_raylib_IsFontValid
     var _load_font_data: c_raylib_LoadFontData
     var _gen_image_font_atlas: c_raylib_GenImageFontAtlas
     var _unload_font_data: c_raylib_UnloadFontData
@@ -202,9 +202,9 @@ struct RaylibText:
         self._load_font_from_memory = raylib_internal.get_function[
             c_raylib_LoadFontFromMemory
         ]("LoadFontFromMemory")
-        self._is_font_ready = raylib_internal.get_function[
-            c_raylib_IsFontReady
-        ]("IsFontReady")
+        self._is_font_valid = raylib_internal.get_function[
+            c_raylib_IsFontValid
+        ]("IsFontValid")
         self._load_font_data = raylib_internal.get_function[
             c_raylib_LoadFontData
         ]("LoadFontData")
@@ -342,9 +342,9 @@ struct RaylibText:
         return UnsafePointer.address_of(font).bitcast[Font]()[0]
 
     @always_inline
-    fn is_font_ready(self, owned font: Font) -> Bool:
+    fn is_font_valid(self, owned font: Font) -> Bool:
         """Check if any font is loaded."""
-        return self._is_font_ready(UnsafePointer.address_of(font))
+        return self._is_font_valid(UnsafePointer.address_of(font))
 
     @always_inline
     fn load_font_data(

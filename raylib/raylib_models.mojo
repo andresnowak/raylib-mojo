@@ -136,7 +136,7 @@ alias c_raylib_DrawGrid = fn (slices: Int32, spacing: Float32) -> None
 # Model management functions
 alias c_raylib_LoadModel = fn (fileName: UnsafePointer[Int8]) -> Model
 alias c_raylib_LoadModelFromMesh = fn (mesh: UnsafePointer[Mesh]) -> Model
-alias c_raylib_IsModelReady = fn (model: UnsafePointer[Model]) -> Bool
+alias c_raylib_IsModelValid = fn (model: UnsafePointer[Model]) -> Bool
 alias c_raylib_UnloadModel = fn (model: UnsafePointer[Model]) -> None
 alias c_raylib_GetModelBoundingBox = fn (
     model: UnsafePointer[Model]
@@ -270,7 +270,7 @@ alias c_raylib_LoadMaterials = fn (
     fileName: UnsafePointer[Int8], materialCount: UnsafePointer[Int32]
 ) -> UnsafePointer[Material]
 alias c_raylib_LoadMaterialDefault = fn () -> Material
-alias c_raylib_IsMaterialReady = fn (material: UnsafePointer[Material]) -> Bool
+alias c_raylib_IsMaterialValid = fn (material: UnsafePointer[Material]) -> Bool
 alias c_raylib_UnloadMaterial = fn (material: UnsafePointer[Material]) -> None
 alias c_raylib_SetMaterialTexture = fn (
     material: UnsafePointer[Material],
@@ -367,7 +367,7 @@ struct RaylibModels:
 
     var _load_model: c_raylib_LoadModel
     var _load_model_from_mesh: c_raylib_LoadModelFromMesh
-    var _is_model_ready: c_raylib_IsModelReady
+    var _is_model_valid: c_raylib_IsModelValid
     var _unload_model: c_raylib_UnloadModel
     var _get_model_bounding_box: c_raylib_GetModelBoundingBox
 
@@ -403,7 +403,7 @@ struct RaylibModels:
 
     var _load_materials: c_raylib_LoadMaterials
     var _load_material_default: c_raylib_LoadMaterialDefault
-    var _is_material_ready: c_raylib_IsMaterialReady
+    var _is_material_valid: c_raylib_IsMaterialValid
     var _unload_material: c_raylib_UnloadMaterial
     var _set_material_texture: c_raylib_SetMaterialTexture
     var _set_model_mesh_material: c_raylib_SetModelMeshMaterial
@@ -502,9 +502,9 @@ struct RaylibModels:
         self._load_model_from_mesh = raylib_bindings_internal.get_function[
             c_raylib_LoadModelFromMesh
         ]("_LoadModelFromMesh")
-        self._is_model_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsModelReady
-        ]("_IsModelReady")
+        self._is_model_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsModelValid
+        ]("_IsModelValid")
         self._unload_model = raylib_bindings_internal.get_function[
             c_raylib_UnloadModel
         ]("_UnloadModel")
@@ -606,9 +606,9 @@ struct RaylibModels:
         self._load_material_default = raylib_bindings_internal.get_function[
             c_raylib_LoadMaterialDefault
         ]("_LoadMaterialDefault")
-        self._is_material_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsMaterialReady
-        ]("_IsMaterialReady")
+        self._is_material_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsMaterialValid
+        ]("_IsMaterialValid")
         self._unload_material = raylib_bindings_internal.get_function[
             c_raylib_UnloadMaterial
         ]("_UnloadMaterial")
@@ -1016,9 +1016,9 @@ struct RaylibModels:
         self._unload_model(UnsafePointer.address_of(model))
 
     @always_inline
-    fn is_model_ready(self, owned model: Model) -> Bool:
-        """Checks if a model is ready to be used."""
-        return self._is_model_ready(UnsafePointer.address_of(model))
+    fn is_model_valid(self, owned model: Model) -> Bool:
+        """Checks if a model is valid to be used."""
+        return self._is_model_valid(UnsafePointer.address_of(model))
 
     @always_inline
     fn get_model_bounding_box(self, owned model: Model) -> BoundingBox:
@@ -1288,9 +1288,9 @@ struct RaylibModels:
         return self._load_material_default()
 
     @always_inline
-    fn is_material_ready(self, owned material: Material) -> Bool:
-        """Checks if a material is ready to be used."""
-        return self._is_material_ready(UnsafePointer.address_of(material))
+    fn is_material_valid(self, owned material: Material) -> Bool:
+        """Checks if a material is valid to be used."""
+        return self._is_material_valid(UnsafePointer.address_of(material))
 
     @always_inline
     fn unload_material(self, owned material: Material):

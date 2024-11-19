@@ -12,9 +12,6 @@ alias c_raylib_LoadImageRaw = fn (
     format: Int32,
     headerSize: Int32,
 ) -> Image
-alias c_raylib_LoadImageSvg = fn (
-    filenameOrString: UnsafePointer[Int8], width: Int32, height: Int32
-) -> Image
 alias c_raylib_LoadImageAnim = fn (
     filename: UnsafePointer[Int8], frames: UnsafePointer[Int32]
 ) -> Image
@@ -27,7 +24,7 @@ alias c_raylib_LoadImageFromTexture = fn (
     texture: UnsafePointer[Texture2D]
 ) -> Image
 alias c_raylib_LoadImageFromScreen = fn () -> Image
-alias c_raylib_IsImageReady = fn (image: UnsafePointer[Image]) -> Bool
+alias c_raylib_IsImageValid = fn (image: UnsafePointer[Image]) -> Bool
 alias c_raylib_UnloadImage = fn (image: UnsafePointer[Image]) -> None
 alias c_raylib_ExportImage = fn (
     image: UnsafePointer[Image], filename: UnsafePointer[Int8]
@@ -303,9 +300,9 @@ alias c_raylib_LoadTextureCubemap = fn (
 alias c_raylib_LoadRenderTexture = fn (
     width: Int32, height: Int32
 ) -> RenderTexture2D
-alias c_raylib_IsTextureReady = fn (texture: UnsafePointer[Texture2D]) -> Bool
+alias c_raylib_IsTextureValid = fn (texture: UnsafePointer[Texture2D]) -> Bool
 alias c_raylib_UnloadTexture = fn (texture: UnsafePointer[Texture2D]) -> None
-alias c_raylib_IsRenderTextureReady = fn (
+alias c_raylib_IsRenderTextureValid = fn (
     target: UnsafePointer[RenderTexture2D]
 ) -> Bool
 alias c_raylib_UnloadRenderTexture = fn (
@@ -417,12 +414,11 @@ alias c_raylib_GetPixelDataSize = fn (
 struct RaylibTextures:
     var _load_image: c_raylib_LoadImage
     var _load_image_raw: c_raylib_LoadImageRaw
-    var _load_image_svg: c_raylib_LoadImageSvg
     var _load_image_anim: c_raylib_LoadImageAnim
     var _load_image_from_memory: c_raylib_LoadImageFromMemory
     var _load_image_from_texture: c_raylib_LoadImageFromTexture
     var _load_image_from_screen: c_raylib_LoadImageFromScreen
-    var _is_image_ready: c_raylib_IsImageReady
+    var _is_image_valid: c_raylib_IsImageValid
     var _unload_image: c_raylib_UnloadImage
     var _export_image: c_raylib_ExportImage
     var _export_image_to_memory: c_raylib_ExportImageToMemory
@@ -494,9 +490,9 @@ struct RaylibTextures:
     var _load_texture_from_image: c_raylib_LoadTextureFromImage
     var _load_texture_cubemap: c_raylib_LoadTextureCubemap
     var _load_render_texture: c_raylib_LoadRenderTexture
-    var _is_texture_ready: c_raylib_IsTextureReady
+    var _is_texture_valid: c_raylib_IsTextureValid
     var _unload_texture: c_raylib_UnloadTexture
-    var _is_render_texture_ready: c_raylib_IsRenderTextureReady
+    var _is_render_texture_valid: c_raylib_IsRenderTextureValid
     var _unload_render_texture: c_raylib_UnloadRenderTexture
     var _update_texture: c_raylib_UpdateTexture
     var _update_texture_rec: c_raylib_UpdateTextureRec
@@ -540,9 +536,6 @@ struct RaylibTextures:
         self._load_image_raw = raylib_internal.get_function[
             c_raylib_LoadImageRaw
         ]("LoadImageRaw")
-        self._load_image_svg = raylib_internal.get_function[
-            c_raylib_LoadImageSvg
-        ]("LoadImageSvg")
         self._load_image_anim = raylib_internal.get_function[
             c_raylib_LoadImageAnim
         ]("LoadImageAnim")
@@ -555,9 +548,9 @@ struct RaylibTextures:
         self._load_image_from_screen = raylib_internal.get_function[
             c_raylib_LoadImageFromScreen
         ]("LoadImageFromScreen")
-        self._is_image_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsImageReady
-        ]("_IsImageReady")
+        self._is_image_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsImageValid
+        ]("_IsImageValid")
         self._unload_image = raylib_bindings_internal.get_function[
             c_raylib_UnloadImage
         ]("_UnloadImage")
@@ -769,15 +762,15 @@ struct RaylibTextures:
         self._load_render_texture = raylib_internal.get_function[
             c_raylib_LoadRenderTexture
         ]("LoadRenderTexture")
-        self._is_texture_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsTextureReady
-        ]("_IsTextureReady")
+        self._is_texture_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsTextureValid
+        ]("_IsTextureValid")
         self._unload_texture = raylib_bindings_internal.get_function[
             c_raylib_UnloadTexture
         ]("_UnloadTexture")
-        self._is_render_texture_ready = raylib_bindings_internal.get_function[
-            c_raylib_IsRenderTextureReady
-        ]("_IsRenderTextureReady")
+        self._is_render_texture_valid = raylib_bindings_internal.get_function[
+            c_raylib_IsRenderTextureValid
+        ]("_IsRenderTextureValid")
         self._unload_render_texture = raylib_bindings_internal.get_function[
             c_raylib_UnloadRenderTexture
         ]("_UnloadRenderTexture")
@@ -888,14 +881,6 @@ struct RaylibTextures:
         )
 
     @always_inline
-    fn load_image_svg(
-        self, file_name_or_string: String, width: Int32, height: Int32
-    ) -> Image:
-        return self._load_image_svg(
-            file_name_or_string.unsafe_cstr_ptr(), width, height
-        )
-
-    @always_inline
     fn load_image_anim(
         self, file_name: String, frames: UnsafePointer[Int32]
     ) -> Image:
@@ -923,8 +908,8 @@ struct RaylibTextures:
         return self._load_image_from_screen()
 
     @always_inline
-    fn is_image_ready(self, owned image: Image) -> Bool:
-        return self._is_image_ready(UnsafePointer.address_of(image))
+    fn is_image_valid(self, owned image: Image) -> Bool:
+        return self._is_image_valid(UnsafePointer.address_of(image))
 
     @always_inline
     fn unload_image(self, owned image: Image) -> None:
@@ -1557,8 +1542,8 @@ struct RaylibTextures:
         return self._load_render_texture(width, height)
 
     @always_inline
-    fn is_texture_ready(self, owned texture: Texture2D) -> Bool:
-        return self._is_texture_ready(UnsafePointer.address_of(texture))
+    fn is_texture_valid(self, owned texture: Texture2D) -> Bool:
+        return self._is_texture_valid(UnsafePointer.address_of(texture))
 
     @always_inline
     fn unload_texture(self, owned texture: Texture2D) -> None:
@@ -1567,8 +1552,8 @@ struct RaylibTextures:
         _ = texture
 
     @always_inline
-    fn is_render_texture_ready(self, owned target: RenderTexture2D) -> Bool:
-        return self._is_render_texture_ready(UnsafePointer.address_of(target))
+    fn is_render_texture_valid(self, owned target: RenderTexture2D) -> Bool:
+        return self._is_render_texture_valid(UnsafePointer.address_of(target))
 
     @always_inline
     fn unload_render_texture(self, owned target: RenderTexture2D) -> None:

@@ -6,8 +6,8 @@ Image _LoadImageFromTexture(Texture2D *texture) {
     return LoadImageFromTexture(*texture);
 }
 
-bool _IsImageReady(Image *image) {
-    return IsImageReady(*image);
+bool _IsImageValid(Image *image) {
+    return IsImageValid(*image);
 }
 
 void _UnloadImage(Image *image) {
@@ -182,16 +182,16 @@ TextureCubemap _LoadTextureCubemap(Image *image, int layout) {
     return LoadTextureCubemap(*image, layout);
 }
 
-bool _IsTextureReady(Texture2D *texture) {
-    return IsTextureReady(*texture);
+bool _IsTextureValid(Texture2D *texture) {
+    return IsTextureValid(*texture);
 }
 
 void _UnloadTexture(Texture2D *texture) {
     UnloadTexture(*texture);
 }
 
-bool _IsRenderTextureReady(RenderTexture2D *target) {
-    return IsRenderTextureReady(*target);
+bool _IsRenderTextureValid(RenderTexture2D *target) {
+    return IsRenderTextureValid(*target);
 }
 
 void _UnloadRenderTexture(RenderTexture2D *target) {

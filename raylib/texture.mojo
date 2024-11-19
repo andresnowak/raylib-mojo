@@ -45,7 +45,7 @@ struct Image(CollectionElement):
 # Texture2D type, bpp always RGBA (32bit)
 # NOTE: Data stored in GPU memory
 @register_passable("trivial")
-struct Texture:
+struct Texture(Writable):
     var id: UInt32
     var width: Int32
     var height: Int32
@@ -66,8 +66,8 @@ struct Texture:
         self.mipmaps = mipmaps
         self.format = format
 
-    fn __str__(self) -> String:
-        return (
+    fn write_to[W: Writer](self, inout writer: W):
+        writer.write( 
             "Texture("
             "id: "
             + str(self.id)
@@ -80,10 +80,10 @@ struct Texture:
             + ", format: "
             + str(self.format)
             + ")"
-        )
+            )
 
-    fn format_to(self, inout writer: Formatter):
-        writer.write(self.__str__())
+    fn __str__(self) -> String:
+        return String.write(self)
 
 
 @value
@@ -167,7 +167,7 @@ struct GlyphInfo(CollectionElement):
 
 @value
 @register_passable
-struct Font(CollectionElement):
+struct Font(CollectionElement, Writable):
     var base_size: Int32
     var glyph_count: Int32
     var glyph_padding: Int32
@@ -191,8 +191,8 @@ struct Font(CollectionElement):
         self.recs = recs
         self.glyphs = glyphs
 
-    fn __str__(self) -> String:
-        return (
+    fn write_to[W: Writer](self, inout writer: W):
+        writer.write(
             "Font("
             + str(self.base_size)
             + ", glyphs: "
@@ -204,5 +204,5 @@ struct Font(CollectionElement):
             + ")"
         )
 
-    fn format_to(self, inout writer: Formatter):
-        writer.write(self.__str__())
+    fn __str__(self) -> String:
+        return String.write(self)

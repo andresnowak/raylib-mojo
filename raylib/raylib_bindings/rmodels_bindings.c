@@ -92,8 +92,8 @@ void _UnloadModel(Model *model) {
     UnloadModel(*model);
 }
 
-bool _IsModelReady(Model *model) {
-    return IsModelReady(*model);
+bool _IsModelValid(Model *model) {
+    return IsModelValid(*model);
 }
 
 BoundingBox _GetModelBoundingBox(Model *model) {
@@ -172,8 +172,8 @@ Mesh _GenMeshCubicmap(Image *cubicmap, Vector3 *cubeSize) {
 }
 
 // Material loading/unloading functions
-bool _IsMaterialReady(Material *material) {
-    return IsMaterialReady(*material);
+bool _IsMaterialValid(Material *material) {
+    return IsMaterialValid(*material);
 }
 
 void _UnloadMaterial(Material *material) {

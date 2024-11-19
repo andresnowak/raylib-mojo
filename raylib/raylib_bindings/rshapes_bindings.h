@@ -36,7 +36,7 @@ void _DrawRectangleGradientEx(Rectangle *rec, Color *col1, Color *col2, Color *c
 void _DrawRectangleLines(int posX, int posY, int width, int height, Color *color);
 void _DrawRectangleLinesEx(Rectangle *rec, float lineThick, Color *color);
 void _DrawRectangleRounded(Rectangle *rec, float roundness, int segments, Color *color);
-void _DrawRectangleRoundedLines(Rectangle *rec, float roundness, int segments, float lineThick, Color *color);
+void _DrawRectangleRoundedLines(Rectangle *rec, float roundness, int segments, Color *color);
 void _DrawTriangle(Vector2 *v1, Vector2 *v2, Vector2 *v3, Color *color);
 void _DrawTriangleLines(Vector2 *v1, Vector2 *v2, Vector2 *v3, Color *color);
 void _DrawTriangleFan(Vector2 *points, int pointCount, Color *color);

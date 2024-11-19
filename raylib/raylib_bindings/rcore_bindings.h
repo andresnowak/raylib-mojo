@@ -16,7 +16,7 @@ VrStereoConfig _LoadVrStereoConfig(VrDeviceInfo *device);
 void _UnloadVrStereoConfig(VrStereoConfig *config);
 
 // Shader management functions
-bool _IsShaderReady(Shader *shader);
+bool _IsShaderValid(Shader *shader);
 int _GetShaderLocation(Shader *shader, const char *uniformName);
 int _GetShaderLocationAttrib(Shader *shader, const char *attribName);
 void _SetShaderValue(Shader *shader, int uniformLoc, const void *value, int uniformType);
