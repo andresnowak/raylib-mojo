@@ -2,6 +2,10 @@
 #include "rtextures_bindings.h"
 
 // rtextures ----------
+Texture2D _LoadTexture(const char *fileName) {
+    return LoadTexture(fileName);
+}
+
 Image _LoadImageFromTexture(Texture2D *texture) {
     return LoadImageFromTexture(*texture);
 }
