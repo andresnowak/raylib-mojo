@@ -3,6 +3,7 @@
 // rtextures ----------
 
 // Image loading functions
+Texture2D _LoadTexture(const char *fileName);
 Image _LoadImageFromTexture(Texture2D *texture);
 bool _IsImageReady(Image *image);
 void _UnloadImage(Image *image);
